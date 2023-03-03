@@ -1,0 +1,806 @@
+ERROR:app:Exception on /genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 133, in query_database
+    engine = create_engine(load_config()['url'], echo=True)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 131, in query_database
+    return load_config()['url']
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 131, in query_database
+    return load_config()['url']
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 131, in query_database
+    return load_config()['url']
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 131, in query_database
+    return load_config()['url']
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 131, in query_database
+    return load_config()['url']
+  File "/home/prichter/find-a-bug/app/__init__.py", line 29, in load_config
+    with open(filepath, 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'find-a-bug.cfg'
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 157, in query_database
+    return make_response(
+TypeError: make_response() got an unexpected keyword argument 'response'
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+ERROR:app:Exception on /gene_name/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 157, in query_database
+    return make_response(
+TypeError: make_response() got an unexpected keyword argument 'response'
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00017s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00016s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00019s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.genome_id AS gtdb_r207_annotations_kegg_genome_id 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00044s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+ERROR:app:Exception on /gene_name+genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 146, in query_database
+    query_dfs = [fab.query_database(q, options=options) for q in query]
+  File "/home/prichter/find-a-bug/app/__init__.py", line 146, in <listcomp>
+    query_dfs = [fab.query_database(q, options=options) for q in query]
+  File "/home/prichter/find-a-bug/app/backend.py", line 157, in query_database
+    query = self.__query_database(query_field, options=options)
+  File "/home/prichter/find-a-bug/app/backend.py", line 93, in __query_database
+    f2t = self.get_field_to_table_map(query_fields + options_fields)
+AttributeError: 'FindABug' object has no attribute 'get_field_to_table_map'
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+ERROR:app:Exception on /gene_name+genome_id/ko=eq;K02956 [GET]
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 2528, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/prichter/find-a-bug/env/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/prichter/find-a-bug/app/__init__.py", line 146, in query_database
+    query_dfs = [fab.query_database(q, options=options) for q in query]
+  File "/home/prichter/find-a-bug/app/__init__.py", line 146, in <listcomp>
+    query_dfs = [fab.query_database(q, options=options) for q in query]
+  File "/home/prichter/find-a-bug/app/backend.py", line 157, in query_database
+    query = self.__query_database(query_field, options=options)
+  File "/home/prichter/find-a-bug/app/backend.py", line 93, in __query_database
+    f2t = self.get_field_to_table_map(query_fields + options_fields)
+AttributeError: 'FindABug' object has no attribute 'get_field_to_table_map'
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name, gtdb_r207_annotations_kegg.genome_id AS gtdb_r207_annotations_kegg_genome_id 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SHOW FULL TABLES FROM `findabug`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_amino_acid_seqs`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_annotations_kegg`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SHOW CREATE TABLE `gtdb_r207_metadata`
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:ROLLBACK
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00016s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00020s] ('K02956',)
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00012s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name, gtdb_r207_annotations_kegg.genome_id AS gtdb_r207_annotations_kegg_genome_id, gtdb_r207_annotations_kegg.ko AS gtdb_r207_annotations_kegg_ko 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00015s] ('K02956',)
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00014s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00013s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00013s] ('K02956',)
+INFO:sqlalchemy.engine.Engine:SELECT DATABASE()
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@sql_mode
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:SELECT @@lower_case_table_names
+INFO:sqlalchemy.engine.Engine:[raw sql] ()
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:SELECT gtdb_r207_annotations_kegg.gene_name AS gtdb_r207_annotations_kegg_gene_name 
+FROM gtdb_r207_annotations_kegg 
+WHERE gtdb_r207_annotations_kegg.ko = ?
+INFO:sqlalchemy.engine.Engine:[generated in 0.00016s] ('K02956',)
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
