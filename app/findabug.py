@@ -10,17 +10,14 @@ sys.path.append(curr_dir)
 sys.path.append('/home/prichter/find-a-bug')
 
 import sqlalchemy
-from sqlalchemy import or_
-from sqlalchemy import inspect
+from sqlalchemy import or_, inspect
 import sqlalchemy.orm
-# import numpy as np
 import pandas as pd
 from database import database_init
-# import os
-import pickle
 
 class FindABug():
     '''
+    The class which handles the the
     '''
 
     def __init__(self, engine):

@@ -1,3 +1,5 @@
+'''
+'''
 import sys
 import os
 
@@ -7,143 +9,72 @@ sys.path.append(curr_dir)
 import logging
 from flask import Flask # Response, make_response
 from backend import FindABug
-# from markupsafe import escape
 from time import perf_counter
-import pandas as pd
 from sqlalchemy import create_engine
-from check import check_query
+from exceptions import FindABugError, QueryError
+from query import Query
 
 # Instantiate and configure the logger. 
 logging.basicConfig(filename='find-a-bug.log', filemode='a')
 logger = logging.getLogger('find-a-bug')
 
-# Tells Flask the name of the current module, for some reason. 
+# Tells Flask the name of the current module. 
 app = Flask(__name__)
 
-# NOTE: Needed an absolute filepath here for some reason. 
-def load_config(filepath='/home/prichter/find-a-bug/app/find-a-bug.cfg'):
+######################################################################
+host = 'localhost'
+dialect = 'mariadb'
+driver = 'mariadbconnector'
+user = 'root'
+pwd = 'Doledi7-Bebyno2'
+dbname = 'findabug'
+
+url = f'{dialect}+{driver}://{user}:{pwd}@{host}/{dbname}'
+# Hopefully means that only one engine is created.
+engine = create_engine(url)
+######################################################################
+
+@app.route(FindABugError)
+@app.route(QueryError)
+def handle_error(err):
     '''
+    Error handling for issues which involve the client-side query or the
+    host-side code (so basically any exception which occurs. 
     '''
-    config = {}
-    # Read in the config file. 
-    with open(filepath, 'r') as f:
-        settings = f.read().splitlines()
-        for setting in settings:
-            setting = setting.strip() # Make sure no more whitespace. 
-            try:
-                var, val = setting.split('=')
-                config[var] = val
-            except: # In case there are random trailing lines. 
-                pass
-    # Make sure everything in the configurations file is cofectly specified. 
-    # check_config(config)
-   
-    dialect = config['DIALECT']
-    driver = config['DRIVER']
-    user = config['USER']
-    pwd = config['PWD']
-    host = config['HOST']
-    dbname = config['DBNAME']
-    # Construct the URL using the settings in the config file. 
-    url = f'{dialect}+{driver}://{user}:{pwd}@{host}/{dbname}'
-    
-    return {'url':url, 'data_dir':config['DATA_DIR']}
+    return str(err), err.status_code
 
-
-# TODO: Might be worth using the Flask session construct to store the FindABug
-# information. 
-
-def parse_options(options_string):
+@app.route(Exception)
+def handle_unknown_error(err):
     '''
-    Parse the string of options. String should be of the form
-    field=value;operator+field=value;operator+....
-
-    args:
-        : options_string (string)
-    returns:
-        : options (dict)
+    Error handling when unanticipated exceptions are raised. 
     '''
-    # TODO: Add some kind of checking. 
-
-    options = {}
-    for option in options_string.split('+'):
-        
-        # Special case where the option is specifying output format.
-        if option[:3] == 'out':
-            options['out'] = option.split('=')[1]
-        
-        else:
-            field = option.split('=')[0]
-            filter_ = option.split('=')[1]
-            operator, value = filter_.split(';')
-            
-            # The only types in the database (and I think all that there
-            # will be) are floats, ints, and strings. 
-            # TODO: There is probably a better way to handle this... 
-            try:
-                value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    # If neither of these two conversions work, just
-                    # treat the value like a string. 
-                    pass
-
-            if field not in options:
-                options[field] = [(operator, value)]
-            else:
-                options[field].append((operator, value))
-
-    return options
+    return f'An unanticipated error occurred: {str(err)}', 500
 
 
 @app.route('/')
 def welcome():
-    return 'SUCCESS'
+    return 'Welcome to Find-A-Bug!', 200
 
 
 @app.route('/info')
 def database_info():
     # Start a connection to the FindABug database. 
-    engine = create_engine(load_config()['url'])
     
-    return load_config()['url']
     fab = FindABug(engine)
-    
-    # options = parse_options(options)
-    # JSON is the default return format, but CSV can be specified. 
-    # out = options.pop('out', 'json')
-    # Only one option (so far) should be sepcified when using info. 
-    
     info_df = fab.info()
     
     return info_df.to_json(orient='records')
-    # if out == 'csv':
-    #     return info_df.to_csv()
-    # elif out == 'json':
-    #     return info_df.to_json(orient='records')
-    # else:
-    #     msg = f'Output type {out} is not supported.'
-    #     raise ValueError(msg)
  
 
-@app.route('/<string:query>/<options>')
-def query_database(query=None, options=None):
+@app.route('/<string:url_query>/<url_options>')
+def query_database(url_query=None, url_options=None):
 
     t_init = perf_counter()
 
-    # Start a connection to the FindABug database. 
-    engine = create_engine(load_config()['url'], echo=True)
     fab = FindABug(engine)
-    # Make sure the query is valid.
-    # check_query(query, fab)
-
-    options = parse_options(options)
+    query = Query(url_query, url_options)
     
-    # In case multiple query fields are specified.
-    query = query.split('+')
-    result = fab.query_database(query, options=options) 
+    result = fab.query_database(query) 
     
     # TODO: Add FASTA output option. 
     

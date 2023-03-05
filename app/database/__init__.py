@@ -7,7 +7,9 @@ from sqlalchemy import String, ForeignKey # , ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 
-import pickle
+# Variable which stores whether or not the database information has been
+# reflected into the table classes.  
+reflected = False
 
 class Base(DeclarativeBase):
     pass
@@ -76,5 +78,18 @@ def database_init(engine):
     Reflected.prepare method is called. 
     '''
     Reflected.prepare(engine)
+
+
+def get_all_fields():
+    '''
+    Get all the fields stored in the database.
+    '''
+    table_objs = [AnnotationsKegg_r207, Metadata_r207, AASeqs_r207]
+    fields = []
+
+    for t in table_objs:
+        fields += [str(c) for c in t.__table__.c]
+
+    return fields
 
 

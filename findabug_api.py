@@ -66,7 +66,7 @@ def get(fields, where={}, verbose=True):
         # Does this return a string or a JSON something?
         result = requests.get(url).json()
     except requests.RequestsJSONDecodeError:
-        result = str(results.get(url)
+        result = str(result.get(url))
     
     if verbose:
         print(f'GET {url}')
