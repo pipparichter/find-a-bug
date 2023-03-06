@@ -72,11 +72,9 @@ def query_database(url_query=None, url_options=None):
     t_init = perf_counter()
 
     fab = FindABug(engine)
-    query = Query(url_query, url_options)
+    Q = Query(url_query, url_options)
     
-    result = fab.query_database(query) 
-    
-    # TODO: Add FASTA output option. 
+    result = fab.query_database(Q) 
     
     t_final = perf_counter()
 

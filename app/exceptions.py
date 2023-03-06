@@ -9,7 +9,7 @@ class FindABugError(Exception):
         super().__init__(self.message)
 
 
-class QueryError(Exception):
+class FindABugQueryError(Exception):
     '''
     Exception raised when an error occurred when trying to parse a Query from
     the client-side. 
