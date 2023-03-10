@@ -35,6 +35,13 @@ class Metadata_r207(Reflected, Base):
     
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207')
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
+    
+
+    def __str__(self):
+        return f'<Find-A-Bug Table, name={self.__tablename__}>'
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class AASeqs_r207(Reflected, Base):
@@ -49,7 +56,13 @@ class AASeqs_r207(Reflected, Base):
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
             back_populates='gtdb_r207_amino_acid_seqs')
-   
+     
+    def __str__(self):
+        return f'<Find-A-Bug Table, name={self.__tablename__}>'
+
+    def __repr__(self):
+        return self.__str__()
+ 
 
 class AnnotationsKegg_r207(Reflected, Base):
 
@@ -69,6 +82,13 @@ class AnnotationsKegg_r207(Reflected, Base):
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
             back_populates='gtdb_r207_annotations_kegg', uselist=False)
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+    
+    def __str__(self):
+        return f'<Find-A-Bug Table, name={self.__tablename__}>'
+
+    def __repr__(self):
+        return self.__str__()
+
 
 
 def database_init(engine):

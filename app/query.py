@@ -5,7 +5,7 @@ received at the remote host from a url or the Find-A-Bug API.
 from sqlalchemy import or_
 
 from exceptions import FindABugQueryError
-import ast
+# import ast
 
 def generate_filter(table, field, operator, value):
     '''
@@ -55,7 +55,10 @@ def parse_options(url_options):
         operator, value = filter_.split(';')
         
         # Infer the type of the value. Should only be floats, ints, and strings.
-        value = ast.literal_eval(value)
+        try: # See if it can be converted to a float. I guess just treat ints as floats. 
+            value = float(value)
+        except:
+            pass
         
         if type(value) not in [float, int, str]:
             msg = f'The type of {value} does not appear in the Find-A-Bug database.'
@@ -104,7 +107,7 @@ class FindABugQuery():
             if relationship:
                 query = query.join(relationship)
             
-        for field, filter_ in self.options_fields:
+        for field, filter_ in self.options.items():
             table = self.f2t[field] 
 
             # If multiple filters are specified, for a single field, join them
@@ -123,6 +126,8 @@ class FindABugQuery():
             else:
                 msg = f'There is an error in the query option for the {field} field.'
                 raise FindABugQuery(msg)
+
+        return query
  
     def init_field_to_table_map(self, tables):
         '''

@@ -33,7 +33,9 @@ def query_to_csv(query):
     
     for row in query.all():
         # A row is a tuple of elements, convert to list.
-        csv.append(','.join(list(row)))
+        # Also need to make sure the elements are strings. 
+        row = [str(x) for x in list(row)]
+        csv.append(','.join(row))
 
     return csv
 
@@ -83,9 +85,6 @@ class FindABug():
         Q.init_field_to_table_map(self.tables)   
         # Creates a SQLAlchemy Query object. 
         query = Q.build_sql_query(self.session)
-
-        return query_to_csv(query)
+        return query, query_to_csv(query)
     
-
-        
 

@@ -1,0 +1,6 @@
+/app/__pycache__
+/__pycache__
+/__pycache__/*
+/app/__pycache__/*
+/app/database/__pycache__
+/app/database/gene_to_genome_map.csv
