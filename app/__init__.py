@@ -74,14 +74,13 @@ def database_info():
     # Adjust some things depending on whether or not tit's going to print out
     # to the browser.
     user_agent = request.headers.get('User-Agent')
-    return user_agent
+    
     if 'python-requests' in user_agent:
         sep = '\n'
         content_type = 'text/plain'
     else:
         sep = '<b>'
         content_type = 'text/html'
-
 
     sep.join(response)
      

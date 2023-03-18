@@ -804,3 +804,89 @@ Traceback (most recent call last):
   File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
     self._execute_command("ROLLBACK")
 mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
+ERROR:sqlalchemy.pool.impl.QueuePool:Exception during reset or similar
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/event/base.py", line 147, in __init__
+    self._empty_listeners = self._empty_listener_reg[instance_cls]
+  File "/usr/lib64/python3.9/weakref.py", line 416, in __getitem__
+    return self.data[ref(key)]
+KeyError: <weakref at 0x7f5d83967400; to 'type' at 0x55fb5267ffd0 (Session)>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 991, in _finalize_fairy
+    fairy._reset(
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/pool/base.py", line 1437, in _reset
+    pool._dialect.do_rollback(self)
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/sqlalchemy/engine/default.py", line 657, in do_rollback
+    dbapi_connection.rollback()
+  File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
+    self._execute_command("ROLLBACK")
+mariadb.InterfaceError: Server has gone away
