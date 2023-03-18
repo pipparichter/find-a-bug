@@ -890,3 +890,5 @@ Traceback (most recent call last):
   File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
     self._execute_command("ROLLBACK")
 mariadb.InterfaceError: Server has gone away
+ERROR:find-a-bug:404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ERROR:find-a-bug:404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.

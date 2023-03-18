@@ -106,12 +106,13 @@ def query_database(url_query=None, url_options=None):
     # Adjust some things depending on whether or not it's going to print out
     # to the browser.
     user_agent = request.headers.get('User-Agent')
-    return user_agent
+   
+    sep = None
     if 'python-requests' in user_agent:
         sep = '\n'
         content_type = 'text/plain'
     else:
-        sep = '<b>'
+        sep = '<br>'
         content_type = 'text/html'
 
     def response():
