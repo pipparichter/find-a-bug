@@ -12,7 +12,6 @@ sys.path.append('/home/prichter/find-a-bug')
 from sqlalchemy import inspect
 import sqlalchemy
 import sqlalchemy.orm
-import pandas as pd
 from database import database_init
 
 
@@ -64,14 +63,16 @@ class FindABug():
         Displays information related to the database.
 
         '''
-        df = {'name':[], 'primary_key':[], 'columns':[]}
+        response = []
 
         for t in self.tables:
-            df['name'].append(t.__tablename__)
-            df['primary_key'].append(inspect(t).primary_key[0].name)
-            df['columns'].append([col.name for col in t.__table__.c])
+            response.append(f'NAME: {t.__tablename__}')
+            response.append(f'PRIMARY KEY: {inspect(t).primary_key[0].name}')
+            cols = ' '.join([col.name for col in t.__table__.c])
+            response.append(f'COLUMNS: {cols}')
+            response.append('\n')
         
-        return pd.DataFrame(df)
+        return response
 
     def query_database(self, Q):
         '''

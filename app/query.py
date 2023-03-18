@@ -92,7 +92,9 @@ class FindABugQuery():
         self.query_tables = None
         self.options_tables = None
         self.f2t = None
-
+    
+    def __repr__(self):
+        return f'<FindABugQuery, fields={self.query_fields}>'
        
     def build_sql_query(self, session):
         '''

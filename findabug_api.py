@@ -62,11 +62,7 @@ def get(fields, where={}, verbose=True):
     options = '+'.join(options)
     
     url = f'http://{host}/{fields}/{options}'
-    try:
-        # Does this return a string or a JSON something?
-        result = requests.get(url).json()
-    except requests.RequestsJSONDecodeError:
-        result = str(result.get(url))
+    result = requests.get(url).text
     
     if verbose:
         print(f'GET {url}')
