@@ -1,21 +1,24 @@
+<p align="center">
+<img src="./mascot.png" width="400" height="400">
+</p>
+
 # Find-A-Bug
 
-A Flask-based RESTful API for interfacing with a SQL database of microbial genes and annotations. This repository contains files for reading in data from text files to a SQL database, as well as files for accessing the data after it has been uploaded. Descriptions of each file are as follows. 
+## About the database
 
-`src/database.py` Contains utilities for reading in 
+### Where is the data hosted?
 
-`src/backend.py`
+The data is hosted on a Caltech machine running a Red Hat Linux distro, `microbes.gps.caltech.edu`. This remote host is only accessible when on Caltech campus wifi or using a VPN.
 
-`src/frontend.py`
+### How is the data stored?
 
-`src/findabug.cfg`
+The data is stored in multiple tables in a MariaDB SQL database. More information on the table structure and the information they contain is given in the following section. 
 
-## Installation and set-up
+### What information does the database contain?
 
-### Configuration file
+Currently, the data is organized into three tables (although we will be adding more soon!). All data is from the Genome Taxonomy Database (GTDB) r207 release. 
 
-### Loading information to SQL database
-
-
-## Usage
+1. `gtdb_r207_metadata`
+2. `gtdb_r207_amino_acid_seqs`
+3. `gtdb_r207_annotations_kegg`
 

@@ -152,6 +152,7 @@ def query(url_query=None, url_options=None):
         yield str(q.statement.compile(bind=engine))
         yield sep
         yield sep
+        yield '*' * 10 # Dividing line.
 
         for row in csv:
             yield row + sep
