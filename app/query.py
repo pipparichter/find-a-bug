@@ -96,9 +96,21 @@ class FindABugQuery():
     def __repr__(self):
         return f'<FindABugQuery, fields={self.query_fields}>'
        
-    def build_sql_query(self, session):
+    def build(self, session):
         '''
+        Using an existing session to construct a SQL query (in the form of a
+        SQLAlchemy Query object) using the specifications given when the
+        FindABugQuery object was instantiated. 
+
+        args:
+            : session (sqlalchemy.Session): The SQLAlchemy Session created in
+                FindABug object instance. 
         '''
+        # Create a map for each field to the table in which it is found.
+        # This (and other relevant fields) will be stored in the FindABugQuery.
+        self.init_field_to_table_map(session.info['tables'])   
+
+
         query_cols = [getattr(t, f) for t, f in zip(self.query_tables, self.query_fields)]
         query = session.query(*query_cols)
         

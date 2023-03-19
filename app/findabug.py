@@ -15,30 +15,6 @@ import sqlalchemy.orm
 from database import database_init
 
 
-def query_to_csv(query):
-    '''
-    Dumps the information retrieved from a sqlalchemy.Query into list of
-    strings, where each string is a row in a CSV file. 
-
-    args:
-        query (sqlalchemy.Query): The query to convert to CSV.
-    '''
-    csv = []
-
-    # Instantiate a dataframe with the names contained in the query.
-    cols = [c['name'] for c in query.column_descriptions]
-
-    csv.append(','.join(cols))
-    
-    for row in query.all():
-        # A row is a tuple of elements, convert to list.
-        # Also need to make sure the elements are strings. 
-        row = [str(x) for x in list(row)]
-        csv.append(','.join(row))
-
-    return csv
-
-
 class FindABug():
     '''
     The class which handles the the
@@ -53,10 +29,10 @@ class FindABug():
         # tables module using the Base class. 
         from database import Metadata_r207, AASeqs_r207, AnnotationsKegg_r207
         self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
-
+        
+        # Create a new session, storing the table names in the info field. 
         Session = sqlalchemy.orm.sessionmaker(bind=engine)
-        self.session = Session()
-
+        self.session = Session(info={'tables':self.tables})
 
     def info(self):
         '''
@@ -73,19 +49,49 @@ class FindABug():
             response.append('\n')
         
         return response
+    
+    def count(self, fabq):
+        '''
+        Returns the number of rows which would be returned by the given query.
 
-    def query_database(self, Q):
+        args:
+            : fabq (query.FindABugQuery): Defined in the query.py file.
+        returns:
+            : query (sqlalchemy.Query): A SQLAlchemy Query object.
+            : n (int): The count of rows returned by the query.
+        '''
+        query = fabq.build(self.session)
+        n = query.count()
+
+        return query, n
+
+    def query(self, fabq):
         '''
         Finds entries in the specified database which match the given query. 
 
         args: 
-            : Q (query.Query)
+            : fabq (query.FindABugQuery): Defined in the query.py file.
+        returns:
+            : query (sqlalchemy.Query): A SQLAlchemy Query object.
+            : csv (list of str): A list of strings, where each string is a row
+                in CSV format. 
         '''
-        # Create a map for each field to the table in which it is found.
-        # This (and other relevant fields) will be stored in the FindABugQuery.
-        Q.init_field_to_table_map(self.tables)   
-        # Creates a SQLAlchemy Query object. 
-        query = Q.build_sql_query(self.session)
-        return query, query_to_csv(query)
+        # Creates a SQLAlchemy fabquery object. 
+        query = fabq.build(self.session)
+        
+        # Convert the query to a "CSV" (a list of strings)
+        csv = []
+        # Instantiate a dataframe with the names contained in the query.
+        cols = [c['name'] for c in query.column_descriptions]
+        csv.append(','.join(cols))
+
+        for row in query.all():
+            # A row is a tuple of elements, convert to list.
+            # Also need to make sure the elements are strings. 
+            row = [str(x) for x in list(row)]
+            csv.append(','.join(row))
+
+
+        return query, csv
     
 

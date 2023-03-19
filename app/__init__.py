@@ -35,6 +35,29 @@ url = f'{dialect}+{driver}://{user}:{pwd}@{host}/{dbname}'
 engine = create_engine(url)
 ######################################################################
 
+def detect_response_type():
+    '''
+    Detects how to format the response depending on whether or not the request
+    comes from the browser or the API.
+
+    returns:
+        : sep (str): The newline character to use when generating a response
+            string.
+        : content_type (str): The type of response content (plain text or html)
+    '''
+    user_agent = request.headers.get('User-Agent')
+    
+    sep, content_type = None, None
+    if 'python-requests' in user_agent:
+        sep = '\n'
+        content_type = 'text/plain'
+    else:
+        sep = '<b>'
+        content_type = 'text/html'
+
+    return sep, content_type
+
+
 @app.errorhandler(FindABugError)
 @app.errorhandler(FindABugQueryError)
 def handle_error(err):
@@ -62,73 +85,79 @@ def handle_unknown_error(err):
 def welcome():
     return 'Welcome to Find-A-Bug!', 200
 
-# NOTE: The string "python-requests" will be in the HTTP 
 
 @app.route('/info')
-def database_info():
+def info():
     # Start a connection to the FindABug database. 
     
     fab = FindABug(engine)
-    response = fab.info()
     
-    # Adjust some things depending on whether or not tit's going to print out
-    # to the browser.
-    user_agent = request.headers.get('User-Agent')
+    # Adjust some things according to where the request comes from.
+    sep, content_type = detect_response_type()
     
-    if 'python-requests' in user_agent:
-        sep = '\n'
-        content_type = 'text/plain'
-    else:
-        sep = '<b>'
-        content_type = 'text/html'
-
-    sep.join(response)
-     
     # Log the query to the log file. 
     logger.info('Query to database: DATABASE INFO')
     
-    return response, 200, {'Content-Type':content_type}
+    return sep.join(fab.info()), 200, {'Content-Type':content_type}
  
 
+@app.route('/<string:url_query>/<url_options>/count')
+def count(url_query=None, url_options=None):
+    '''
+    '''
+    t_init = perf_counter()
+
+    fab = FindABug(engine)
+    fabq = FindABugQuery(url_query, url_options)
+    q, n = fab.query(fabq) 
+    
+    t_final = perf_counter()
+    
+    # Adjust some things according to where the request comes from.
+    sep, content_type = detect_response_type()
+    
+    response = f'Result in {t_final - t_init} seconds' + sep
+    response += sep
+    response = str(q.statement.compile(bind=engine)) + sep
+    response += sep
+    response += str(n)
+     
+    # Log the query to the log file. 
+    logger.info(f'Query to database: {str(fabq)}')
+ 
+    return response(), 200, {'Content-Type':content_type}
+
+
 @app.route('/<string:url_query>/<url_options>')
-def query_database(url_query=None, url_options=None):
+def query(url_query=None, url_options=None):
     '''
     '''
     
     t_init = perf_counter()
 
     fab = FindABug(engine)
-    Q = FindABugQuery(url_query, url_options)
-    query, csv = fab.query_database(Q) 
+    fabq = FindABugQuery(url_query, url_options)
+    q, csv = fab.query(fabq) 
     
     t_final = perf_counter()
     
-    # Adjust some things depending on whether or not it's going to print out
-    # to the browser.
-    user_agent = request.headers.get('User-Agent')
-   
-    sep = None
-    if 'python-requests' in user_agent:
-        sep = '\n'
-        content_type = 'text/plain'
-    else:
-        sep = '<br>'
-        content_type = 'text/html'
-
+    # Adjust some things according to where the request comes from.
+    sep, content_type = detect_response_type()
+    
     def response():
         yield f'{len(csv)} results in {t_final - t_init} seconds' + sep
         
         # Also want to print the raw SQL query. 
         yield sep
-        yield str(query.statement.compile(bind=engine))
+        yield str(q.statement.compile(bind=engine))
         yield sep
         yield sep
 
         for row in csv:
             yield row + sep
-    
+       
     # Log the query to the log file. 
-    logger.info(f'Query to database: {str(Q)}')
+    logger.info(f'Query to database: {str(fabq)}')
     
     return response(), 200, {'Content-Type':content_type}
 
