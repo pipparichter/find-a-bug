@@ -892,3 +892,4 @@ Traceback (most recent call last):
 mariadb.InterfaceError: Server has gone away
 ERROR:find-a-bug:404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
 ERROR:find-a-bug:404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ERROR:find-a-bug:gene_id are not found in the Find-A-Bug database.
