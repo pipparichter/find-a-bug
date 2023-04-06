@@ -52,6 +52,8 @@ class AASeqs_r207(Reflected, Base):
 
     gene_name = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_name'), primary_key=True)
     genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+    # Should allow rapid indexing using genus. This is temporary. 
+    genus = mapped_column(String, index=True)
     
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
