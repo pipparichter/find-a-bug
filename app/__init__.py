@@ -101,33 +101,35 @@ def info():
     return sep.join(fab.info()), 200, {'Content-Type':content_type}
  
 
-@app.route('/<string:url_query>/<url_options>/count')
-def count(url_query=None, url_options=None):
-    '''
-    '''
-    t_init = perf_counter()
+# @app.route('/<string:url_query>/<url_options>/count')
+# def count(url_query=None, url_options=None):
+#     '''
+#     '''
+#     t_init = perf_counter()
+# 
+#     fab = FindABug(engine)
+#     fabq = FindABugQuery(url_query, url_options)
+#     q, n = fab.query(fabq) 
+#     
+#     t_final = perf_counter()
+#     
+#     # Adjust some things according to where the request comes from.
+#     sep, content_type = detect_response_type()
+#     
+#     response = f'Result in {t_final - t_init} seconds' + sep
+#     response += sep
+#     response = str(q.statement.compile(bind=engine)) + sep
+#     response += sep
+#     response += str(n)
+#      
+#     # Log the query to the log file. 
+#     logger.info(f'Query to database: {str(fabq)}')
+#  
+#     return response(), 200, {'Content-Type':content_type}
 
-    fab = FindABug(engine)
-    fabq = FindABugQuery(url_query, url_options)
-    q, n = fab.query(fabq) 
-    
-    t_final = perf_counter()
-    
-    # Adjust some things according to where the request comes from.
-    sep, content_type = detect_response_type()
-    
-    response = f'Result in {t_final - t_init} seconds' + sep
-    response += sep
-    response = str(q.statement.compile(bind=engine)) + sep
-    response += sep
-    response += str(n)
-     
-    # Log the query to the log file. 
-    logger.info(f'Query to database: {str(fabq)}')
- 
-    return response(), 200, {'Content-Type':content_type}
 
 
+@app.route('/<string:url_query>/')
 @app.route('/<string:url_query>/<url_options>')
 def query(url_query=None, url_options=None):
     '''
