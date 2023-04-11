@@ -50,21 +50,6 @@ class FindABug():
         
         return response
     
-    def count(self, fabq):
-        '''
-        Returns the number of rows which would be returned by the given query.
-
-        args:
-            : fabq (query.FindABugQuery): Defined in the query.py file.
-        returns:
-            : query (sqlalchemy.Query): A SQLAlchemy Query object.
-            : n (int): The count of rows returned by the query.
-        '''
-        query = fabq.build(self.session)
-        n = query.count()
-
-        return query, n
-
     def query(self, fabq):
         '''
         Finds entries in the specified database which match the given query. 
@@ -76,22 +61,22 @@ class FindABug():
             : csv (list of str): A list of strings, where each string is a row
                 in CSV format. 
         '''
-        # Creates a SQLAlchemy fabquery object. 
-        query = fabq.build(self.session)
-        
-        # Convert the query to a "CSV" (a list of strings)
-        csv = []
-        # Instantiate a dataframe with the names contained in the query.
-        cols = [c['name'] for c in query.column_descriptions]
-        csv.append(','.join(cols))
+        # TODO: Maybe change how I do this. Perhaps store the query as an attribute in 
+        # the FindABugQuery object instead. 
 
-        for row in query.all():
+        # Constructs the SQLAlchemy Select object, which can then be executed. 
+        fabq.build(self.session)
+        # Execute the SQL query and obtain a Result object. 
+        result = self.session.execute(fabq.stmt)
+        
+        # Convert the query result to a "CSV" (a list of strings)
+        csv = []
+        csv.append(','.join(fabq.cols))
+
+        for row in self.session.execute(fabq.stmt):
             # A row is a tuple of elements, convert to list.
             # Also need to make sure the elements are strings. 
             row = [str(x) for x in list(row)]
             csv.append(','.join(row))
 
-
-        return query, csv
-    
-
+        return csv

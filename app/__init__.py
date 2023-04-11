@@ -2,6 +2,7 @@
 '''
 import sys
 import os
+from datetime import datetime
 
 curr_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(curr_dir)
@@ -78,7 +79,10 @@ def handle_unknown_error(err):
     logger.error(str(err))
 
     report = traceback.format_exc().split('\n')
-    return '<br>'.join(report), 500, {'Content-Type':'text/html'}
+    
+    sep, content_type = detect_response_type()
+
+    return sep.join(report), 500, {'Content-Type':content_type}
 
 
 @app.route('/')
@@ -101,37 +105,10 @@ def info():
     return sep.join(fab.info()), 200, {'Content-Type':content_type}
  
 
-# @app.route('/<string:url_query>/<url_options>/count')
-# def count(url_query=None, url_options=None):
-#     '''
-#     '''
-#     t_init = perf_counter()
-# 
-#     fab = FindABug(engine)
-#     fabq = FindABugQuery(url_query, url_options)
-#     q, n = fab.query(fabq) 
-#     
-#     t_final = perf_counter()
-#     
-#     # Adjust some things according to where the request comes from.
-#     sep, content_type = detect_response_type()
-#     
-#     response = f'Result in {t_final - t_init} seconds' + sep
-#     response += sep
-#     response = str(q.statement.compile(bind=engine)) + sep
-#     response += sep
-#     response += str(n)
-#      
-#     # Log the query to the log file. 
-#     logger.info(f'Query to database: {str(fabq)}')
-#  
-#     return response(), 200, {'Content-Type':content_type}
-
-
 
 @app.route('/<string:url_query>/')
 @app.route('/<string:url_query>/<url_options>')
-def query(url_query=None, url_options=None):
+def default(url_query=None, url_options=None):
     '''
     '''
     
@@ -139,31 +116,73 @@ def query(url_query=None, url_options=None):
 
     fab = FindABug(engine)
     fabq = FindABugQuery(url_query, url_options)
-    q, csv = fab.query(fabq) 
+    csv = fab.query(fabq) 
     
     t_final = perf_counter()
     
+    return reply(fabq, csv, t_final - t_init)
+
+@app.route('/mode/<string:url_query>/')
+@app.route('/mode/<string:url_query>/<url_options>')
+def mode(url_query=None, url_options=None):
+    '''
+    '''
+    t_init = perf_counter()
+
+    fab = FindABug(engine)
+    # TODO: Allow for a userr-defined limit.
+    fabq = FindABugQuery(url_query, url_options, type_='mode')
+    csv = fab.query(fabq) 
+    
+    t_final = perf_counter()
+    
+    return reply(fabq, csv, t_final - t_init)
+
+
+@app.route('/count/<string:url_query>/')
+@app.route('/count/<string:url_query>/<url_options>')
+def count(url_query=None, url_options=None):
+    '''
+    '''
+    
+    t_init = perf_counter()
+
+    fab = FindABug(engine)
+    fabq = FindABugQuery(url_query, url_options, type_='count')
+    csv = fab.query(fabq) 
+    
+    t_final = perf_counter()
+    
+    return reply(fabq, csv, t_final - t_init)
+
+
+
+def reply(fabq, csv, t):   
+    '''
+
+    '''
+
     # Adjust some things according to where the request comes from.
     sep, content_type = detect_response_type()
     
     def response():
-        yield f'{len(csv)} results in {t_final - t_init} seconds' + sep
+        yield f'{len(csv)} results in {t} seconds' + sep
         
         # Also want to print the raw SQL query. 
+        # yield sep
+        # yield str(fabq.stmt)
+        # yield sep
         yield sep
-        yield str(q.statement.compile(bind=engine))
-        yield sep
-        yield sep
-        yield '*' * 10 # Dividing line.
+        yield '-' * 10 # Dividing line.
 
         for row in csv:
             yield row + sep
        
     # Log the query to the log file. 
-    logger.info(f'Query to database: {str(fabq)}')
+    now = datetime.now()
+    timestamp = now.strftime('%d/%m/%Y %H:%M')
+    logger.info(f'{timestamp} Query to database: {str(fabq)}')
     
     return response(), 200, {'Content-Type':content_type}
-
-    
 
 
