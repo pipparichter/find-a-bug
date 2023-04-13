@@ -135,7 +135,7 @@ class FindABugQuery():
                 msg = f'There is an error in the option for the {field} field.'
                 raise FindABugQueryError(msg)
 
-            return stmt
+        return stmt
 
     def add_joins(self, stmt):
         '''
