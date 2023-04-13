@@ -7,6 +7,10 @@ from sqlalchemy import String, ForeignKey # , ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 
+
+# TODO: There seems to be an extraneous "index" column, and I'm not totally sure why. 
+# It might be redundant, but I am too scared to delete it right now. 
+
 # Variable which stores whether or not the database information has been
 # reflected into the table classes.  
 reflected = False

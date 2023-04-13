@@ -78,5 +78,5 @@ class FindABug():
             # Also need to make sure the elements are strings. 
             row = [str(x) for x in list(row)]
             csv.append(','.join(row))
-
+        
         return csv

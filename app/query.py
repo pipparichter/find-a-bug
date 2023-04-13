@@ -144,13 +144,14 @@ class FindABugQuery():
         args:
             : stmt (sqlalchemy.Select): A SQLALchemy Select construct. 
         '''
-        for t_o in self.options_tables:
-            for t_q in self.stmt_tables:
+        for t1 in [self.col_to_table[c] for c in self.options.keys()]:
+            for t2 in [self.col_to_table[c] for c in self.cols]:
                 # Extract the relevant ORM relationship on which to join. 
-                relationship = getattr(t_o, t_q.__tablename__, False)
-            if relationship:
-                stmt = stmt.join(relationship)
-
+                relationship = getattr(t1, t2.__tablename__, False)
+                
+                if relationship:
+                    stmt = stmt.join(relationship)
+        
         return stmt 
 
     def default(self):
@@ -171,12 +172,7 @@ class FindABugQuery():
         Convert the constructed query to a query which returns the count (i.e. the number 
         of results contained in the query.
         '''
-        
-        # For this to be called, only one field can be specified. 
-        if len(self.query_fields) > 1:
-            msg = 'Only one query field may be specified when calculating mode.'
-            raise FindABugQueryError(msg)
-        
+       
         # Extract the SQLAlchemy Column from the matching Table.
         col = getattr(self.col_to_table[self.cols[0]], self.cols[0])
         col = func.count(col).label('count')
@@ -206,9 +202,15 @@ class FindABugQuery():
         col = getattr(self.col_to_table[self.cols[0]], self.cols[0])
         
         stmt = select(col, func.count(col).label('frequency'))
+        
+        stmt = self.add_joins(stmt)
+        stmt = self.add_filters(stmt)
+ 
         # The GROUP BY statement groups rows that have the same values into summary rows.
         stmt = stmt.group_by(col)
         stmt = stmt.order_by(desc(text('frequency')))
+
+        self.cols.append('frequency') # Add a header to the constructed frequency column.
 
         # Only return the top n most frequently-occurring things. 
         return stmt.limit(5) # No issue if this is None.
@@ -259,7 +261,7 @@ class FindABugQuery():
         ordered_tables = [t for t, _ in ordered_tables]
 
         # Keep track of the fields which have not been covered. 
-        unaccounted_for = self.cols[:]
+        unaccounted_for = all_cols[:]
         while len(unaccounted_for) > 0:
 
             try:

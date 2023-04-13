@@ -36,27 +36,27 @@ url = f'{dialect}+{driver}://{user}:{pwd}@{host}/{dbname}'
 engine = create_engine(url)
 ######################################################################
 
-def detect_response_type():
-    '''
-    Detects how to format the response depending on whether or not the request
-    comes from the browser or the API.
-
-    returns:
-        : sep (str): The newline character to use when generating a response
-            string.
-        : content_type (str): The type of response content (plain text or html)
-    '''
-    user_agent = request.headers.get('User-Agent')
-    
-    sep, content_type = None, None
-    if 'python-requests' in user_agent:
-        sep = '\n'
-        content_type = 'text/plain'
-    else:
-        sep = '<b>'
-        content_type = 'text/html'
-
-    return sep, content_type
+# def detect_response_type():
+#     '''
+#     Detects how to format the response depending on whether or not the request
+#     comes from the browser or the API.
+# 
+#     returns:
+#         : sep (str): The newline character to use when generating a response
+#             string.
+#         : content_type (str): The type of response content (plain text or html)
+#     '''
+#     user_agent = request.headers.get('User-Agent')
+#     
+#     sep, content_type = None, None
+#     if 'python-requests' in user_agent:
+#         sep = '\n'
+#         content_type = 'text/plain'
+#     else:
+#         sep = '<b>'
+#         content_type = 'text/html'
+# 
+#     return sep, content_type
 
 
 @app.errorhandler(FindABugError)
@@ -119,7 +119,6 @@ def default(url_query=None, url_options=None):
     csv = fab.query(fabq) 
     
     t_final = perf_counter()
-    
     return reply(fabq, csv, t_final - t_init)
 
 @app.route('/mode/<string:url_query>/')
@@ -163,18 +162,20 @@ def reply(fabq, csv, t):
     '''
 
     # Adjust some things according to where the request comes from.
-    sep, content_type = detect_response_type()
+    # sep, content_type = detect_response_type()
+
+    sep, content_type = '\n', 'text/plain'
     
     def response():
         yield f'{len(csv)} results in {t} seconds' + sep
         
         # Also want to print the raw SQL query. 
-        # yield sep
-        # yield str(fabq.stmt)
-        # yield sep
         yield sep
-        yield '-' * 10 # Dividing line.
-
+        yield str(fabq.stmt)
+        yield sep
+        yield sep
+        yield '-' * 20 # Dividing line.
+        yield sep
         for row in csv:
             yield row + sep
        
