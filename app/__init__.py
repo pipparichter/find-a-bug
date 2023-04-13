@@ -80,9 +80,9 @@ def handle_unknown_error(err):
 
     report = traceback.format_exc().split('\n')
     
-    sep, content_type = detect_response_type()
+    # sep, content_type = detect_response_type()
 
-    return sep.join(report), 500, {'Content-Type':content_type}
+    return '\n'.join(report), 500, {'Content-Type':'text/plain'}
 
 
 @app.route('/')
@@ -97,12 +97,12 @@ def info():
     fab = FindABug(engine)
     
     # Adjust some things according to where the request comes from.
-    sep, content_type = detect_response_type()
+    # sep, content_type = detect_response_type()
     
     # Log the query to the log file. 
     logger.info('Query to database: DATABASE INFO')
     
-    return sep.join(fab.info()), 200, {'Content-Type':content_type}
+    return '\n'.join(fab.info()), 200, {'Content-Type':'text/plain'}
  
 
 
