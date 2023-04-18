@@ -24,96 +24,86 @@ def generate_filter(table, field, operator, value):
     # Extract the relevant column from the provided table. 
     col = getattr(table, field)
 
-    if operator == 'eq':
+    if operator == '=':
         return col == value
-    if operator == 'ge':
+    if operator == '>=':
         return col >= value
-    if operator == 'le':
+    if operator == '<=':
         return col <= value
-    if operator == 'lt':
+    if operator == '<':
         return col < value
-    if operator == 'gt':
+    if operator == '>':
         return col > value
 
-    # Already checked to make sure the operator strings were valid in the
-    # parse_options function. 
 
-
-def parse_options(url_options):
+def parse_filters(filters_string):
     '''
-    Parse the string of options. String should be of the form
-    field=value;operator+field=value;operator+....
 
-    args:
-        : url_options (string)
-    returns:
-        : options (dict)
     '''
-    options = {}
-    # In the event no filter options are specified. 
-    if url_options is None:
-        return options
+    filters = {}
 
-    for option in url_options.split('+'):
+    # Split filters into col;op;val substrings. 
+    filters_list = filters_string.split(',')
+
+    for filter_ in filters_list:
         
-        field = option.split('=')[0]
-        filter_ = option.split('=')[1]
-        operator, value = filter_.split(';')
+        col, op, val = filter_.split(';')
         
         # Infer the type of the value. Should only be floats, ints, and strings.
         try: # See if it can be converted to a float. I guess just treat ints as floats. 
-            value = float(value)
+            val = float(val)
         except:
             pass
         
-        if type(value) not in [float, int, str]:
-            msg = f'The type of {value} does not appear in the Find-A-Bug database.'
+        if type(val) not in [float, int, str]:
+            msg = f'The type of {val} does not appear in the Find-A-Bug database.'
             raise FindABugQueryError(msg)
 
         # Check the operator to make sure it's valid. 
-        if operator not in ['eq', 'lt', 'gt', 'le', 'ge']:
-            msg = f'{operator} is not a valid operator. Must be one of eq, ge, lt, gt.'
+        if op not in ['=', '<', '>', '<=', '>=']:
+            msg = f'{op} is not a valid operator.'
             raise FindABugQueryError(msg)
 
-        if field not in options:
-            options[field] = [(operator, value)]
+        if col not in filters:
+            filters[col] = [(op, val)]
         else:
-            options[field].append((operator, value))
+            filters[col].append((op, val))
 
-    return options
+    return filters
 
 
 class FindABugQuery():
     '''
     '''
     
-    def __init__(self, url_query, url_options, type_='default'):
+    def __init__(self, cols_string, filters_string, type_, 
+            page_size=100,
+            page=0):
         '''
         Initialize a FindABugQuery object.
 
-        args:
-            : url_query (str):
-            : url_options (str): 
-        kwargs:
         '''
         
-        self.options = parse_options(url_options)
-        self.cols = url_query.split('+')
+        self.filters = parse_filters(filters_string)
+        self.cols = cols_string.split(',')
         
         self.stmt = None
         self.type_ = type_
+        
+        self.page_size = page_size
+        self.page = page
     
     def __repr__(self):
         return f'<FindABugQuery, cols={self.cols}, type={self.type_}>'
     
     def add_filters(self, stmt):
         '''
-        Add the filters specified in the self.options attribute to a SQLAlchemy stmt.
+        Add the filters specified in the self.filters attribute to a SQLAlchemy stmt.
 
         args:
             : stmt (sqlalchemy.Select): A SQLALchemy Select construct. 
         '''
-        for col, filter_ in self.options.items():
+        for col, filter_ in self.filters.items():
             table = self.col_to_table[col] 
 
             # If multiple filters are specified, for a single field, join them
@@ -144,7 +134,7 @@ class FindABugQuery():
         args:
             : stmt (sqlalchemy.Select): A SQLALchemy Select construct. 
         '''
-        for t1 in [self.col_to_table[c] for c in self.options.keys()]:
+        for t1 in [self.col_to_table[c] for c in self.filters.keys()]:
             for t2 in [self.col_to_table[c] for c in self.cols]:
                 # Extract the relevant ORM relationship on which to join. 
                 relationship = getattr(t1, t2.__tablename__, False)
@@ -154,7 +144,7 @@ class FindABugQuery():
         
         return stmt 
 
-    def default(self):
+    def get(self):
         '''
         Construct a regular query, i.e. a query which returns the requested fields with
         the specified filters applied. 
@@ -212,8 +202,7 @@ class FindABugQuery():
 
         self.cols.append('frequency') # Add a header to the constructed frequency column.
 
-        # Only return the top n most frequently-occurring things. 
-        return stmt.limit(5) # No issue if this is None.
+        return stmt
 
     def build(self, session):
         '''
@@ -229,15 +218,18 @@ class FindABugQuery():
         # This (and other relevant fields) will be stored in the FindABugQuery.
         self.init_col_to_table_map(session.info['tables'])   
 
-        if self.type_ == 'default':
-            self.stmt = self.default()
+        if self.type_ == 'get':
+            self.stmt = self.get()
         elif self.type_ == 'count':
             self.stmt = self.count()
         elif self.type_ == 'mode':
             self.stmt = self.mode()
         else:
-            warn('The specified query type is invalid. "default" is being used.')
-            self.stmt = self.default()
+            msg = 'The specified query type {self.type_} is invalid.'
+            raise FindABugQueryError(msg)
+        
+        # Grab the queries corresponding to the requested page. 
+        self.stmt = self.stmt.offset(self.page_size * self.page).limit(self.page_size)
 
     def init_col_to_table_map(self, tables):
         '''
@@ -251,11 +243,11 @@ class FindABugQuery():
         col_to_table = {}
         
         # Create a list containing both option and main query columns.
-        all_cols = self.cols + list(self.options.keys())
+        all_cols = self.cols + list(self.filters.keys())
 
         # Map of the tables to the fields they contain. 
-        table_to_col = {t:[c for c in all_cols if c in dir(t)] for t in tables} 
-        
+        table_to_col = {t:[c for c in all_cols if c in t.__table__.c] for t in tables} 
+         
         # Sort the tables according to the number of columns they "cover"
         ordered_tables = sorted(list(table_to_col.items()), key=lambda x: len(x[1]))
         ordered_tables = [t for t, _ in ordered_tables]
