@@ -77,8 +77,8 @@ class FindABugQuery():
     '''
     
     def __init__(self, cols_string, filters_string, type_, 
-            page_size=100,
-            page=0):
+            page_size=None,
+            page=None):
         '''
         Initialize a FindABugQuery object.
 
@@ -229,7 +229,11 @@ class FindABugQuery():
             raise FindABugQueryError(msg)
         
         # Grab the queries corresponding to the requested page. 
-        self.stmt = self.stmt.offset(self.page_size * self.page).limit(self.page_size)
+        if self.page is not None:
+            self.stmt = self.stmt.offset(self.page_size * self.page).limit(self.page_size)
+        else: # If no page specified, grab all results. 
+            self.stmt = self.stmt.all()
+
 
     def init_col_to_table_map(self, tables):
         '''

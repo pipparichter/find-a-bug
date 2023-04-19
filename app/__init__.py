@@ -81,12 +81,19 @@ def handle(type_):
         # Decided to store information in request headers as opposed to a URL. 
         cols_string = request.headers.get('cols', '')
         filters_string = request.headers.get('filters', '')
-        page = int(request.headers.get('page', 0)) # Not sure if this is received as an int. 
+
+        # If no page is specified, grab everything. If not, only grab 100 things from a particular page. 
+        page = request.headers.get('page', None) # Not sure if this is received as an int. 
         
         t_init = perf_counter()
 
         fab = FindABug(engine)
-        fabq = FindABugQuery(cols_string, filters_string, type_, page_size=100, page=page)
+
+        if page is not None:
+            fabq = FindABugQuery(cols_string, filters_string, type_, page_size=100, page=int(page))
+        else:
+            fabq = FindABugQuery(cols_string, filters_string, type_)
+
         csv = fab.query(fabq) 
         
         t_final = perf_counter()
