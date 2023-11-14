@@ -1,30 +1,43 @@
-import sqlalchemy
+import configparser
 import pandas as pd
+import sqlalchemy
 import numpy as np
+import os
 from time import perf_counter
+from tqdm import tqdm
+from utils import upload_to_sql_table, pd_from_fasta, URL
 
-import setup
 
-def split_taxonomies(df):
+# Read in the config file, which is in the project root directory. 
+config = configparser.ConfigParser()
+# with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
+with open(os.path.join(os.path.dirname(__file__), '../', '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
+    config.read_file(f)
+
+
+def parse_taxonomy_col(col:pd.DataFrame, prefix:str='') -> pd.DataFrame:
+    '''Takes a DataFrame subset containing taxonomy data as input (e.g. ncbi_taxonomy) as input, and returns
+    a new DataFrame with the column split into individual columns.'''
+    m = {'o':'order', 'd':'domain', 'p':'phylum', 'c':'class', 'f':'family', 'g':'genus', 's':'species'}
+    rows = []
+    for row in col: # Iterate over taxonomy strings in column. .
+        new_row = [s.split('__') for s in row.strip().split(';')]
+        new_row = list(map(new_row, lambda x : [f'{prefix}_' + m[x[0]], x[1]]))
+        rows.append(new_row) 
+    return pd.DataFrame(rows)
+
+
+def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
     '''
-    Genome taxonomy is represented as super long strings separated using
-    semicolons. This expands the taxonomy string into multiple columns. 
+    Genome taxonomy is represented as super long strings separated using semicolons. 
+    This expands the taxonomy string into multiple columns. 
     '''
-    tax_cats = ['domain', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-    cols = df.columns
-    
-    for col in cols:
-        if 'taxonomy' in col:
-            try:
-                col_prefix = col[:-len('taxonomy')]
-                new_cols = [col_prefix + cat for cat in tax_cats]
-                df[new_cols] = getattr(df, col).str.split(';', expand=True)
-            except:
-                print(f'WARNING: Could not load {col_prefix[:-1]} taxonomy.')
-                pass
-    
-    # Drop the taxonomy columns which have been expanded. 
-    return df.drop(columns=[c for c in cols if 'taxonomy' in c])
+    dfs = []
+    for col in [c for c in df.columns if 'taxonomy' in c]:
+        prefix = col[:-len('_taxonomy')] # e.g. ncbi.
+        dfs.append(parse_taxonomy_col(df[[col]], prefix=prefix))
+        df = df.drop(columns=[col]) # Drop the original column. 
+    return pd.concat(dfs + [df], axis=1)
 
 
 def int_converter(val):
@@ -73,16 +86,12 @@ def load(engine, **kwargs):
     setup.create_table(df.fillna('None'), 'gtdb_r207_metadata', engine, primary_key='genome_id')
     
 
+
 if __name__ == '__main__':
     
-    print(f'STARTING ENGINE WITH URL {setup.url}')
-    engine = sqlalchemy.create_engine(setup.url, echo=False)
-    
+    print(f'Starting engine with URL {URL}')
+    engine = sqlalchemy.setup_engine(URL, echo=False)
     t_init = perf_counter()
-    
-    load(engine)
-
+    setup(engine)
     t_final = perf_counter()
-
-    print(f'\nTable uploaded in {t_final - t_init} seconds.')
- 
+    print(f'\nTable {TABLE_NAME} uploaded in {t_final - t_init} seconds.')
