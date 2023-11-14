@@ -103,7 +103,7 @@ def pd_to_fasta(df, path=None, textwidth=80):
     write(fasta, path=path)
 
 
-def get_sql_dtypes(df:pd.DataFrame) -> Dict[str, MySqlType]:
+def get_sql_dtypes(df:pd.DataFrame):
     '''Explicitly converts the datatypes in a pandas DataFrame to their SQL equivalents. Returns
     a dictionary mapping column names to SQL types.'''
     dtypes = {'seq':LONGTEXT, 'gene_id':VARCHAR(150), 'genome_id':VARCHAR(150)}
