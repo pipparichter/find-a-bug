@@ -33,9 +33,9 @@ def setup(engine):
     table_exists = False # Make sure to append after the table is initially setupd. 
     for path in [BACTERIA_GENOMES_PATH, ARCHAEA_GENOMES_PATH]:
         
-        # Each file corresponds to a different genome, either archaeal or bacterial. 
-        genome_file_batches = np.array_split(os.listdir(path), (n // BATCH_SIZE) + 1)
-        n = len(os.listdir(path))
+        # Each file corresponds to a different genome, either archaeal or bacterial.
+        genome_files = os.listdir(path) 
+        genome_file_batches = np.array_split(genome_files, (len(genome_files) // BATCH_SIZE) + 1)
         
         for batch in tqdm(genome_file_batches, desc=f):
             # Process the genome files in chunks to avoid crashing the process.             
