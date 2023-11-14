@@ -19,8 +19,9 @@ config = configparser.ConfigParser()
 # with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
 with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
     config.read_file(f)
+config = config._sections # Grab everything as a dictionary. 
 
-BACTERIA_GENOMES_PATH = config.items('paths')['bacteria_genomes_path']
+BACTERIA_GENOMES_PATH = dict(config.items('paths')['bacteria_genomes_path']
 ARCHAEA_GENOMES_PATH = config.items('paths')['archaea_genomes_path']
 
 # NOTE: We can't make genome_id an index because it is not unique. So will need to manually add genome IDs to the 
