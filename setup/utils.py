@@ -52,7 +52,7 @@ def get_gene_id(head:str) -> str:
     '''Extract the unique identifier from a FASTA metadata string (the 
     information on the line preceding the actual sequence). '''
     gene_id = head.split(' # ')[0]
-    gene_id = gene_id.remove('>') # Remove the leading carrot. 
+    gene_id = gene_id[1:] # Remove the leading carrot. 
     return gene_id
 
 def fasta_gene_ids(path:str) -> np.array:
