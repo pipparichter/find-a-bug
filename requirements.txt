@@ -1,7 +1,9 @@
 configparser==6.0.0
 greenlet==3.0.1
+h5py==3.10.0
 numpy==1.26.1
 pandas==2.1.2
+PyMySQL==1.1.0
 python-dateutil==2.8.2
 pytz==2023.3.post1
 six==1.16.0

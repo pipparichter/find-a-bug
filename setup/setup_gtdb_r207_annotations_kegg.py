@@ -4,7 +4,7 @@ import numpy as np
 import os
 from time import perf_counter
 from tqdm import tqdm
-import h5py
+import h5pyg
 from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
 ANNOTATIONS_PATH = load_config_paths()['annotations_path']

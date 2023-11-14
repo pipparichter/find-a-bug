@@ -5,6 +5,7 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 import typing
+import h5py
 
 from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
