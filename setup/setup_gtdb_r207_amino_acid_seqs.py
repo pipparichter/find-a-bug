@@ -5,24 +5,16 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 import typing
-import configparser
 
-from utils import upload_to_sql_table, pd_from_fasta, URL
+from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
 # This is where the data is stored on the microbes server. 
 
 BATCH_SIZE = 500 # Size of batches for handling data.
 TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
 
-# Read in the config file, which is in the project root directory. 
-config = configparser.ConfigParser()
-# with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-    config.read_file(f)
-config = config._sections # Grab everything as a dictionary. 
-
-BACTERIA_GENOMES_PATH = dict(config.items('paths')['bacteria_genomes_path']
-ARCHAEA_GENOMES_PATH = config.items('paths')['archaea_genomes_path']
+BACTERIA_GENOMES_PATH = load_config_paths()['bacteria_genomes_path']
+ARCHAEA_GENOMES_PATH = load_config_paths()['archaea_genomes_path']
 
 # NOTE: We can't make genome_id an index because it is not unique. So will need to manually add genome IDs to the 
 # gtdb_r207_annotations_kegg table. To speed up this process, it makes sense to store a map of gene_id to genome_id

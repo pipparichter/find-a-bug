@@ -5,20 +5,12 @@ import numpy as np
 import os
 from time import perf_counter
 from tqdm import tqdm
-from utils import upload_to_sql_table, pd_from_fasta, URL
+from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
-
-# Read in the config file, which is in the project root directory. 
-config = configparser.ConfigParser()
-# with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-    config.read_file(f)
-
-BACTERIA_METADATA_PATH = config.items('paths')['bacteria_metadata_path']
-ARCHAEA_METADATA_PATH = config.items('paths')['archaea_metadata_path']
+BACTERIA_METADATA_PATH = load_config_paths()['bacteria_metadata_path']
+ARCHAEA_METADATA_PATH = load_config_paths()['archaea_metadata_path']
 
 TABLE_NAME = 'gtdb_r207_metadata'
-
 
 def parse_taxonomy_col(col:pd.DataFrame, prefix:str='') -> pd.DataFrame:
     '''Takes a DataFrame subset containing taxonomy data as input (e.g. ncbi_taxonomy) as input, and returns

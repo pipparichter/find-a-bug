@@ -5,16 +5,9 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 import h5py
-import configparser
-from utils import upload_to_sql_table, pd_from_fasta, URL
+from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
-# Read in the config file, which is in the project root directory. 
-config = configparser.ConfigParser()
-# with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-    config.read_file(f)
-
-ANNOTATIONS_PATH = config.items('paths')['annotations_path']
+ANNOTATIONS_PATH = load_config_paths()['annotations_path']
 BATCH_SIZE = 500
 TABLE_NAME = 'gtdb_r207_annotations_kegg'
 
