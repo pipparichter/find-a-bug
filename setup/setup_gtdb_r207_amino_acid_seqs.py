@@ -17,7 +17,7 @@ TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
 # Read in the config file, which is in the project root directory. 
 config = configparser.ConfigParser()
 # with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../', '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
+with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
     config.read_file(f)
 
 BACTERIA_GENOMES_PATH = config.items('paths')['bacteria_genomes_path']
