@@ -11,7 +11,7 @@ from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 
 # This is where the data is stored on the microbes server. 
 
-BATCH_SIZE = 500 # Size of batches for handling data.
+BATCH_SIZE = 10 # Size of batches for handling data.
 TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
 
 BACTERIA_GENOMES_PATH = load_config_paths()['bacteria_genomes_path']
@@ -48,10 +48,10 @@ def setup(engine):
 
             # Put the table into the SQL database. Add a primary key on the first pass. 
             if not table_exists:
-                upload_to_sql_table(df, TABLE_NAME, engine, primary_key='gene_id', if_exists='replace')
+                upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key='gene_id', if_exists='replace')
                 table_exists = True
             else:
-               upload_to_sql_table(df, TABLE_NAME, engine, primary_key=None, if_exists='append')
+               upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
     # Close the HDF file after writing is done. 
     gene_to_genome_map.close()
 
