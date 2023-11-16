@@ -35,10 +35,10 @@ def setup(engine):
         
          # Put the table into the SQL database. Add a primary key on the first pass. 
         if not table_exists:
-            upload_to_sql_table(df, TABLE_NAME, engine, primary_key='gene_id', if_exists='replace')
+            upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key='gene_id', if_exists='replace')
             table_exists = True
         else:
-            upload_to_sql_table(df, TABLE_NAME, engine, primary_key=None, if_exists='append')
+            upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
 
 
 if __name__ == '__main__':
