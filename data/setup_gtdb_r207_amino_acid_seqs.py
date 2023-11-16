@@ -52,6 +52,7 @@ if __name__ == '__main__':
 
     if sql_table_exists(TABLE_NAME, engine):
         drop_sql_table(TABLE_NAME, engine)
+        print(f'Dropped existing table {TABLE_NAME}.')
 
     t_init = perf_counter()
     setup(engine)
