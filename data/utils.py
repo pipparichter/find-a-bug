@@ -209,6 +209,7 @@ def get_duplicate_annotation_info():
             if gene_id in info:
                 info[gene_id]['count'] = info[gene_id]['count'] + 1
             else: # If the gene has not yet been encountered... 
+                info[gene_id] = {}
                 info[gene_id]['count'] = 0
                 info[gene_id]['genome_ids'] = []
             info[gene_id]['genome_ids'].append(genome_id) # Log which genomes the genes are encountered in. 
