@@ -219,3 +219,24 @@ def get_duplicate_annotation_info():
         pickle.dump(info, file)
 
 
+def print_duplicate_annotation_info(path:str) -> NoReturn:
+    '''Loads the pickle file where duplicate annotation info is stored, and prints stats.'''
+    f = 'utils.print_duplicate_annotation_info'
+
+    with open(path, 'rb') as file:
+        info = pickle.load(file)
+
+    cross_genome_duplicates = 0
+    average_duplicate_count = []
+
+    for _, gene_id_info in info.items():
+        average_duplicate_count.append(gene_id_info['count'])
+
+        if len(set(gene_id_info['genome_ids'])) > 1:
+            cross_genome_duplicates += 1
+
+    print(f'{f} cross_genome_duplicates:', cross_genome_duplicates) 
+    print(f'{f} average_duplicate_count:', np.mean(average_duplicate_count)) 
+
+
+
