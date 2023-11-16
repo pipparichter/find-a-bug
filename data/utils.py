@@ -153,7 +153,7 @@ def sql_table_exists(
     with engine.connect() as conn:
         tables = conn.execute(sqlalchemy.text('SHOW TABLES')).all()
     
-    return name in result
+    return name in tables
 
 
 def upload_to_sql_table(  
