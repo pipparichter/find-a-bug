@@ -10,6 +10,7 @@ from sqlalchemy.dialects.mysql import VARCHAR, LONGTEXT
 import os   
 import configparser
 from typing import Dict, TypeVar, NoReturn
+import pickle
 
 
 def load_config() -> Dict[str, Dict[str, str]]:
@@ -185,5 +186,34 @@ def upload_to_sql_table(
             conn.execute(sqlalchemy.text(f'ALTER TABLE {name} ADD PRIMARY KEY ({primary_key})'))
 
     # print(f'{f}: Upload to table {name} successful.')
+
+
+def get_duplicate_annotation_info():
+    '''Found that I was not able to make gene_id the primary key when loading annotations into the SQL database. This
+    is due to the fact that there were duplicate entries (Josh said this was expected, as genes can have multiple annotations). 
+    We were curious about characteristics of these duplications. Are there duplications across genome files?
+    How many duplications are there?'''
+    
+    annotations_path = load_config_paths()['annotations_path']
+    annotation_files = os.listdir(annotation_path)  
+    # Dictionary of the format {gene_id:{genome_ids:[], count:n}}
+    info = {}
+
+    for file in tqdm(annotation_file_batches, desc=f):    
+
+        genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
+        gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values
+
+        for gene_id in gene_ids:
+            if gene_id in info:
+                info[gene_id]['count'] = info[gene_id]['count'] + 1
+            else: # If the gene has not yet been encountered... 
+                info[gene_id]['count'] = 0
+                info[gene_id]['genome_ids'] = []
+            info[gene_id]['genome_ids'].append(genome_id) # Log which genomes the genes are encountered in. 
+
+    # Save the information as a pickle file. 
+    with open('duplicate_annotation_info.pkl', 'wb') as f:
+        pickle.dump(info, f)
 
 
