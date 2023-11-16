@@ -4,8 +4,7 @@ import numpy as np
 import os
 from time import perf_counter
 from tqdm import tqdm
-# import h5py
-from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
+from utils import * 
 
 ANNOTATIONS_PATH = load_config_paths()['annotations_path']
 # BATCH_SIZE = 500
