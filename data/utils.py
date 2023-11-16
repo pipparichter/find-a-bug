@@ -160,6 +160,6 @@ def upload_to_sql_table(
         if primary_key is not None:
             conn.execute(sqlalchemy.text(f'ALTER TABLE {name} ADD PRIMARY KEY ({primary_key})'))
 
-    print(f'{f}: Upload to table {name} successful.')
+    # print(f'{f}: Upload to table {name} successful.')
 
 
