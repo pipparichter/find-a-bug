@@ -151,7 +151,9 @@ def sql_table_exists(
     
     # Collect a list of all tables in the database.
     with engine.connect() as conn:
+        # This returns a list of tuples, so need to extract each table name for this to work.
         tables = conn.execute(sqlalchemy.text('SHOW TABLES')).all()
+        tables = [t[0] for t in tables]
     
     return name in tables
 
