@@ -193,6 +193,7 @@ def get_duplicate_annotation_info():
     is due to the fact that there were duplicate entries (Josh said this was expected, as genes can have multiple annotations). 
     We were curious about characteristics of these duplications. Are there duplications across genome files?
     How many duplications are there?'''
+    f = 'utils.get_duplicate_annotation_info'
     
     annotations_path = load_config_paths()['annotations_path']
     annotation_files = os.listdir(annotations_path)  
@@ -213,7 +214,7 @@ def get_duplicate_annotation_info():
             info[gene_id]['genome_ids'].append(genome_id) # Log which genomes the genes are encountered in. 
 
     # Save the information as a pickle file. 
-    with open('duplicate_annotation_info.pkl', 'wb') as f:
-        pickle.dump(info, f)
+    with open('duplicate_annotation_info.pkl', 'wb') as file:
+        pickle.dump(info, file)
 
 
