@@ -141,7 +141,7 @@ def drop_sql_table(
     database (as specified in the find-a-bug.cfg file), so no need to specify here.'''
 
     with engine.connect() as conn:
-        conn.execute(sqlalchemy.text(f'DROP TABLE {name})'))
+        conn.execute(sqlalchemy.text(f'DROP TABLE {name}'))
 
 
 def sql_table_exists(
