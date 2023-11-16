@@ -26,10 +26,6 @@ def setup(engine):
     acid sequences into a pandas DataFrame.'''
     f = 'setup_gtb_r207_amino_acid_seqs.setup'
 
-    # Should just make it in the current working directory, so no need to specify a path. 
-    # gene_to_genome_map = pd.DataFrame(columns=['gene_id', 'genome_id']).to_hdf('gene_to_genome_map.h5', key='gene_to_genome_map')
-    gene_to_genome_map = h5py.File('gene_to_genome_map.h5', 'w') 
-
     table_exists = False # Make sure to append after the table is initially setupd. 
     for path in [BACTERIA_GENOMES_PATH, ARCHAEA_GENOMES_PATH]:
         
@@ -38,13 +34,9 @@ def setup(engine):
         genome_file_batches = np.array_split(genome_files, (len(genome_files) // BATCH_SIZE) + 1)
         
         for batch in tqdm(genome_file_batches, desc=f):
-            # Process the genome files in chunks to avoid crashing the process.             
+            # Process the genome files in chunks to avoid crashing the process.   
+            # Setting is_genome_file=True automatically adds the genome_id to the DataFrame.          
             df = pd.concat([pd_from_fasta(os.path.join(path, g), is_genome_file=True) for g in batch]).fillna('None')
-
-            # Write the gene-to-genome information to the file. Not totally sure what append=True does?
-            # df[['genome_id', 'gene_id']].to_hdf('gene_to_genome_map.h5', key='gene_to_genome_map', append=True)
-            for row in df[['genome_id', 'gene_id']].itertuples():
-                gene_to_genome_map[row.gene_id] = row.genome_id
 
             # Put the table into the SQL database. Add a primary key on the first pass. 
             if not table_exists:
@@ -52,8 +44,6 @@ def setup(engine):
                 table_exists = True
             else:
                upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
-    # Close the HDF file after writing is done. 
-    gene_to_genome_map.close()
 
 if __name__ == '__main__':
     print(f'Starting engine with URL {URL}')
