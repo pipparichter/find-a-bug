@@ -199,7 +199,7 @@ def get_duplicate_annotation_info():
     # Dictionary of the format {gene_id:{genome_ids:[], count:n}}
     info = {}
 
-    for file in tqdm(annotation_file_batches, desc=f):    
+    for file in tqdm(annotation_files, desc=f):    
 
         genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
         gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values
