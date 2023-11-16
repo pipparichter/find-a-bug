@@ -5,13 +5,13 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 import typing
-import h5py
 
-from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
+# from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
+from utils import *
 
 # This is where the data is stored on the microbes server. 
 
-BATCH_SIZE = 10 # Size of batches for handling data.
+BATCH_SIZE = 100 # Size of batches for handling data.
 TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
 
 BACTERIA_GENOMES_PATH = load_config_paths()['bacteria_genomes_path']
@@ -45,9 +45,14 @@ def setup(engine):
             else:
                upload_to_sql_table(df.set_index('gene_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
 
+
 if __name__ == '__main__':
     print(f'Starting engine with URL {URL}')
     engine = sqlalchemy.create_engine(URL, echo=False)
+
+    if sql_table_exists(TABLE_NAME, engine):
+        drop_sql_table(TABLE_NAME, engine)
+
     t_init = perf_counter()
     setup(engine)
     t_final = perf_counter()

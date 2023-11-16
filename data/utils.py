@@ -134,6 +134,28 @@ def get_sql_dtypes(df:pd.DataFrame):
     return dtypes
 
 
+def drop_sql_table(
+    name:str,
+    engine:sqlalchemy.engine.Engine) -> NoReturn:
+    '''Deletes a SQL table from the Find-A-Bug database. The connection should already be to a specific 
+    database (as specified in the find-a-bug.cfg file), so no need to specify here.'''
+
+    with engine.connect() as conn:
+        conn.execute(sqlalchemy.text(f'DROP TABLE {name})'))
+
+
+def sql_table_exists(
+    name:str,
+    engine:sqlalchemy.engine.Engine) -> bool:
+    '''Checks for the existence of a table in the database.'''
+    
+    # Collect a list of all tables in the database.
+    with engine.connect() as conn:
+        tables = conn.execute(sqlalchemy.text('SHOW TABLES')).all()
+    
+    return name in result
+
+
 def upload_to_sql_table(  
     df:pd.DataFrame,
     name:str,
@@ -147,7 +169,7 @@ def upload_to_sql_table(
         - name: The name of the table to create.
         - engine: An engine connected to the SQL database.
         - primary_key: The primary key of the table. 
-        -if_exists: One of fail or append. Specifies behavior if table already exists.
+        - if_exists: One of fail or append. Specifies behavior if table already exists.
     '''
     f = 'utils.create_table'
     assert df.index.name is not None, f'{f}: A labeled index name must be specified.'
