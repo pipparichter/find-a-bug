@@ -44,7 +44,7 @@ def setup(engine):
 if __name__ == '__main__':
     
     print(f'Starting engine with URL {URL}')
-    engine = sqlalchemy.setup_engine(URL, echo=False)
+    engine = sqlalchemy.create_engine(URL, echo=False)
     t_init = perf_counter()
     setup(engine)
     t_final = perf_counter()

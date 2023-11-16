@@ -1,10 +1,5 @@
-import sys
+'''Setting up ORM for the Find-A-Bug database. Reflects SQL tables which already exist, as created by scripts in the data subdirectory.'''
 import os
-
-# curr_dir = os.path.dirname(os.path.abspath(__file__))
-# sys.path.append(curr_dir)
-# sys.path.append('/home/prichter/find-a-bug')
-
 from sqlalchemy import inspect
 import sqlalchemy
 import sqlalchemy.orm
