@@ -34,7 +34,7 @@ def setup(engine):
             curr_id += df.shape[0]
         
          # Put the table into the SQL database. Add a primary key on the first pass. 
-        if not table_setup:
+        if not table_exists:
             upload_to_sql_table(df, TABLE_NAME, engine, primary_key='gene_id', if_exists='replace')
             table_exists = True
         else:
