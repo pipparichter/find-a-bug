@@ -195,7 +195,7 @@ def get_duplicate_annotation_info():
     How many duplications are there?'''
     
     annotations_path = load_config_paths()['annotations_path']
-    annotation_files = os.listdir(annotation_path)  
+    annotation_files = os.listdir(annotations_path)  
     # Dictionary of the format {gene_id:{genome_ids:[], count:n}}
     info = {}
 
