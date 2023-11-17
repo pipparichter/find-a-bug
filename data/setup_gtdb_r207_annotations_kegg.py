@@ -30,7 +30,7 @@ def setup(engine):
         batch_df = [] # Accumulate the DataFrames for a batch. 
         for file in batch:
             # Need to lad everything in as strings, so that I can merge duplicate rows. Not sure how efficient this is. 
-            df = pd.read_csv(os.path.join(ANNOTATIONS_PATH, file), header=0, names=['gene_id', 'ko', 'threshold', 'score', 'e_value'], dtype=str)
+            df = pd.read_csv(os.path.join(ANNOTATIONS_PATH, file), header=0, names=['gene_id', 'ko', 'threshold', 'score', 'e_value'])
             df['genome_id'] = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
             df['annotation_id'] = np.arange(annotation_id, annotation_id + len(df)) # Add unique annotation_id for the primary key. 
             annotation_id += len(df)
@@ -44,12 +44,10 @@ def setup(engine):
 
 
 if __name__ == '__main__':
-    get_duplicate_annotation_info()
-    
-    # print(f'Starting engine with URL {URL}')
-    # engine = sqlalchemy.create_engine(URL, echo=False)
-    # t_init = perf_counter()
-    # setup(engine)
-    # t_final = perf_counter()
-    # print(f'\nTable {TABLE_NAME} uploaded in {t_final - t_init} seconds.')
+    print(f'Starting engine with URL {URL}')
+    engine = sqlalchemy.create_engine(URL, echo=False)
+    t_init = perf_counter()
+    setup(engine)
+    t_final = perf_counter()
+    print(f'\nTable {TABLE_NAME} uploaded in {t_final - t_init} seconds.')
  
