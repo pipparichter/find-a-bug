@@ -21,7 +21,6 @@ def parse_taxonomy_col(col:pd.DataFrame, prefix:str='') -> pd.DataFrame:
         
         new_row = dict([t.split('__') for t in row.strip().split(';')]) # Get a dictionary mapping flag (o, d, p, etc.) to value. 
         new_row = {k:new_row[k] for k in new_row.keys() if k in m.keys()} # Handles some edge cases -- sometimes, there are x flags, etc, which I just throw out. 
-        new_row = {k:'None' for k in m.keys()}.update(new_row) # Fill in missing taxonomical categories with 'None'
         new_row = {f'{prefix}_' + m[k]:v for k, v in new_row.items()} # Adjust the column names to {prefix}_{taxonomy level}.
         rows.append(new_row) 
     return pd.DataFrame.from_records(rows)
