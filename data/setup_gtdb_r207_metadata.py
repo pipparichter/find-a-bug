@@ -62,6 +62,7 @@ def setup(engine):
         with open(path, 'r') as f:
             df = pd.read_csv(f, delimiter='\t') # converters={c:int_converter for c in cols_to_int})
             df = df.drop(columns=[c for c in df.columns if 'lsu_silva' in c]) # Did not fit the taxonomy convention, so just dropped it. 
+            df = df.drop(columns=[c for c in df.columns if 'ssu_silva' in c]) # Did not fit the taxonomy convention, so just dropped it. 
             df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
             # Drop some columns I was having issues with, sometimes due to typing. I had gotten the int converter to fix it, but decided to remove instead. 
             df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
