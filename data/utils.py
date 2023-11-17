@@ -197,7 +197,6 @@ def get_duplicate_annotation_info():
     
     annotations_path = load_config_paths()['annotations_path']
     annotation_files = os.listdir(annotations_path)  
-    # Dictionary of the format {gene_id:{genome_ids:[], count:n}}
     info = {}
 
     for file in tqdm(annotation_files, desc=f):    
@@ -205,15 +204,15 @@ def get_duplicate_annotation_info():
         genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
         gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values.ravel()
 
-        for gene_id in gene_ids:
+        for gene_id in np.unique(gene_ids):
             if gene_id in info:
-                info[gene_id]['count'] = info[gene_id]['count'] + 1
+                info[gene_id]['num_instances'] += np.sum(gene_ids == gene_id)
+                info[gene_id]['num_genomes_with_gene'] += 1
             else: # If the gene has not yet been encountered... 
                 info[gene_id] = {}
-                info[gene_id]['count'] = 0
-                info[gene_id]['genome_ids'] = []
-            info[gene_id]['genome_ids'].append(genome_id) # Log which genomes the genes are encountered in. 
-
+                info[gene_id]['num_instances'] = 1 
+                info[gene_id]['num_genomes_with_gene'] = 1
+   
     # Save the information as a pickle file. 
     with open('duplicate_annotation_info.pkl', 'wb') as file:
         pickle.dump(info, file)
@@ -227,16 +226,16 @@ def print_duplicate_annotation_info(path:str) -> NoReturn:
         info = pickle.load(file)
 
     cross_genome_duplicates = 0
-    average_duplicate_count = []
+    average_instance_count = []
 
     for _, gene_id_info in info.items():
-        average_duplicate_count.append(gene_id_info['count'])
+        average_duplicate_count.append(gene_id_info['num_instances'])
 
-        if len(set(gene_id_info['genome_ids'])) > 1:
+        if len(gene_id_info['num_genomes_with_gene']) > 1:
             cross_genome_duplicates += 1
 
     print(f'{f} cross_genome_duplicates:', cross_genome_duplicates) 
-    print(f'{f} average_duplicate_count:', np.mean(average_duplicate_count)) 
+    print(f'{f} average_instance_count:', np.mean(average_duplicate_count)) 
 
 
 
