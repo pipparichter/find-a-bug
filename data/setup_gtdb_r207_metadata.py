@@ -12,17 +12,22 @@ ARCHAEA_METADATA_PATH = load_config_paths()['archaea_metadata_path']
 
 TABLE_NAME = 'gtdb_r207_metadata'
 
-def parse_taxonomy_col(col:pd.DataFrame, prefix:str='') -> pd.DataFrame:
+# Almost certainly a better way to do what this function does. 
+def parse_taxonomy_col(col:pd.Series, prefix:str='') -> pd.DataFrame:
     '''Takes a DataFrame subset containing taxonomy data as input (e.g. ncbi_taxonomy) as input, and returns
     a new DataFrame with the column split into individual columns.'''
-    m = {'o':'order', 'd':'domain', 'p':'phylum', 'c':'class', 'f':'family', 'g':'genus', 's':'species'}
+    m = {'o':f'{prefix}_order', 'd':f'{prefix}_domain', 'p':f'{prefix}_phylum', 'c':f'{prefix}_class', 'f':f'{prefix}_family', 'g':f'{prefix}_genus', 's':f'{prefix}_species'}
     rows = []
     for row in col: # Iterate over taxonomy strings in column.
-        
-        new_row = dict([t.split('__') for t in row.strip().split(';')]) # Get a dictionary mapping flag (o, d, p, etc.) to value. 
-        new_row = {k:new_row[k] for k in new_row.keys() if k in m.keys()} # Handles some edge cases -- sometimes, there are x flags, etc, which I just throw out. 
-        new_row = {f'{prefix}_' + m[k]:v for k, v in new_row.items()} # Adjust the column names to {prefix}_{taxonomy level}.
-        rows.append(new_row) 
+        new_row = {k:'none' for k in m.keys()}
+        if row == 'none': # This is an edge case. Just fill in all none values if this happens. 
+            rows.append(new_row)
+        else:
+            for tax in row.strip().split(';'):
+                flag, entry = tax.split('__')
+                if flag in m.keys():
+                    new_row[m[flag]] = entry
+            rows.append(new_row)
     return pd.DataFrame.from_records(rows)
 
 
