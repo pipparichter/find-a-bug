@@ -46,6 +46,11 @@ def setup(engine):
 if __name__ == '__main__':
     print(f'Starting engine with URL {URL}')
     engine = sqlalchemy.create_engine(URL, echo=False)
+
+    if sql_table_exists(TABLE_NAME, engine):
+        drop_sql_table(TABLE_NAME, engine)
+        print(f'Dropped existing table {TABLE_NAME}.')
+        
     t_init = perf_counter()
     setup(engine)
     t_final = perf_counter()
