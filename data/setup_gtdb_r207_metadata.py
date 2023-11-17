@@ -20,7 +20,7 @@ def parse_taxonomy_col(col:pd.DataFrame, prefix:str='') -> pd.DataFrame:
     for row in col: # Iterate over taxonomy strings in column.
         # This is a list of lists with [[flag, taxonomy], [flag, taxonomy], ...]
         new_row = [s.split('__') for s in row.strip().split(';')]
-        new_row = list(map(new_row, lambda x : {f'{prefix}_' + m[x[0]] : x[1]}))
+        new_row = list(map(lambda x : {f'{prefix}_' + m[x[0]] : x[1]}, new_row))
         rows.append(new_row) 
     return pd.DataFrame.from_records(rows)
 
