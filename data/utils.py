@@ -188,52 +188,52 @@ def upload_to_sql_table(
     # print(f'{f}: Upload to table {name} successful.')
 
 
-def get_duplicate_annotation_info(collect='num_genomes_with_gene'):
-    '''Found that I was not able to make gene_id the primary key when loading annotations into the SQL database. This
-    is due to the fact that there were duplicate entries (Josh said this was expected, as genes can have multiple annotations). 
-    We were curious about characteristics of these duplications. Are there duplications across genome files?
-    How many duplications are there?'''
+# def get_duplicate_annotation_info(collect='num_instances'):
+#     '''Found that I was not able to make gene_id the primary key when loading annotations into the SQL database. This
+#     is due to the fact that there were duplicate entries (Josh said this was expected, as genes can have multiple annotations). 
+#     We were curious about characteristics of these duplications. Are there duplications across genome files?
+#     How many duplications are there?'''
 
-    f = 'utils.get_duplicate_annotation_info'
-    assert collect in ['num_genomes_with_gene', 'num_instances'], f'{f}: Specified collect option is not recognized'
+#     f = 'utils.get_duplicate_annotation_info'
+#     assert collect in ['num_genomes_with_gene', 'num_instances'], f'{f}: Specified collect option is not recognized'
     
-    annotations_path = load_config_paths()['annotations_path']
-    annotation_files = os.listdir(annotations_path)  
-    info = {}
+#     annotations_path = load_config_paths()['annotations_path']
+#     annotation_files = os.listdir(annotations_path)  
+#     info = {}
 
-    for file in tqdm(annotation_files, desc=f):    
+#     for file in tqdm(annotation_files, desc=f):    
 
-        genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
-        gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values.ravel()
+#         genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
+#         gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values.ravel()
 
-        # I had to separate because I kept getting booted off of the server when it loaded 95 percent of the genomes. 
-        for gene_id in np.unique(gene_ids):
-            if gene_id in info:
-                if collect == 'num_instances':
-                    info[gene_id] += np.sum(gene_ids == gene_id)
-                elif collect == 'num_genomes_with_gene':
-                    info[gene_id] += 1
-            else: # If the gene has not yet been encountered... 
-                if collect == 'num_instances':
-                    info[gene_id] = np.sum(gene_ids == gene_id)
-                elif collect == 'num_genomes_with_gene':
-                    info[gene_id] = 1
+#         # I had to separate because I kept getting booted off of the server when it loaded 95 percent of the genomes. 
+#         for gene_id in np.unique(gene_ids):
+#             if gene_id in info:
+#                 if collect == 'num_instances':
+#                     info[gene_id] += np.sum(gene_ids == gene_id)
+#                 elif collect == 'num_genomes_with_gene':
+#                     info[gene_id] += 1
+#             else: # If the gene has not yet been encountered... 
+#                 if collect == 'num_instances':
+#                     info[gene_id] = np.sum(gene_ids == gene_id)
+#                 elif collect == 'num_genomes_with_gene':
+#                     info[gene_id] = 1
    
-    # Save the information as a pickle file. 
-    with open(f'duplicate_annotation_info_{collect}.pkl', 'wb') as file:
-        pickle.dump(info, file)
+#     # Save the information as a pickle file. 
+#     with open(f'duplicate_annotation_info_{collect}.pkl', 'wb') as file:
+#         pickle.dump(info, file)
 
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
 
-    duplicate_annotation_info_num_instances_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_instances.pkl'
-    with open(duplicate_annotation_info_num_instances_path, 'rb') as file:
-        info = pickle.load(file)
-        print('average number of instances:', np.mean(list(info.values())))
+#     duplicate_annotation_info_num_instances_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_instances.pkl'
+#     with open(duplicate_annotation_info_num_instances_path, 'rb') as file:
+#         info = pickle.load(file)
+#         print('average number of instances:', np.mean(list(info.values())))
 
-    duplicate_annotation_info_num_genomes_with_gene_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_genomes_with_gene.pkl'
-    with open(duplicate_annotation_info_num_genomes_with_gene_path, 'rb') as file:
-        info = pickle.load(file)
-        print('number of genes present in multiple genomes:', len([n for n in info.values() if n > 1]))
+#     duplicate_annotation_info_num_genomes_with_gene_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_genomes_with_gene.pkl'
+#     with open(duplicate_annotation_info_num_genomes_with_gene_path, 'rb') as file:
+#         info = pickle.load(file)
+#         print('number of genes present in multiple genomes:', len([n for n in info.values() if n > 1]))
