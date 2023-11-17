@@ -224,24 +224,16 @@ def get_duplicate_annotation_info(collect='num_genomes_with_gene'):
         pickle.dump(info, file)
 
 
-def print_duplicate_annotation_info(path:str) -> NoReturn:
-    '''Loads the pickle file where duplicate annotation info is stored, and prints stats.'''
-    f = 'utils.print_duplicate_annotation_info'
 
-    with open(path, 'rb') as file:
+if __name__ == '__main__':
+
+
+    duplicate_annotation_info_num_instances_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_instances.pkl'
+    with open(duplicate_annotation_info_num_instances_path, 'rb') as file:
         info = pickle.load(file)
+        print('average number of instances:', np.mean(list(info.values())))
 
-    cross_genome_duplicates = 0
-    average_instance_count = []
-
-    for _, gene_id_info in info.items():
-        average_duplicate_count.append(gene_id_info['num_instances'])
-
-        if len(gene_id_info['num_genomes_with_gene']) > 1:
-            cross_genome_duplicates += 1
-
-    print(f'{f} cross_genome_duplicates:', cross_genome_duplicates) 
-    print(f'{f} average_instance_count:', np.mean(average_duplicate_count)) 
-
-
-
+    duplicate_annotation_info_num_genomes_with_gene_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_genomes_with_gene.pkl'
+    with open(duplicate_annotation_info_num_genomes_with_gene_path, 'rb') as file:
+        info = pickle.load(file)
+        print('number of genes present in multiple genomes:', len([n for n in info.values() if n > 1]))
