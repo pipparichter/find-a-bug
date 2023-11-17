@@ -48,9 +48,8 @@ def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
 #         return int(val)
 
  
-def setup(engine, **kwargs): 
+def setup(engine): 
     '''Load metadata files into the SQL database.'''
-    gene_to_genome_map = h5py.File('gene_to_genome_map.h5', 'r') # Read in the HDF file. 
     table_exists = False
 
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
