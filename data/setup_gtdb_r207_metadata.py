@@ -31,7 +31,7 @@ def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
     dfs = []
     for col in [c for c in df.columns if 'taxonomy' in c]:
         prefix = col[:-len('_taxonomy')] # e.g. ncbi.
-        dfs.append(parse_taxonomy_col(df[[col]], prefix=prefix))
+        dfs.append(parse_taxonomy_col(df[col].values, prefix=prefix))
         df = df.drop(columns=[col]) # Drop the original column. 
     return pd.concat(dfs + [df], axis=1)
 
