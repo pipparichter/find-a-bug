@@ -20,6 +20,8 @@ class Reflected(DeferredReflection):
     __abstract__ = True # NOTE: What does this mean?
 
 
+
+
 class Metadata_r207(Reflected, Base):
 
     release = 207
@@ -30,7 +32,7 @@ class Metadata_r207(Reflected, Base):
     genome_id = mapped_column(String, primary_key=True)
     
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207')
-    # gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
+    gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
 
 
 class AASeqs_r207(Reflected, Base):
@@ -39,10 +41,8 @@ class AASeqs_r207(Reflected, Base):
 
     __tablename__ = 'gtdb_r207_amino_acid_seqs'
 
-    gene_name = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_name'), primary_key=True)
+    gene_id = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_id'), primary_key=True)
     genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
-    # Should allow rapid indexing using genus. This is temporary. 
-    genus = mapped_column(String, index=True)
     
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
@@ -57,8 +57,8 @@ class AnnotationsKegg_r207(Reflected, Base):
     __tablename__ = 'gtdb_r207_annotations_kegg'
     
     # gene_name = mapped_column(String, primary_key=True)
-    unique_id = mapped_column(String, primary_key=True)
-    # genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+    annotation_id = mapped_column(String, primary_key=True)
+    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
 
     # Because the relationship from amino acid sequences to annotations
     # should be one-to-one, should specify uselist=False. Note that here we
@@ -66,7 +66,7 @@ class AnnotationsKegg_r207(Reflected, Base):
     # amino acid sequence table. 
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
             back_populates='gtdb_r207_annotations_kegg', uselist=False)
-    # gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     
 
 class FindABugDatabase():
@@ -78,7 +78,7 @@ class FindABugDatabase():
         Reflected.prepare(engine)
         self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
     
-    def get_query_tables(fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
+    def get_query_tables(self, fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
         '''Returns a dictionary mapping the fields in the input to the Sqlalchemy table in which
         they are found. Minimizes the number of tables required to cover the fields.'''
         
@@ -89,8 +89,8 @@ class FindABugDatabase():
         for table in all_tables:
             if len(fields) == 0:
                 break
-            query_tables.update({field:table for field in fields.intersection(get_fields(table))})
-            fields = fields - get_fields(table)
+            query_tables.update({field:table for field in fields.intersection(self.get_fields(table))})
+            fields = fields - self.get_fields(table)
 
         return query_tables
 
@@ -106,5 +106,4 @@ class FindABugDatabase():
             if table.__tablename__ == aliases[name]:
                 return table
 
-
-    
+   
