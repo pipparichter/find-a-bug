@@ -70,7 +70,7 @@ ncbi_scaffold_l50,int
 ncbi_scaffold_n50,int
 ncbi_scaffold_n75,int
 ncbi_scaffold_n90,int
-ncbi_seq_rel_date,str,
+ncbi_seq_rel_date,str
 ncbi_spanned_gaps,int
 ncbi_species_taxid,str
 ncbi_ssu_count,int
