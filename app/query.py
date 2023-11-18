@@ -47,14 +47,15 @@ class FindABugQuery():
         Session = sqlalchemy.orm.sessionmaker(bind=engine)
         self.session = Session()
         
-        self.url = url
+        url = urlparse(url) # Parse the URL string.
+
         # Use this instead of parse_qs to support multiple of the same keys. 
-        self.qsl = parse_qsl(urlparse(url).query, separator='&') # Returns a list of key, value pairs. 
+        self.qsl = parse_qsl(url.query, separator='&') # Returns a list of key, value pairs. 
         
         # Reflect the Database. 
         self.db = FindABugDatabase(engine)
         # Get the table corresponding to the specified URL resource.
-        self.table = self.db.get_table(urlparse(url).path[1:]) # Make sure to remove the leading forward slash.
+        self.table = self.db.get_table(url.path[1:]) # Make sure to remove the leading forward slash.
         # Collect all fields used in the query, including those affiliated with the main table. 
         self.fields = self.db.get_fields(self.table).union({field for field, _ in self.qsl})
 
