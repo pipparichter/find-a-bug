@@ -9,8 +9,9 @@ import logging
 from flask import Flask, request # Response, make_response
 from time import perf_counter
 from sqlalchemy import create_engine
-from query import FindABugQuery
+from app.query import FindABugQuery
 import traceback
+import configparser
 
 # Instantiate and configure the logger. 
 logging.basicConfig(filename='find-a-bug.log', filemode='a')
@@ -23,7 +24,7 @@ app = Flask(__name__)
 # Read in the config file, which is in the project root directory. 
 config = configparser.ConfigParser()
 # with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../', '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
+with open(os.path.join(os.path.dirname(__file__), '../',  'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
     config.read_file(f)
 
 URL = '{dialect}+{driver}://{user}:{password}@{host}/{name}'.format(**dict(config.items('db')))
@@ -52,7 +53,7 @@ def info():
 
 
 @app.route('/<resource>')
-def handle(resource):
+def handle(resource=None):
     '''
     '''
 

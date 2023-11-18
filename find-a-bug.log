@@ -88,3 +88,14 @@ Traceback (most recent call last):
   File "/home/prichter/find-a-bug/env/lib64/python3.9/site-packages/mariadb/connections.py", line 191, in rollback
     self._execute_command("ROLLBACK")
 mariadb.InterfaceError: Server has gone away
+ERROR:find-a-bug:handle() got an unexpected keyword argument 'resource'
+ERROR:find-a-bug:handle() got an unexpected keyword argument 'resource'
+ERROR:find-a-bug:'/annotations'
+ERROR:find-a-bug:'/annotation'
+ERROR:find-a-bug:unsupported operand type(s) for +: 'set' and 'list'
+ERROR:find-a-bug:unsupported operand type(s) for +: 'set' and 'set'
+ERROR:find-a-bug:Textual column expression 'gtdb_r207_annotations_keg...' should be explicitly declared with text('gtdb_r207_annotations_keg...'), or use column('gtdb_r207_annotations_keg...') for more specificity
+ERROR:find-a-bug:get_query_tables() takes 1 positional argument but 2 were given
+ERROR:find-a-bug:name 'get_fields' is not defined
+ERROR:find-a-bug:name 'get_fields' is not defined
+ERROR:find-a-bug:'str' object has no attribute '__tablename__'

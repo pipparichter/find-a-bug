@@ -1,10 +1,11 @@
 '''Class for managing client-side queries to the Find-A-Bug database. Defines the FindABugQuery class, which parses a URL sent to the 
 server from a client, and builds a query which can be sent to the SQL database.'''
 from warnings import warn
-from sqlalchemy import or_, func, desc, select, text
+from sqlalchemy import or_, func, desc, select, text, column
 from urllib.parse import parse_qsl, urlparse
 import typing 
-import database
+from app.database import FindABugDatabase
+import sqlalchemy
 
 # URL format ------------------------------------------------------------------------------
 # https://microbes.gps.caltech.edu/annotations?{x1}={y1}&{x2}={y2}...#page
@@ -51,13 +52,13 @@ class FindABugQuery():
         self.qsl = parse_qsl(urlparse(url).query, separator='&') # Returns a list of key, value pairs. 
         
         # Reflect the Database. 
-        self.db = database.FindABugDatabase(engine)
+        self.db = FindABugDatabase(engine)
         # Get the table corresponding to the specified URL resource.
-        self.table = self.db.get_table(urlparse(url).path) 
+        self.table = self.db.get_table(urlparse(url).path[1:]) # Make sure to remove the leading forward slash.
         # Collect all fields used in the query, including those affiliated with the main table. 
-        self.fields = set(self.db.get_fields(self.table) + [field for field, _ in self.qsl])
+        self.fields = self.db.get_fields(self.table).union(set([field for field, _ in self.qsl]))
 
-        stmt = select(*self.fields)
+        stmt = select(*[column(c) for c in self.fields])
         stmt = self.add_joins(stmt)
         stmt = self.add_filters(stmt)
 

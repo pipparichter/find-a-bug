@@ -76,8 +76,7 @@ def get_columns(path:str):
  
 def setup(engine): 
     '''Load metadata files into the SQL database.'''
-    table_exists = False
-
+    dfs = []
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
 
         dtypes = pd.read_csv('gtdb_r207_metadata_dtypes.csv').set_index('col').to_dict(orient='dict')['dtype']
@@ -89,13 +88,11 @@ def setup(engine):
         # df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
         df = df.drop(columns=['ncbi_submitter', 'ncbi_translation_table'])
         df = df.rename(columns={'accession':'genome_id'})
+        dfs.append(df)
 
-         # Put the table into the SQL database. Add a primary key on the first pass. 
-        if not table_exists:
-            upload_to_sql_table(df.set_index('genome_id'), TABLE_NAME, engine, primary_key='genome_id', if_exists='replace')
-            table_exists = True
-        else:
-            upload_to_sql_table(df.set_index('genome_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
+    df = pd.concat(dfs)
+    # Put the table into the SQL database. Add a primary key on the first pass. 
+    upload_to_sql_table(df.set_index('genome_id'), TABLE_NAME, engine, primary_key='genome_id', if_exists='replace')
 
 
 if __name__ == '__main__':

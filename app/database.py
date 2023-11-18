@@ -20,6 +20,8 @@ class Reflected(DeferredReflection):
     __abstract__ = True # NOTE: What does this mean?
 
 
+
+
 class Metadata_r207(Reflected, Base):
 
     release = 207
@@ -76,7 +78,7 @@ class FindABugDatabase():
         Reflected.prepare(engine)
         self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
     
-    def get_query_tables(fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
+    def get_query_tables(self, fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
         '''Returns a dictionary mapping the fields in the input to the Sqlalchemy table in which
         they are found. Minimizes the number of tables required to cover the fields.'''
         
@@ -87,8 +89,8 @@ class FindABugDatabase():
         for table in all_tables:
             if len(fields) == 0:
                 break
-            query_tables.update({field:table for field in fields.intersection(get_fields(table))})
-            fields = fields - get_fields(table)
+            query_tables.update({field:table for field in fields.intersection(self.get_fields(table))})
+            fields = fields - self.get_fields(table)
 
         return query_tables
 
@@ -104,5 +106,4 @@ class FindABugDatabase():
             if table.__tablename__ == aliases[name]:
                 return table
 
-
-    
+   
