@@ -56,9 +56,9 @@ class FindABugQuery():
         # Get the table corresponding to the specified URL resource.
         self.table = self.db.get_table(urlparse(url).path[1:]) # Make sure to remove the leading forward slash.
         # Collect all fields used in the query, including those affiliated with the main table. 
-        self.fields = self.db.get_fields(self.table).union(set([field for field, _ in self.qsl]))
+        self.columns = self.table.__table__.c 
 
-        stmt = select(*[column(c) for c in self.fields])
+        stmt = select(*self.columns)
         stmt = self.add_joins(stmt)
         stmt = self.add_filters(stmt)
 
@@ -79,9 +79,9 @@ class FindABugQuery():
     
     def add_filters(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
         '''Add the query specifications in the self.qsl list to the query statement.'''
-        query_tables = self.db.get_query_tables(self.fields)
+        query_tables = self.db.get_query_tables(self.fields) # Maps the field to a table.
         
-        for field, val in self.qsl.items():
+        for field, val in self.qsl:
             table = query_tables[field]
             if val[0] in OPERATORS:
                 stmt = stmt.filter(get_filter(getattr(table, field), operator, value))

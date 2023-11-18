@@ -91,12 +91,12 @@ class FindABugDatabase():
                 break
             query_tables.update({field:table for field in fields.intersection(self.get_fields(table))})
             fields = fields - self.get_fields(table)
-
+        print(query_tables)
         return query_tables
 
     def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
         '''Get all the fields stored in the table.'''
-        return set([str(c) for c in table.__table__.c])
+        return set([c.name for c in table.__table__.c])
 
     def get_table(self, name):
         '''Get the table corresponding to the given name.'''
