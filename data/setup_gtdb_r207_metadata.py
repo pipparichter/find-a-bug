@@ -24,8 +24,8 @@ def parse_taxonomy_col(col:pd.Series, prefix:str='') -> pd.DataFrame:
             rows.append(new_row)
         else:
             for tax in row.strip().split(';'):
-                flag, entry = tax.split('__')
-                if flag in m.keys():
+                flag, entry = tax[0], tax[3:] # Can't use split('__') because of edge cases where there is a __ in the species name. 
+                if flag in m.keys() and len(entry) > 0: # Also handles case of empty entry. 
                     new_row[m[flag]] = entry
             rows.append(new_row)
     return pd.DataFrame.from_records(rows)
@@ -42,16 +42,34 @@ def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
     return pd.concat(dfs + [df], axis=1)
 
 
-# def int_converter(val):
-#     '''
-#     Convert missing int values in the Metadata when reading the CSV file. 
-#     '''
-#     # If the encountered value is NaN...
-#     if val == 'none':
-#         # The problem columns use integers which should be positive (e.g. RNA counts). 
-#         return -1
-#     else:
-#         return int(val)
+def get_converter(col:str, dtypes:Dict[str, str]=None):
+    
+    dtype = dtypes[col] # Get the manually-defined datatype of the column. 
+    if dtype == 'str':
+        def converter(val):
+            return str(val)
+
+    elif dtype == 'int':
+        def converter(val):
+            if val == 'none':
+                return -1
+            else:
+                return int(val)
+
+    elif dtype == 'float':
+        def converter(val):
+            if val == 'none':
+                return -1.0
+            else:
+                return float(0)
+
+    return converter
+    
+
+def get_columns(path:str):
+    '''Get the column names from the DataFrame stored at the path prior to loading in the entire thing.'''
+    df = pd.read_csv(path, nrows=1)
+    return df.columns
 
  
 def setup(engine): 
@@ -59,15 +77,15 @@ def setup(engine):
     table_exists = False
 
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
-        with open(path, 'r') as f:
-            df = pd.read_csv(f, delimiter='\t') # converters={c:int_converter for c in cols_to_int})
-            df = df.drop(columns=[c for c in df.columns if 'lsu_silva' in c]) # Did not fit the taxonomy convention, so just dropped it. 
-            df = df.drop(columns=[c for c in df.columns if 'ssu_silva' in c]) # Did not fit the taxonomy convention, so just dropped it. 
-            df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
-            # Drop some columns I was having issues with, sometimes due to typing. I had gotten the int converter to fix it, but decided to remove instead. 
-            df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
-            # Rename the genome ID column for consistency with the sequence data. 
-            df = df.rename(columns={'accession':'genome_id'})
+
+        dtypes = pd.read_csv('gtdb_r207_metadata_dtypes').to_dict(orient='list')
+        usecols = [c for c in get_columns(path) if 'silva' not in c]
+        df = pd.read_csv(f, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
+
+        df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
+        # Drop some columns I was having issues with, sometimes due to typing. I had gotten the int converter to fix it, but decided to remove instead. 
+        # df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
+        df = df.rename(columns={'accession':'genome_id'})
 
          # Put the table into the SQL database. Add a primary key on the first pass. 
         if not table_exists:
