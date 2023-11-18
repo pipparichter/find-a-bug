@@ -130,7 +130,7 @@ def get_sql_dtypes(df:pd.DataFrame):
             dtypes[col] = Boolean
         else:
             msg = 'utils.get_sql_dtypes: Type ' + str(t) + ' is not handled by create_table.'
-            raise TypeError(msg=msg)
+            raise TypeError(msg)
 
     return dtypes
 

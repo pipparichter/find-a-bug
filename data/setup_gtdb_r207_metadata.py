@@ -20,7 +20,7 @@ def parse_taxonomy_col(col:pd.Series, prefix:str='') -> pd.DataFrame:
     m = {'o':f'{prefix}_order', 'd':f'{prefix}_domain', 'p':f'{prefix}_phylum', 'c':f'{prefix}_class', 'f':f'{prefix}_family', 'g':f'{prefix}_genus', 's':f'{prefix}_species'}
     rows = []
     for row in col: # Iterate over taxonomy strings in column.
-        new_row = {k:'none' for k in m.keys()}
+        new_row = {v:'none' for v in m.values()}
         if row == 'none': # This is an edge case. Just fill in all none values if this happens. 
             rows.append(new_row)
         else:
