@@ -1,10 +1,10 @@
 col,dtype
 accession,str
-ambiguous_bases,int 
+ambiguous_bases,int
 checkm_completeness,float
 checkm_contamination,float
 checkm_marker_count,int
-checkm_marker_lineage,str 
+checkm_marker_lineage,str
 checkm_marker_set_count,int
 checkm_strain_heterogeneity,float
 coding_bases,int

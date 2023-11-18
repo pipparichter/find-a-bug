@@ -46,24 +46,25 @@ def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
 def get_converter(col:str, dtypes:Dict[str, str]=None):
     
     dtype = dtypes[col] # Get the manually-defined datatype of the column. 
-    if dtype == 'str':
+    if dtype == str:
         def converter(val):
             return str(val)
 
-    elif dtype == 'int':
+    elif dtype == int:
         def converter(val):
             if val == 'none':
                 return -1
             else:
                 return int(val)
 
-    elif dtype == 'float':
+    elif dtype == float:
         def converter(val):
             if val == 'none':
                 return -1.0
             else:
                 return float(0)
-
+    else:
+        print(col, dtype)
     return converter
 
 
@@ -79,7 +80,7 @@ def setup(engine):
 
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
 
-        dtypes = pd.read_csv('gtdb_r207_metadata_dtypes.csv').to_dict(orient='list')
+        dtypes = pd.read_csv('gtdb_r207_metadata_dtypes.csv').set_index('col').to_dict(orient='dict')['dtype']
         usecols = [c for c in get_columns(path) if 'silva' not in c]
         df = pd.read_csv(path, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
 
