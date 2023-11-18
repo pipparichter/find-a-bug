@@ -70,7 +70,7 @@ def get_converter(col:str, dtypes:Dict[str, str]=None):
 
 def get_columns(path:str):
     '''Get the column names from the DataFrame stored at the path prior to loading in the entire thing.'''
-    df = pd.read_csv(path, nrows=1)
+    df = pd.read_csv(path, delimiter='\t', nrows=1)
     return df.columns
 
  
