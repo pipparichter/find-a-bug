@@ -6,6 +6,7 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
+from typing import Dict
 
 BACTERIA_METADATA_PATH = load_config_paths()['bacteria_metadata_path']
 ARCHAEA_METADATA_PATH = load_config_paths()['archaea_metadata_path']
@@ -64,7 +65,7 @@ def get_converter(col:str, dtypes:Dict[str, str]=None):
                 return float(0)
 
     return converter
-    
+
 
 def get_columns(path:str):
     '''Get the column names from the DataFrame stored at the path prior to loading in the entire thing.'''
@@ -78,9 +79,9 @@ def setup(engine):
 
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
 
-        dtypes = pd.read_csv('gtdb_r207_metadata_dtypes').to_dict(orient='list')
+        dtypes = pd.read_csv('gtdb_r207_metadata_dtypes.csv').to_dict(orient='list')
         usecols = [c for c in get_columns(path) if 'silva' not in c]
-        df = pd.read_csv(f, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
+        df = pd.read_csv(path, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
 
         df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
         # Drop some columns I was having issues with, sometimes due to typing. I had gotten the int converter to fix it, but decided to remove instead. 

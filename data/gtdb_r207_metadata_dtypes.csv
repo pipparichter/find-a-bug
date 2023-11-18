@@ -67,10 +67,10 @@ ncbi_refseq_category,str
 ncbi_rrna_count,int
 ncbi_scaffold_count,int
 ncbi_scaffold_l50,int
-ncbi_scaffold_n50mint
+ncbi_scaffold_n50,int
 ncbi_scaffold_n75,int
 ncbi_scaffold_n90,int
-ncbi_seq_rel_date,strn
+ncbi_seq_rel_date,str,
 ncbi_spanned_gaps,int
 ncbi_species_taxid,str
 ncbi_ssu_count,int
@@ -80,7 +80,7 @@ ncbi_taxid,str
 ncbi_taxonomy,str
 ncbi_taxonomy_unfiltered,str
 ncbi_total_gap_length,int
-ncbi_total_length,int,
+ncbi_total_length,int
 ncbi_translation_table,str
 ncbi_trna_count,int
 ncbi_type_material_designation,str
