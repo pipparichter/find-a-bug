@@ -80,6 +80,7 @@ class FindABugQuery():
     def add_filters(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
         '''Add the query specifications in the self.qsl list to the query statement.'''
         query_tables = self.db.get_query_tables(self.fields) # Maps the field to a table.
+        print(query_tables)
         
         for field, val in self.qsl:
             table = query_tables[field]
