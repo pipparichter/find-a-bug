@@ -64,19 +64,16 @@ class FindABugQuery():
         stmt = self.add_filters(stmt)
 
         page_size = 500
-        page = None if url.fragment is None else int(url.fragment)
+        page = None if len(url.fragment) == 0 else int(url.fragment)
         if page is not None:
-            self.stmt.offset(self.page_size * self.page).limit(self.page_size)
+            self.stmt = stmt.offset(self.page_size * self.page).limit(self.page_size)
         else: # If no page specified, grab all results. 
-            self.stmt
+            self.stmt = stmt
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
         # Grab the queries corresponding to the requested page. 
-        return session.execute(self.stmt).all()
-    
-    def __repr__(self):
-        return self.url
+        return self.session.execute(self.stmt).all()
     
     def add_filters(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
         '''Add the query specifications in the self.qsl list to the query statement.'''
@@ -95,11 +92,10 @@ class FindABugQuery():
         query_tables = self.db.get_query_tables(self.fields)
 
         for field in query_tables.keys():
-            for another_field in query_tables.keys():
-                # Extract the relevant ORM relationship on which to join. 
-                relationship = getattr(query_tables[field], query_tables[another_field].__tablename__, False)
-                if relationship:
-                    stmt = stmt.join(relationship)
+            # Extract the relevant ORM relationship on which to join. 
+            relationship = getattr(self.table, query_tables[another_field].__tablename__, False)
+            if relationship:
+                stmt = stmt.join(relationship)
         return stmt
 
 
