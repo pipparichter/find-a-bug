@@ -93,10 +93,10 @@ class FindABugQuery():
         '''Add all necessary JOINs to the Select statement..'''
         query_tables = self.db.get_query_tables(self.fields)
 
-        for t1 in query_tables.keys():
-            for t2 in query_tables.keys():
+        for field in query_tables.keys():
+            for another_field in query_tables.keys():
                 # Extract the relevant ORM relationship on which to join. 
-                relationship = getattr(t1, t2.__tablename__, False)
+                relationship = getattr(query_tables[field], query_tables[another_field].__tablename__, False)
                 if relationship:
                     stmt = stmt.join(relationship)
         return stmt
