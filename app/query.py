@@ -81,7 +81,7 @@ class FindABugQuery():
         '''Add the query specifications in the self.qsl list to the query statement.'''
         query_tables = self.db.get_query_tables(self.fields)
         
-        for field, val in self.qsl():
+        for field, val in self.qsl.items():
             table = query_tables[field]
             if val[0] in OPERATORS:
                 stmt = stmt.filter(get_filter(getattr(table, field), operator, value))
