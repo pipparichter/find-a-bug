@@ -84,9 +84,9 @@ class FindABugQuery():
         for field, val in self.qsl:
             table = query_tables[field]
             if val[0] in OPERATORS:
-                stmt = stmt.filter(get_filter(getattr(table, field), operator, value))
+                stmt = stmt.filter(get_filter(getattr(table, field), operator, val))
             else:
-                stmt = stmt.filter(get_filter(getattr(table, field), '=', value)) 
+                stmt = stmt.filter(get_filter(getattr(table, field), '=', val)) 
         return stmt
 
     def add_joins(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
