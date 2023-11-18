@@ -87,6 +87,7 @@ def setup(engine):
         df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
         # Drop some columns I was having issues with, sometimes due to typing. I had gotten the int converter to fix it, but decided to remove instead. 
         # df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
+        df = df.drop(columns=['ncbi_submitter', 'ncbi_translation_table'])
         df = df.rename(columns={'accession':'genome_id'})
 
          # Put the table into the SQL database. Add a primary key on the first pass. 

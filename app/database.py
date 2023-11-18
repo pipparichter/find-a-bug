@@ -30,7 +30,7 @@ class Metadata_r207(Reflected, Base):
     genome_id = mapped_column(String, primary_key=True)
     
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207')
-    # gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
+    gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
 
 
 class AASeqs_r207(Reflected, Base):
@@ -39,10 +39,8 @@ class AASeqs_r207(Reflected, Base):
 
     __tablename__ = 'gtdb_r207_amino_acid_seqs'
 
-    gene_name = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_name'), primary_key=True)
+    gene_id = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_id'), primary_key=True)
     genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
-    # Should allow rapid indexing using genus. This is temporary. 
-    genus = mapped_column(String, index=True)
     
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
@@ -57,8 +55,8 @@ class AnnotationsKegg_r207(Reflected, Base):
     __tablename__ = 'gtdb_r207_annotations_kegg'
     
     # gene_name = mapped_column(String, primary_key=True)
-    unique_id = mapped_column(String, primary_key=True)
-    # genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+    annotation_id = mapped_column(String, primary_key=True)
+    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
 
     # Because the relationship from amino acid sequences to annotations
     # should be one-to-one, should specify uselist=False. Note that here we
@@ -66,7 +64,7 @@ class AnnotationsKegg_r207(Reflected, Base):
     # amino acid sequence table. 
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
             back_populates='gtdb_r207_annotations_kegg', uselist=False)
-    # gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     
 
 class FindABugDatabase():

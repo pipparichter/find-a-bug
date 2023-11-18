@@ -52,7 +52,7 @@ def info():
 
 
 @app.route('/<resource>')
-def handle(type_):
+def handle(resource):
     '''
     '''
 
