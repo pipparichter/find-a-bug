@@ -56,10 +56,14 @@ class FindABugQuery():
         self.db = FindABugDatabase(engine)
         # Get the table corresponding to the specified URL resource.
         self.table = self.db.get_table(url.path[1:]) # Make sure to remove the leading forward slash.
+        
         # Collect all fields used in the query, including those affiliated with the main table. 
         self.fields = self.db.get_fields(self.table).union({field for field, _ in self.qsl})
+        self.query_tables = self.db.get_query_tables(self.fields)
 
-        stmt = select(*self.table.__table__.c)
+        # Make sure to include all columns being referenced in the SELECT statement. 
+        stmt = select([getattr(t, f) for f, t in self.query_tables.items()])
+
         stmt = self.add_joins(stmt)
         stmt = self.add_filters(stmt)
 
@@ -77,10 +81,9 @@ class FindABugQuery():
     
     def add_filters(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
         '''Add the query specifications in the self.qsl list to the query statement.'''
-        query_tables = self.db.get_query_tables(self.fields) # Maps the field to a table.
         
         for field, val in self.qsl:
-            table = query_tables[field]
+            table = self.query_tables[field]
             if val[0] in OPERATORS:
                 stmt = stmt.filter(get_filter(getattr(table, field), operator, val))
             else:
@@ -89,11 +92,10 @@ class FindABugQuery():
 
     def add_joins(self, stmt:sqlalchemy.sql.expression.Select) -> sqlalchemy.sql.expression.Select:
         '''Add all necessary JOINs to the Select statement..'''
-        query_tables = self.db.get_query_tables(self.fields)
 
-        for field in query_tables.keys():
+        for field in self.query_tables.keys():
             # Extract the relevant ORM relationship on which to join. 
-            relationship = getattr(self.table, query_tables[another_field].__tablename__, False)
+            relationship = getattr(self.table, query_tables[field].__tablename__, False)
             if relationship:
                 stmt = stmt.join(relationship)
         return stmt
