@@ -46,18 +46,18 @@ def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
 def get_converter(col:str, dtypes:Dict[str, str]=None):
     
     dtype = dtypes[col] # Get the manually-defined datatype of the column. 
-    if dtype == str:
+    if dtype == 'str':
         def converter(val):
             return str(val)
 
-    elif dtype == int:
+    elif dtype == 'int':
         def converter(val):
             if val == 'none':
                 return -1
             else:
                 return int(val)
 
-    elif dtype == float:
+    elif dtype == 'float':
         def converter(val):
             if val == 'none':
                 return -1.0
