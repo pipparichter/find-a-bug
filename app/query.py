@@ -62,7 +62,7 @@ class FindABugQuery():
         self.query_tables = self.db.get_query_tables(self.fields)
 
         # Make sure to include all columns being referenced in the SELECT statement. 
-        stmt = select([getattr(t, f) for f, t in self.query_tables.items()])
+        stmt = select(*[getattr(t, f) for f, t in self.query_tables.items()])
 
         stmt = self.add_joins(stmt)
         stmt = self.add_filters(stmt)
@@ -95,7 +95,7 @@ class FindABugQuery():
 
         for field in self.query_tables.keys():
             # Extract the relevant ORM relationship on which to join. 
-            relationship = getattr(self.table, query_tables[field].__tablename__, False)
+            relationship = getattr(self.table, self.query_tables[field].__tablename__, False)
             if relationship:
                 stmt = stmt.join(relationship)
         return stmt

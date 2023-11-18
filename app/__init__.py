@@ -64,25 +64,24 @@ def handle(resource=None):
 
     t_final = perf_counter()
         
-    return respond(df, t_final - t_init, len(df))
+    return respond(df, t_final - t_init)
 
 
 def respond(df, t):   
-    
-    csv = io.StringIO()
-    df.to_csv(csv) # Write as a CSV string. 
 
     def response():
         yield f'{len(df)} results in {t} seconds\n'
         yield '\n'
-        yield '-' * 20 # Dividing line.
+        yield '-' * 30 # Dividing line.
         yield '\n'
-        yield csv
+        yield '\t'.join(df.columns)
+        for row in df.itertuples():
+            '\t'.join(row)
        
     # Log the query to the log file. 
-    now = datetime.now()
-    timestamp = now.strftime('%d/%m/%Y %H:%M')
-    logger.info(f'{timestamp} Query to database: {str(fabq)}')
+    # now = datetime.now()
+    # timestamp = now.strftime('%d/%m/%Y %H:%M')
+    # logger.info(f'{timestamp} Query to database: {str(fabq)}')
     
     return response(), 200, {'Content-Type':'text/plain'}
 
