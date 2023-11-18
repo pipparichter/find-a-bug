@@ -56,9 +56,9 @@ class FindABugQuery():
         # Get the table corresponding to the specified URL resource.
         self.table = self.db.get_table(urlparse(url).path[1:]) # Make sure to remove the leading forward slash.
         # Collect all fields used in the query, including those affiliated with the main table. 
-        self.columns = self.table.__table__.c 
+        self.fields = self.db.get_fields(table) + {field for field, _ in self.qsl}
 
-        stmt = select(*self.columns)
+        stmt = select(*self.table.__table__.c)
         stmt = self.add_joins(stmt)
         stmt = self.add_filters(stmt)
 
