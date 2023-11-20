@@ -20,11 +20,15 @@ ENGINE = create_engine(URL)
 ANNOTATIONS_PATH = load_config_paths()['annotations_path'] # Where the annotations are located. 
 TABLE_NAME = 'gtdb_r207_annotations_kegg'
 
+
 def count_annotations():
     '''Counts the total number of annotations stored in the directory. If this is slow, 
     it's probably worth calculating once and storing this information in a file.'''
     annotation_files = os.listdir(ANNOTATIONS_PATH)
-    count = sum([fasta_size(file) for file in os.listdir(ANNOTATIONS_PATH)])
+    count = 0
+    for file in os.listdir(ANNOTATIONS_PATH): # Only gives the filename. 
+        path = os.path.join(ANNOTATIONS_PATH, file)
+        count += csv_size(ptha) 
     return count
 
 
@@ -42,7 +46,7 @@ class TestGTDBAnnotationsKegg(unittest.TestCase):
         num_annotations = count_annotations()
         table_size = get_table_size(ENGINE, TABLE_NAME)
         assert num_annotations == table_size, f'Expected {num_annotations} entries in {TABLE_NAME}, but got {table_size}.'  
-        
+
 
 if __name__ == '__main__':
     unittest.main()

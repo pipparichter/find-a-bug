@@ -11,6 +11,7 @@ import os
 import configparser
 from typing import Dict, TypeVar, NoReturn
 import pickle
+import subprocess
 
 
 def load_config() -> Dict[str, Dict[str, str]]:
@@ -76,6 +77,13 @@ def fasta_seqs(path:str) -> np.array:
 def fasta_size(path:str) -> int:
     '''Get the number of entries in a FASTA file.'''
     return len(fasta_gene_ids(path))
+
+
+def csv_size(path):
+    '''Get the number of entries in a FASTA file.'''
+    n = subprocess.run('wc -l {path}', capture_output=True, text=True).split()[0]
+    n = int(n) # Convert text output to an integer. 
+    return n
 
 
 def pd_from_fasta(path:str, is_genome_file=False) -> pd.DataFrame:
