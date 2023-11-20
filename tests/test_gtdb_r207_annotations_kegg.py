@@ -5,6 +5,7 @@ sys.path.append('/home/prichter/find-a-bug/')
 import unittest
 from data.utils import *
 from sqlalchemy import create_engine
+from tqdm import tqdm
 
 ANNOTATIONS_PATH = load_config_paths()['annotations_path']
 
@@ -26,7 +27,7 @@ def count_annotations():
     it's probably worth calculating once and storing this information in a file.'''
     annotation_files = os.listdir(ANNOTATIONS_PATH)
     count = 0
-    for file in os.listdir(ANNOTATIONS_PATH): # Only gives the filename. 
+    for file in tqdm(os.listdir(ANNOTATIONS_PATH), desc=f'tests.test_{TABLE_NAME}.count_annotations'): # Only gives the filename. 
         path = os.path.join(ANNOTATIONS_PATH, file)
         count += csv_size(path) 
     return count
@@ -49,4 +50,5 @@ class TestGTDBAnnotationsKegg(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    print('Number of annotations:', count_annotations())
+    # unittest.main()
