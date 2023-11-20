@@ -28,7 +28,7 @@ def count_annotations():
     count = 0
     for file in os.listdir(ANNOTATIONS_PATH): # Only gives the filename. 
         path = os.path.join(ANNOTATIONS_PATH, file)
-        count += csv_size(ptha) 
+        count += csv_size(path) 
     return count
 
 
