@@ -41,4 +41,8 @@ class TestGTDBAnnotationsKegg(unittest.TestCase):
         # First get the total number of annotations from the data path. 
         num_annotations = count_annotations()
         table_size = get_table_size(ENGINE, TABLE_NAME)
-        assert num_annotations == table_size, f'Expected {num_annotations} entries in {TABLE_NAME}, but got {table_size}.'
+        assert num_annotations == table_size, f'Expected {num_annotations} entries in {TABLE_NAME}, but got {table_size}.'  
+        
+
+if __name__ == '__main__':
+    unittest.main()
