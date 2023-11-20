@@ -1,7 +1,10 @@
-#!../env/bin/python
 '''Tests for the gtdb_r207_annotations_kegg table in the Find-A-Bug SQL database.'''
+import sys
+sys.path.append('/home/prichter/find-a-bug/')
+
 import unittest
 from data.utils import *
+from sqlalchemy import create_engine
 
 ANNOTATIONS_PATH = load_config_paths()['annotations_path']
 
