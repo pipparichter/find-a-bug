@@ -44,11 +44,13 @@ class TestGTDBAnnotationsKegg(unittest.TestCase):
     def test_annotation_ids_are_correct(self):
         '''Make sure that all IDs in the range (0, [number of annotations]) are present in the database.'''
         # First get the total number of annotations from the data path. 
-        num_annotations = count_annotations()
+        num_annotations = 98265928 # count_annotations()
         table_size = get_table_size(ENGINE, TABLE_NAME)
         assert num_annotations == table_size, f'Expected {num_annotations} entries in {TABLE_NAME}, but got {table_size}.'  
 
 
 if __name__ == '__main__':
-    print('Number of annotations:', count_annotations())
+    # print('Number of annotations:', count_annotations())
+    # Number of annotations: 98265928
+
     # unittest.main()
