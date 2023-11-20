@@ -81,7 +81,7 @@ def fasta_size(path:str) -> int:
 
 def csv_size(path):
     '''Get the number of entries in a FASTA file.'''
-    n = subprocess.run('wc -l {path}', capture_output=True, text=True).split()[0]
+    n = subprocess.run(f'wc -l {path}', capture_output=True, text=True).split()[0]
     n = int(n) # Convert text output to an integer. 
     return n
 
