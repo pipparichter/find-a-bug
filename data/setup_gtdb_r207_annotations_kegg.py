@@ -34,13 +34,15 @@ def setup(engine):
             df['genome_id'] = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
             df['annotation_id'] = np.arange(annotation_id, annotation_id + len(df)) # Add unique annotation_id for the primary key. 
             annotation_id += len(df)
+            batch_df.append(df)
 
+        batch_df = pd.concat(batch_df) # combine all DataFrames. 
          # Put the table into the SQL database. Add a primary key on the first pass. 
         if not table_exists:
-            upload_to_sql_table(df.set_index('annotation_id'), TABLE_NAME, engine, primary_key='annotation_id', if_exists='replace')
+            upload_to_sql_table(batch_df.set_index('annotation_id'), TABLE_NAME, engine, primary_key='annotation_id', if_exists='replace')
             table_exists = True
         else:
-            upload_to_sql_table(df.set_index('annotation_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
+            upload_to_sql_table(batch_df.set_index('annotation_id'), TABLE_NAME, engine, primary_key=None, if_exists='append')
 
 
 if __name__ == '__main__':

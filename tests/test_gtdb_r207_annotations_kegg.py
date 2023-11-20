@@ -53,4 +53,4 @@ if __name__ == '__main__':
     # print('Number of annotations:', count_annotations())
     # Number of annotations: 98265928
 
-    # unittest.main()
+    unittest.main()
