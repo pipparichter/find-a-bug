@@ -201,7 +201,7 @@ def get_column_data(engine, table, column):
 
 def get_table_size(engine, table):
     '''Gets the number of entries in a table.'''
-     with engine.begin() as conn:
+    with engine.begin() as conn:
         # The execute method returns a CursorResult. Calling all returns a list of Row objects.
         # Row objects behave "as much like Python named tuples as possible." 
         count = conn.execute(sqlalchemy.text(f'SELECT COUNT(*) from {table}')).scalar_one()
