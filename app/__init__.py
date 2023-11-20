@@ -3,7 +3,6 @@
 import sys
 import os
 from datetime import datetime
-import io
 import pandas as pd
 import logging
 from flask import Flask, request # Response, make_response
@@ -12,6 +11,7 @@ from sqlalchemy import create_engine
 from app.query import FindABugQuery
 import traceback
 import configparser
+import numpy as np
 
 # Instantiate and configure the logger. 
 logging.basicConfig(filename='find-a-bug.log', filemode='a')
@@ -27,6 +27,7 @@ config = configparser.ConfigParser()
 with open(os.path.join(os.path.dirname(__file__), '../',  'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
     config.read_file(f)
 
+# According to SQLAlchemy documentation, it is most efficient to instantiate the engine at the module level. 
 URL = '{dialect}+{driver}://{user}:{password}@{host}/{name}'.format(**dict(config.items('db')))
 ENGINE = create_engine(URL)
 
@@ -70,13 +71,13 @@ def handle(resource=None):
 def respond(df, t):   
 
     def response():
-        yield f'{len(df)} results in {t} seconds\n'
-        yield '\n'
-        yield '-' * 30 # Dividing line.
-        yield '\n'
-        yield '\t'.join(df.columns)
+        yield f'{len(df)} results in {np.round(t, 3)} seconds\n'
+        yield '-' * 50 # Dividing line.
+        yield '\n\n'
+        yield ','.join(df.columns) + '\n'
         for row in df.itertuples():
-            '\t'.join(row)
+            # First row element is the index, which we do not want to include. 
+            yield ','.join([str(elem) for elem in row[1:]]) + '\n'
        
     # Log the query to the log file. 
     # now = datetime.now()
@@ -84,5 +85,6 @@ def respond(df, t):
     # logger.info(f'{timestamp} Query to database: {str(fabq)}')
     
     return response(), 200, {'Content-Type':'text/plain'}
+
 
 

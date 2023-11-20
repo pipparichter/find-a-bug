@@ -181,11 +181,32 @@ def upload_to_sql_table(
     # Setting index to True means df.index is used (this is the default setting).
     df.to_sql(name, engine, dtype=get_sql_dtypes(df), if_exists=if_exists, chunksize=1000, method='multi')
     
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         if primary_key is not None:
             conn.execute(sqlalchemy.text(f'ALTER TABLE {name} ADD PRIMARY KEY ({primary_key})'))
 
     # print(f'{f}: Upload to table {name} successful.')
+
+
+# It's possible I'll have to do this in chunks? Using LIMIT and OFFSET for pagination. 
+def get_column_data(engine, table, column):
+    '''Query the database to get information from a column.'''
+    with engine.begin() as conn:
+        # The execute method returns a CursorResult. Calling all returns a list of Row objects.
+        # Row objects behave "as much like Python named tuples as possible." 
+        rows = conn.execute(sqlalchemy.text(f'SELECT {column} from {table}')).all()
+        # Because we are only selecting one column at a time, should only be one element in each Row. 
+        rows = [r[0] for r in rows]
+    return rows
+
+def get_table_size(engine, table):
+    '''Gets the number of entries in a table.'''
+     with engine.begin() as conn:
+        # The execute method returns a CursorResult. Calling all returns a list of Row objects.
+        # Row objects behave "as much like Python named tuples as possible." 
+        count = conn.execute(sqlalchemy.text(f'SELECT COUNT(*) from {table}')).scalar_one()
+        # Because we are only selecting one column at a time, should only be one element in each Row. 
+    return count 
 
 
 # def get_duplicate_annotation_info(collect='num_instances'):
