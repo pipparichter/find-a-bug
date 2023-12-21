@@ -94,7 +94,7 @@ class FindABugQuery():
         for field, val in query_list:
             table = field_to_table_map[field]
             col = getattr(table, field) # Extract the column from the Table. 
-            op, val = '=', val if val[0] not in OPERATORS else val[0], val[1:] # Default to the equals operator. 
+            op, val = ('=', val) if val[0] not in OPERATORS else (val[0], val[1:]) # Default to the equals operator. 
             self.stmt = self.stmt.filter(get_filter(getattr(table, field), op, val))
 
     def add_joins(self, table:Table=None, tables:List[Table]=None) -> NoReturn:
