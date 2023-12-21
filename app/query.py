@@ -77,10 +77,10 @@ class FindABugQuery():
         self.add_joins(table=table, tables=[t for t in field_to_table_map.values()])
         self.add_filters(query_list=query_list, field_to_table_map=field_to_table_map )
 
-        page = None if len(url.fragment) == 0 else int(url.fragment)
-        if page is not None: # Default page size to 500. 
-            self.stmt = self.stmt.offset(page_size * self.page)
-        self.stmt = self.stmt.limit(500)
+        # Handling pagination. 
+        page = 0 if len(url.fragment) == 0 else int(url.fragment)
+        page_size = 500
+        self.stmt = self.stmt.offset(page_size * page).limit(page_size)
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
