@@ -19,7 +19,7 @@ logger = logging.getLogger('find-a-bug')
 # Tells Flask the name of the current module. 
 app = Flask(__name__)
 
-ENGINE = create_engine(f'marisab+pymysql://root:Doledi7-Bebyno2@localhost/findabug')
+ENGINE = create_engine(f'mariadb+pymysql://root:Doledi7-Bebyno2@localhost/findabug')
 
 
 @app.errorhandler(Exception)
