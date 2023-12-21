@@ -73,7 +73,7 @@ def respond(df:pd.DataFrame, t:float) -> Tuple[Generator[str, None, None], int, 
         dictionary specifying the content type.    
     '''
 
-    def response() -> Generator[str, None, none]:
+    def response() -> Generator[str, None, None]:
         yield f'{len(df)} results in {np.round(t, 3)} seconds\n'
         yield '-' * 50 # Dividing line.
         yield '\n\n'
