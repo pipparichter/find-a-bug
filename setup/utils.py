@@ -37,7 +37,6 @@ def read(path:str) -> str:
         text = f.read()
     return text
 
-
 # NOTE: Seems as though these FASTA files have slightly different header conventions. 
 def get_gene_id(head:str) -> str:
     '''Extract the unique identifier from a FASTA metadata string (the 
@@ -45,6 +44,7 @@ def get_gene_id(head:str) -> str:
     gene_id = head.split(' # ')[0]
     gene_id = gene_id[1:] # Remove the leading carrot. 
     return gene_id
+    
 
 def fasta_gene_ids(path:str) -> np.array:
     '''Extract all gene gene_ids stored in a FASTA file.'''

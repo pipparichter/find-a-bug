@@ -1,5 +1,3 @@
-'''
-'''
 import sys
 import os
 from datetime import datetime
@@ -10,7 +8,6 @@ from time import perf_counter
 from sqlalchemy import create_engine
 from app.query import FindABugQuery
 import traceback
-import configparser
 import numpy as np
 
 from typing import List, Generator, Dict, Tuple
@@ -22,14 +19,7 @@ logger = logging.getLogger('find-a-bug')
 # Tells Flask the name of the current module. 
 app = Flask(__name__)
 
-
-# Read in the config file, which is in the project root directory. 
-with open(os.path.join('/home/prichter/find-a-bug/find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-    config = configparser.ConfigParser().read_file(f)
-
-# According to SQLAlchemy documentation, it is most efficient to instantiate the engine at the module level. 
-URL = '{dialect}+{driver}://{user}:{password}@{host}/{name}'.format(**dict(config.items('db')))
-ENGINE = create_engine(URL)
+ENGINE = create_engine(f'marisab+pymysql://root:Doledi7-Bebyno2@localhost/findabug')
 
 
 @app.errorhandler(Exception)
