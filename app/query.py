@@ -79,7 +79,8 @@ class FindABugQuery():
 
         page = None if len(url.fragment) == 0 else int(url.fragment)
         if page is not None: # Default page size to 500. 
-            self.stmt = self.stmt.offset(self.page_size * self.page).limit(500)
+            self.stmt = self.stmt.offset(page_size * self.page)
+        self.stmt = self.stmt.limit(500)
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
