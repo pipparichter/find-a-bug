@@ -79,7 +79,7 @@ def respond(df:pd.DataFrame, t:float) -> Tuple[Generator[str, None, None], int, 
     :param df: A DataFrame containing the information from the query. 
     :param t: The time it took to retrieve the query information. 
     :return: A string generator to produce the response, as well as the response status code and a
-        dictoinary specifying the content type.    
+        dictionary specifying the content type.    
     '''
 
     def response() -> Generator[str, None, none]:

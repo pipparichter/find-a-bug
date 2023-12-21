@@ -2,7 +2,7 @@
 server from a client, and builds a query which can be sent to the SQL database.'''
 from warnings import warn
 from sqlalchemy import or_, func, desc, select, text, column, Table
-from sqlqlchemy.schema import Column
+from sqlalchemy.schema import Column
 from urllib.parse import parse_qsl, urlparse
 from typing import Set, List, Dict, NoReturn, Tuple
 from app.database import FindABugDatabase
