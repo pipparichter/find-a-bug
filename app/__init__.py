@@ -13,6 +13,8 @@ import traceback
 import configparser
 import numpy as np
 
+from typing import List, Generator, Dict, Tuple
+
 # Instantiate and configure the logger. 
 logging.basicConfig(filename='find-a-bug.log', filemode='a')
 logger = logging.getLogger('find-a-bug')
@@ -22,10 +24,8 @@ app = Flask(__name__)
 
 
 # Read in the config file, which is in the project root directory. 
-config = configparser.ConfigParser()
-# with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-with open(os.path.join(os.path.dirname(__file__), '../',  'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-    config.read_file(f)
+with open(os.path.join('/home/prichter/find-a-bug/find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
+    config = configparser.ConfigParser().read_file(f)
 
 # According to SQLAlchemy documentation, it is most efficient to instantiate the engine at the module level. 
 URL = '{dialect}+{driver}://{user}:{password}@{host}/{name}'.format(**dict(config.items('db')))
@@ -36,10 +36,10 @@ ENGINE = create_engine(URL)
 def handle_unknown_error(err):
     '''Error handling when unanticipated exceptions are raised. '''
     # Log the error. 
-    logger.error(str(err))
-    report = traceback.format_exc().split('\n')
+    # logger.error(str(err))
+    report = traceback.format_exc()
     
-    return '\n'.join(report), 500, {'Content-Type':'text/plain'}
+    return report, 500, {'Content-Type':'text/plain'}
 
 
 @app.route('/')
@@ -54,9 +54,14 @@ def info():
 
 
 @app.route('/<resource>')
-def handle(resource=None):
+def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
+    '''Handles a resource request to the server. 
+
+    :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
+    :return: Calls the respond function (defined below) using the data obtained for the query.
     '''
-    '''
+
+    assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
 
     t_init = perf_counter()
     fabq = FindABugQuery(request.url, ENGINE)
@@ -68,9 +73,16 @@ def handle(resource=None):
     return respond(df, t_final - t_init)
 
 
-def respond(df, t):   
+def respond(df:pd.DataFrame, t:float) -> Tuple[Generator[str, None, None], int, Dict[str, str]]:   
+    '''Generates a response to send out to the requesting client.
+    
+    :param df: A DataFrame containing the information from the query. 
+    :param t: The time it took to retrieve the query information. 
+    :return: A string generator to produce the response, as well as the response status code and a
+        dictoinary specifying the content type.    
+    '''
 
-    def response():
+    def response() -> Generator[str, None, none]:
         yield f'{len(df)} results in {np.round(t, 3)} seconds\n'
         yield '-' * 50 # Dividing line.
         yield '\n\n'
@@ -78,11 +90,6 @@ def respond(df, t):
         for row in df.itertuples():
             # First row element is the index, which we do not want to include. 
             yield ','.join([str(elem) for elem in row[1:]]) + '\n'
-       
-    # Log the query to the log file. 
-    # now = datetime.now()
-    # timestamp = now.strftime('%d/%m/%Y %H:%M')
-    # logger.info(f'{timestamp} Query to database: {str(fabq)}')
     
     return response(), 200, {'Content-Type':'text/plain'}
 

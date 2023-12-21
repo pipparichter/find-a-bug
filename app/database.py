@@ -20,8 +20,6 @@ class Reflected(DeferredReflection):
     __abstract__ = True # NOTE: What does this mean?
 
 
-
-
 class Metadata_r207(Reflected, Base):
 
     release = 207
@@ -78,31 +76,45 @@ class FindABugDatabase():
         Reflected.prepare(engine)
         self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
     
-    def get_query_tables(self, fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
-        '''Returns a dictionary mapping the fields in the input to the Sqlalchemy table in which
-        they are found. Minimizes the number of tables required to cover the fields.'''
+    def get_field_to_table_map(self, fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
+        '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
+        they are found. Minimizes the number of tables required to cover the fields.
+        
+        :param fields: The fields which must be covered in the set of tables returned by this function. 
+        :return: A dictionary mapping each input field to a table which contains it. 
+        '''
         
         # Sort the tables according to the number of columns they "cover"
         all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c))
-        query_tables = {}
+        field_to_table_map = {}
 
         for table in all_tables:
             if len(fields) == 0:
                 break
-            query_tables.update({field:table for field in fields.intersection(self.get_fields(table))})
+            field_to_table_map.update({field:table for field in fields.intersection(self.get_fields(table))})
             fields = fields - self.get_fields(table)
-        return query_tables
+
+        return field_to_table_map
 
     def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
-        '''Get all the fields stored in the table.'''
+        '''Get all the fields stored in the table.
+        
+        :param table: A SQLAlchemy table for which to grab the field names. 
+        :return: A set of strings representing the columns of the table. 
+        '''
         return set([c.name for c in table.__table__.c])
 
-    def get_table(self, name):
-        '''Get the table corresponding to the given name.'''
-        aliases = {'annotations':'gtdb_r207_annotations_kegg', 'sequences':'gtdb_r207_amino_acid_seqs', 'metadata':'gtdb_r207_metadata'}
+    def get_table(self, name:str) -> sqlalchemy.Table:
+        '''Get the table corresponding to the given name.
+        
+        :param name: The name of the table to grab.
+        :return: The SQLAlchemy table object with the specified name. 
+        :raise: ValueError if the input table name does not match any in the database. 
+        '''
         # Probably should treat this like a dictionary, eventually. 
         for table in self.tables:
-            if table.__tablename__ == aliases[name]:
+            if table.__tablename__ == name:
                 return table
 
+        raise ValueError('database.FindABugDatabase.get_table: Table {name} is not present in the database.')
    

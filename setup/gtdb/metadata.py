@@ -5,12 +5,14 @@ import numpy as np
 import os
 from time import perf_counter
 from tqdm import tqdm
-from utils import upload_to_sql_table, pd_from_fasta, URL, load_config_paths
 from typing import Dict
 
-BACTERIA_METADATA_PATH = load_config_paths()['bacteria_metadata_path']
-ARCHAEA_METADATA_PATH = load_config_paths()['archaea_metadata_path']
+import sys
+sys.path.append('../') # Make the utils directory accessible. 
+from utils import *
 
+BACTERIA_METADATA_PATH = '/var/lib/pgsql/data/gtdb/r207/metadata/bac120_metadata_r207.tsv'
+ARCHAEA_METADATA_PATH = '/var/lib/pgsql/data/gtdb/r207/metadata/ar53_metadata_r207.tsv'
 TABLE_NAME = 'gtdb_r207_metadata'
 
 # Almost certainly a better way to do what this function does. 
@@ -96,10 +98,13 @@ def setup(engine):
 
 
 if __name__ == '__main__':
-    
-    print(f'Starting engine with URL {URL}')
-    engine = sqlalchemy.create_engine(URL, echo=False)
+
+    url = get_database_url()
+    print(f'Starting engine with URL {url}')
+    engine = sqlalchemy.create_engine(url, echo=False)
+
     t_init = perf_counter()
     setup(engine)
     t_final = perf_counter()
+    
     print(f'\nTable {TABLE_NAME} uploaded in {t_final - t_init} seconds.')

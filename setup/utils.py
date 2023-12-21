@@ -8,31 +8,20 @@ import sqlalchemy
 from sqlalchemy import Integer, Float, Boolean
 from sqlalchemy.dialects.mysql import VARCHAR, LONGTEXT
 import os   
-import configparser
 from typing import Dict, TypeVar, NoReturn
 import pickle
 import subprocess
 
 
-def load_config() -> Dict[str, Dict[str, str]]:
-    '''Loads information from the configuration file as a dictionary. Assumes the 
-    configuration file is in the project root directory.'''
-
-    # Read in the config file, which is in the project root directory. 
-    config = configparser.ConfigParser()
-    # with open('/home/prichter/Documents/find-a-bug/find-a-bug.cfg', 'r', encoding='UTF-8') as f:
-    with open(os.path.join(os.path.dirname(__file__), '../', 'find-a-bug.cfg'), 'r', encoding='UTF-8') as f:
-        config.read_file(f)
-    return config._sections # This gets everything as a dictionary. 
-
-
-def load_config_paths() -> Dict[str, str]:
-    '''Loads everything under the [paths] heading in the config file as a dictionary.'''
-    return load_config()['paths']
-
-
-# Load the URL to use for accessing the SQL Database. Not sure if this is great practice. I might want to wrap it in a function. 
-URL = '{dialect}+{driver}://{user}:{password}@{host}/{name}'.format(**load_config()['db'])
+def get_database_url() -> str:
+    '''Load the URL to use for accessing the SQL Database.''' 
+    host = 'localhost'
+    dialect = 'mariadb'
+    driver = 'pymysql'
+    user = 'root'
+    password = 'Doledi7-Bebyno2'
+    name = 'findabug'
+    return  f'{dialect}+{driver}://{user}:{password}@{host}/{name}'
 
 
 def write(text:str, path:str) -> NoReturn:
@@ -206,6 +195,7 @@ def get_column_data(engine, table, column):
         # Because we are only selecting one column at a time, should only be one element in each Row. 
         rows = [r[0] for r in rows]
     return rows
+
 
 def get_table_size(engine, table):
     '''Gets the number of entries in a table.'''
