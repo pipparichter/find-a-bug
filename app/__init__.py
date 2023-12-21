@@ -7,6 +7,7 @@ from flask import Flask, request # Response, make_response
 from time import perf_counter
 from sqlalchemy import create_engine
 from app.query import FindABugQuery
+import requests
 import traceback
 import numpy as np
 
