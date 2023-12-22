@@ -79,6 +79,8 @@ class FindABugQuery():
 
         # Handling pagination. 
         page_size = 500
+        # Use orderby to enforce consistent behavior. 
+        self.stmt = self.stmt.order_by(getattr(table, fields[0]))
         self.stmt = self.stmt.offset(page * page_size).limit(page_size)
 
     def execute(self):
