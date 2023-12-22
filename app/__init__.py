@@ -10,6 +10,7 @@ from app.query import FindABugQuery
 import requests
 import traceback
 import numpy as np
+import re
 
 from typing import List, Generator, Dict, Tuple
 
@@ -44,6 +45,21 @@ def info():
     return 'TODO', 200
 
 
+def get_page(url:str) -> Tuple[int, str]:
+    '''Retrieve the page from the URL, if one is specified, as well as the 
+    URL without the page in the query list.append
+    
+    :param url: The URL sent by the client to the web application.
+    :return: A tuple containing the extracted page number and the URL without a page={page} query. 
+    '''
+    if 'page' in url:
+        page = int(re.search('page=([0-9]+)', url).group(1))
+        url = re.sub('[?]*page=([0-9]+)[&]*', '', url)
+        return page, url
+    else:
+        return 0, url
+
+
 @app.route('/<resource>')
 def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     '''Handles a resource request to the server. 
@@ -55,7 +71,10 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
 
     t_init = perf_counter()
-    fabq = FindABugQuery(request.url, ENGINE)
+
+    page, url = get_page(request.url)
+
+    fabq = FindABugQuery(request.url, ENGINE, page=page)
     result = fabq.execute()
     df = pd.DataFrame.from_records(result, columns=result[0]._fields)
 

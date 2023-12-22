@@ -44,7 +44,7 @@ def get_filter(col:Column, operator:str, value:str):
 
 class FindABugQuery():
     
-    def __init__(self, url, engine):
+    def __init__(self, url, engine, page=None):
         '''Initialize a FindABugQuery object.'''
 
          # Create a new session, storing the table names in the info field. 
@@ -78,13 +78,11 @@ class FindABugQuery():
         self.add_filters(query_list=query_list, field_to_table_map=field_to_table_map )
 
         # Handling pagination. 
-        self.page = 0 if len(url.fragment) == 0 else int(url.fragment)
-        self.page_size = 500
-        self.stmt = self.stmt.offset(self.page * self.page_size).limit()
+        page_size = 500
+        self.stmt = self.stmt.offset(page * page_size).limit(page_size)
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
-        raise Exception(print(self.stmt))
         return self.session.execute(self.stmt).all()
 
     def add_filters(self, query_list:List[Tuple[str, str]]=None, field_to_table_map:Dict[str, Table]=None) -> NoReturn:
