@@ -74,7 +74,7 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     page, url = get_page(request.url)
 
-    fabq = FindABugQuery(request.url, ENGINE, page=page)
+    fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
     df = pd.DataFrame.from_records(result, columns=result[0]._fields)
 
