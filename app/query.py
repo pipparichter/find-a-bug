@@ -78,14 +78,15 @@ class FindABugQuery():
         self.add_filters(query_list=query_list, field_to_table_map=field_to_table_map )
 
         # Handling pagination. 
-        page = 0 if len(url.fragment) == 0 else int(url.fragment)
-        page_size = 500
-        self.stmt = self.stmt.offset(page_size * page).limit(page_size)
+        self.page = 0 if len(url.fragment) == 0 else int(url.fragment)
+        self.page_size = 500
+        self.stmt = self.stmt.offset(self.page * self.page_size).limit()
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
+        raise Exception(print(self.stmt))
         return self.session.execute(self.stmt).all()
-    
+
     def add_filters(self, query_list:List[Tuple[str, str]]=None, field_to_table_map:Dict[str, Table]=None) -> NoReturn:
         '''Add the specifications in the query list to the statement attribute.
         
