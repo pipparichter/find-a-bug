@@ -132,9 +132,7 @@ def get_sql_dtypes(df:pd.DataFrame):
     return dtypes
 
 
-def drop_sql_table(
-    name:str,
-    engine:sqlalchemy.engine.Engine) -> NoReturn:
+def drop_sql_table(name:str,engine:sqlalchemy.engine.Engine) -> NoReturn:
     '''Deletes a SQL table from the Find-A-Bug database. The connection should already be to a specific 
     database (as specified in the find-a-bug.cfg file), so no need to specify here.'''
 
@@ -142,9 +140,7 @@ def drop_sql_table(
         conn.execute(sqlalchemy.text(f'DROP TABLE {name}'))
 
 
-def sql_table_exists(
-    name:str,
-    engine:sqlalchemy.engine.Engine) -> bool:
+def sql_table_exists(name:str, engine:sqlalchemy.engine.Engine) -> bool:
     '''Checks for the existence of a table in the database.'''
     
     # Collect a list of all tables in the database.
