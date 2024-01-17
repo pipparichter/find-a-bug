@@ -90,6 +90,9 @@ def setup(engine):
         # df = df.drop(columns=['ncbi_submitter', 'ncbi_ncrna_count', 'ncbi_rrna_count', 'ncbi_ssu_count', 'ncbi_translation_table', 'ncbi_trna_count', 'ncbi_ungapped_length'])
         df = df.drop(columns=['ncbi_submitter', 'ncbi_translation_table'])
         df = df.rename(columns={'accession':'genome_id'})
+        # Remove the RS_ or GB_ prefix, and add to a separate column indicating the genome source. 
+        df['source'] = df.genome_id.str.slice(start=0, stop=2)
+        df['genome_id'] = df.genome_id.str.slice(start=3)
         dfs.append(df)
 
     df = pd.concat(dfs)

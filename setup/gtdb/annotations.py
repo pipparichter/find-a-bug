@@ -32,7 +32,11 @@ def setup(engine):
         for file in batch:
             # Need to lad everything in as strings, so that I can merge duplicate rows. Not sure how efficient this is. 
             df = pd.read_csv(os.path.join(ANNOTATIONS_DIR_PATH, file), header=0, names=['gene_id', 'ko', 'threshold', 'score', 'e_value'])
-            df['genome_id'] = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
+
+            genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
+            _, genome_id = genome_id[:2], genome_id[3:] # Remove the RS or GB prefix.
+
+            df['genome_id'] =  genome_id
             df['annotation_id'] = np.arange(annotation_id, annotation_id + len(df)) # Add unique annotation_id for the primary key. 
             annotation_id += len(df)
             batch_df.append(df)
