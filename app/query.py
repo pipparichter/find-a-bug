@@ -56,15 +56,20 @@ class FindABugQuery():
         
         url = urlparse(url) # Parse the URL string.
         resource = url.path.replace('/', '') # One of annotations, sequences, or metadata. 
+        # Define the minimum fields to return when each resource is queried. Also define the primary field, which is what
+        # is used to order the response data. These correspond to the primary keys of the tables. 
         if resource == 'annotations':
             table = db.get_table('gtdb_r207_annotations_kegg')
-            fields = ['gene_id', 'ko', 'genome_id'] # Minimum fields to return for this table. 
+            fields = ['gene_id', 'ko', 'genome_id', 'annotation_id'] # Minimum fields to return for this table. 
+            primary_field = 'annotation_id'
         elif resource == 'sequences':
             table = db.get_table('gtdb_r207_amino_acid_seqs')
             fields = ['gene_id', 'seq', 'genome_id'] # Minimum fields to return for this table. 
+            primary_field = 'gene_id'
         elif resource == 'metadata':
             table = db.get_table('gtdb_r207_metadata')
             fields = ['genome_id'] # Minimum fields to return for this table. 
+            primary_field = 'genome_id'
         
         query_list = parse_qsl(url.query, separator='&') # Returns a list of key, value pairs. This may be empty. 
         # Collect all fields used in the query, including those affiliated with the main table. 
@@ -80,7 +85,7 @@ class FindABugQuery():
         # Handling pagination. 
         page_size = 500
         # Use orderby to enforce consistent behavior. 
-        self.stmt = self.stmt.order_by(getattr(table, fields[0]))
+        self.stmt = self.stmt.order_by(getattr(table, primary_field))
         self.stmt = self.stmt.offset(page * page_size).limit(page_size)
 
     def execute(self):
