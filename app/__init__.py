@@ -76,11 +76,13 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
-    df = pd.DataFrame.from_records(result, columns=result[0]._fields)
 
-    t_final = perf_counter()
-        
-    return respond(df, t_final - t_init)
+    if len(result) == 0:
+        return str(result), 200:welcome
+    else:
+        df = pd.DataFrame.from_records(result, columns=result[0]._fields)
+        t_final = perf_counter()
+        return respond(df, t_final - t_init)
 
 
 def respond(df:pd.DataFrame, t:float) -> Tuple[Generator[str, None, None], int, Dict[str, str]]:   
