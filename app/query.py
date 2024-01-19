@@ -74,7 +74,7 @@ class FindABugQuery():
         query_list = parse_qsl(url.query, separator='&') # Returns a list of key, value pairs. This may be empty. 
         # Collect all fields used in the query, including those affiliated with the main table. 
         fields = set(fields).union({field for field, _ in query_list})
-        field_to_table_map = db.get_field_to_table_map(fields)
+        field_to_table_map = db.get_field_to_table_map(fields, table=table)
 
         # Make sure to include all columns being referenced in the SELECT statement. 
         self.stmt = select(*[getattr(t, f) for f, t in field_to_table_map.items()])
@@ -90,6 +90,7 @@ class FindABugQuery():
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
+        return str(self.stmt)
         return self.session.execute(self.stmt).all()
 
     def add_filters(self, query_list:List[Tuple[str, str]]=None, field_to_table_map:Dict[str, Table]=None) -> NoReturn:

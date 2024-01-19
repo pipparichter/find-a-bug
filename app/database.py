@@ -76,22 +76,25 @@ class FindABugDatabase():
         Reflected.prepare(engine)
         self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
     
-    def get_field_to_table_map(self, fields:Set[str]) -> Dict[str, sqlalchemy.Table]:
+    def get_field_to_table_map(self, fields:Set[str], table:sqlalchemy.Table=None) -> Dict[str, sqlalchemy.Table]:
         '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
         they are found. Minimizes the number of tables required to cover the fields.
         
         :param fields: The fields which must be covered in the set of tables returned by this function. 
+        :param table: The main query table, i.e. the one which corresponds to the requested resource. 
         :return: A dictionary mapping each input field to a table which contains it. 
         '''
-        
-        # Sort the tables according to the number of columns they "cover"
-        all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c))
-        field_to_table_map = {}
+        # Initialize the field_to_table_map with the fields in the main table. 
+        # This will hopefully avoid any unnecessary joins. 
+        field_to_table_map = {f:table for f in fields.intersection(self.get_fields(table))}
+        fields = fields - self.get_fields(table) # Remove the fields which have already been added. 
 
-        for table in all_tables:
+        # Sort the tables according to the number of columns they "cover." Exclude the main query table. 
+        all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c)).remove(table)
+        for t in all_tables:
             if len(fields) == 0:
                 break
-            field_to_table_map.update({field:table for field in fields.intersection(self.get_fields(table))})
+            field_to_table_map.update({f:t for f in fields.intersection(self.get_fields(table))})
             fields = fields - self.get_fields(table)
 
         return field_to_table_map
