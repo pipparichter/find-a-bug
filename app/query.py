@@ -99,6 +99,9 @@ class FindABugQuery():
         :param field_to_table_map: A dictionary mapping a field name to a SQLAlchemy Table object.         
         '''
         for field, val in query_list:
+            # Asterisk means that no filter is applied, just include the values associated with the field.
+            if val == '*':
+                continue
             table = field_to_table_map[field]
             col = getattr(table, field) # Extract the column from the Table. 
             op, val = ('=', val) if val[0] not in OPERATORS else (val[0], val[1:]) # Default to the equals operator. 
