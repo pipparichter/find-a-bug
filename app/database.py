@@ -89,8 +89,9 @@ class FindABugDatabase():
         field_to_table_map = {f:table for f in fields.intersection(self.get_fields(table))}
         fields = fields - self.get_fields(table) # Remove the fields which have already been added. 
 
-        # Sort the tables according to the number of columns they "cover." Exclude the main query table. 
-        all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c)).remove(table)
+        # Sort the tables according to the number of columns they "cover." 
+        all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c))
+        all_tables.remove(table) # Exclude the main query table. 
         for t in all_tables:
             if len(fields) == 0:
                 break
