@@ -90,7 +90,6 @@ class FindABugQuery():
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
-        return str(self.stmt)
         return self.session.execute(self.stmt).all()
 
     def add_filters(self, query_list:List[Tuple[str, str]]=None, field_to_table_map:Dict[str, Table]=None) -> NoReturn:
