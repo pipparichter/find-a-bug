@@ -59,6 +59,22 @@ def get_page(url:str) -> Tuple[int, str]:
     else:
         return 0, url
 
+@app.route('/sql/<resource>')
+def sql(resource:str=None) -> Tuple[str, int]:
+    '''Returns the SQL query submitted to the Find-A-Bug database to the client. 
+      
+    :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
+    :return: The SQL query and the status code. 
+    '''
+    assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
+
+    url = request.url.replace('/sql', '') # Convert the URL to one which mirrors a resource request. 
+    page, url = get_page(url)
+
+    fabq = FindABugQuery(url, ENGINE, page=page)
+
+    return str(fabq), 200
+    
 
 @app.route('/<resource>')
 def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
@@ -75,8 +91,8 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     page, url = get_page(request.url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
-    result = fabq.execute()
-
+    # result = fabq.execute()
+    return str(fabq.stmt), 200
     if len(result) == 0:
         # In case of no results.
         return 'NONE', 200

@@ -121,6 +121,12 @@ class FindABugQuery():
             if relationship:
                 self.stmt = self.stmt.join(relationship)
 
+    def __str__(self):
+        '''Return a string representation of the query, which is the statement sent to the SQL database.
+        Mostly for debugging purposes.'''
+        # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
+        return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
+
 
 
 
