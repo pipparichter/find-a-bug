@@ -75,16 +75,13 @@ def csv_size(path):
     return n
 
 
-def pd_from_fasta(path:str, is_genome_file=False) -> pd.DataFrame:
+def pd_from_fasta(path:str) -> pd.DataFrame:
     '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
     add the genome ID as an additional column.'''
     gene_ids = fasta_gene_ids(path)
     seqs = fasta_seqs(path)
     df = pd.DataFrame({'seq':seqs, 'gene_id':gene_ids})
 
-    if is_genome_file:
-        filename = os.path.basename(path) # Extract the filename.
-        df['genome_id'] = filename[:-len('_protein.faa')]# File names are of the form {genome_id}_protein.faa
 
     return df
 

@@ -30,9 +30,14 @@ def setup(engine):
         genome_file_batches = np.array_split(genome_files, (len(genome_files) // 100) + 1)
         
         for batch in tqdm(genome_file_batches, desc='setup_gtb_r207_amino_acid_seqs.setup'):
-            # Process the genome files in chunks to avoid crashing the process.   
-            # Setting is_genome_file=True automatically adds the genome_id to the DataFrame.          
-            df = pd.concat([pd_from_fasta(os.path.join(path, g), is_genome_file=True) for g in batch]).fillna('None')
+            # Process the genome files in chunks to avoid crashing the process.
+            dfs = []   
+            for genome_file in batch:    
+                genome_id = genome_file.replace('_protein.faa', '')    
+                # Remove the prefix. Don't bother adding the source to this table, as it is already present in the metadata table. 
+                genome_id = genome_id[3:]
+                dfs.append(pd_from_fasta(os.path.join(path, genome_file)))
+            df = pd.concat(dfs).fillna('none')
 
             # Put the table into the SQL database. Add a primary key on the first pass. 
             if not table_exists:
