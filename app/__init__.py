@@ -80,7 +80,6 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     if len(result) == 0:
         return str(result), 200
     else:
-        return str(result), 200
         df = pd.DataFrame.from_records(result, columns=result[0]._fields)
         t_final = perf_counter()
         return respond(df, t_final - t_init)
