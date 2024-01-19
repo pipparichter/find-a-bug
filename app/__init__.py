@@ -77,7 +77,7 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
 
-    if len(results) == 0:
+    if len(result) == 0:
         # In case of no results.
         return 'NONE', 200
     else:
