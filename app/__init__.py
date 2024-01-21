@@ -32,10 +32,10 @@ def handle_unknown_error(err):
     # logger.error(str(err))
     # exception = sys.exception() # Access the exception. 
     err = traceback.format_exception_only(type(err), err) # Returns a list of strings, usually just one string. 
-    logger.error(err[0])
+    logger.error(str(err))
 
-    report = traceback.format_exc() # Return the full traceback. 
-    return report, 500, {'Content-Type':'text/plain'}
+    # report = traceback.format_exc() # Return the full traceback. 
+    return 'Exception raised, see log for details.', 500, {'Content-Type':'text/plain'}
 
 
 @app.route('/')
