@@ -15,7 +15,8 @@ import re
 from typing import List, Generator, Dict, Tuple
 
 # Instantiate and configure the logger. 
-logging.basicConfig(filename='find-a-bug.log', filemode='a')
+logging_format = '%(levelname):%(asctime):%(message)'
+logging.basicConfig(filename='find-a-bug.log', filemode='a', format=logging_format)
 logger = logging.getLogger('find-a-bug')
 
 # Tells Flask the name of the current module. 
@@ -29,8 +30,11 @@ def handle_unknown_error(err):
     '''Error handling when unanticipated exceptions are raised. '''
     # Log the error. 
     # logger.error(str(err))
-    report = traceback.format_exc()
-    
+    exception = sys.exception() # Access the exception. 
+    exception = traceback.format_exception_only(type(exception), exception) # Returns a list of strings, usually just one string. 
+    logger.error(exception[0])
+
+    report = traceback.format_exc() # Return the full traceback. 
     return report, 500, {'Content-Type':'text/plain'}
 
 
