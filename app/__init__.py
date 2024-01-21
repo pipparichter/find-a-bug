@@ -32,7 +32,7 @@ def handle_unknown_error(err):
     # logger.error(str(err))
     # exception = sys.exception() # Access the exception. 
     err = traceback.format_exception_only(type(err), err) # Returns a list of strings, usually just one string. 
-    logger.error(str(err))
+    logger.error(err[0].strip())
 
     # report = traceback.format_exc() # Return the full traceback. 
     return 'Exception raised, see log for details.', 500, {'Content-Type':'text/plain'}
@@ -40,7 +40,7 @@ def handle_unknown_error(err):
 
 @app.route('/')
 def welcome():
-    logger.info(request.url)
+    logger.info(str(request.url))
     return 'Welcome to Find-A-Bug!', 200
 
 
@@ -72,7 +72,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
     :return: The SQL query and the status code. 
     '''
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
-    logger.info(request.url)
+    logger.info(str(request.url))
 
     url = request.url.replace('sql', 'api', 1) # Convert the URL to one which mirrors a resource request. 
     page, url = get_page(url)
@@ -90,7 +90,7 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     :return: Calls the respond function (defined below) using the data obtained for the query.
     '''
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
-    logger.info(request.url)
+    logger.info(str(request.url))
 
     t_init = perf_counter()
 
