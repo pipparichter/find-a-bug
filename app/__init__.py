@@ -30,9 +30,9 @@ def handle_unknown_error(err):
     '''Error handling when unanticipated exceptions are raised. '''
     # Log the error. 
     # logger.error(str(err))
-    exception = sys.exception() # Access the exception. 
-    exception = traceback.format_exception_only(type(exception), exception) # Returns a list of strings, usually just one string. 
-    logger.error(exception[0])
+    # exception = sys.exception() # Access the exception. 
+    err = traceback.format_exception_only(type(err), err) # Returns a list of strings, usually just one string. 
+    logger.error(err[0])
 
     report = traceback.format_exc() # Return the full traceback. 
     return report, 500, {'Content-Type':'text/plain'}
