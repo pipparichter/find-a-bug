@@ -71,9 +71,9 @@ def sql(resource:str=None) -> Tuple[str, int]:
     :return: The SQL query and the status code. 
     '''
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
+    logger.info(request.url)
 
     url = request.url.replace('/sql', '') # Convert the URL to one which mirrors a resource request. 
-    return url
     page, url = get_page(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
@@ -88,8 +88,8 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
     :return: Calls the respond function (defined below) using the data obtained for the query.
     '''
-
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
+    logger.info(request.url)
 
     t_init = perf_counter()
 
