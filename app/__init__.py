@@ -15,8 +15,9 @@ import re
 from typing import List, Generator, Dict, Tuple
 
 # Instantiate and configure the logger. 
-logging_format = '%(levelname)s:%(asctime)s:%(message)s'
-logging.basicConfig(filename='find-a-bug.log', filemode='a', format=logging_format)
+logging_format = '%(levelname)s : %(asctime)s : %(message)s'
+# Set logging level to info so everything gets added to the log file. 
+logging.basicConfig(filename='find-a-bug.log', filemode='a', format=logging_format, level=logging.INFO)
 logger = logging.getLogger('find-a-bug')
 
 # Tells Flask the name of the current module. 
