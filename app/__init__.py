@@ -80,7 +80,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
 
     fabq = FindABugQuery(url, ENGINE, page=page)
 
-    return str(fabq), 200
+    return str(fabq), 200, {'Content-Type':'text/plain'}
     
 
 @app.route('/api/<resource>')
