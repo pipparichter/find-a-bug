@@ -69,6 +69,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
 
     url = request.url.replace('/sql', '') # Convert the URL to one which mirrors a resource request. 
+    return url
     page, url = get_page(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
@@ -91,6 +92,8 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     page, url = get_page(request.url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
+    result = fabq.execute()
+
     if len(result) == 0:
         # In case of no results.
         return 'NONE', 200
