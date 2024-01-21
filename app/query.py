@@ -55,7 +55,7 @@ class FindABugQuery():
         db = FindABugDatabase(engine)
         
         url = urlparse(url) # Parse the URL string.
-        resource = url.path.replace('api/', '') # One of annotations, sequences, or metadata. 
+        resource = url.path.replace('/api/', '') # One of annotations, sequences, or metadata. 
         # Define the minimum fields to return when each resource is queried. Also define the primary field, which is what
         # is used to order the response data. These correspond to the primary keys of the tables. 
         if resource == 'annotations':

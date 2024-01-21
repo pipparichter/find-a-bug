@@ -41,13 +41,13 @@ def handle_unknown_error(err):
 @app.route('/')
 def welcome():
     logger.info(str(request.url))
-    return 'Welcome to Find-A-Bug!', 200
+    return 'Welcome to Find-A-Bug!', 200, {'Content-Type':'text/plain'}
 
 
 @app.route('/info')
 def info():
     '''Return information about the database.'''
-    return 'TODO', 200
+    return 'TODO', 200, {'Content-Type':'text/plain'}
 
 
 def get_page(url:str) -> Tuple[int, str]:
