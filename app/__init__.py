@@ -40,6 +40,7 @@ def handle_unknown_error(err):
 
 @app.route('/')
 def welcome():
+    logger.info(request.url)
     return 'Welcome to Find-A-Bug!', 200
 
 
@@ -73,7 +74,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
     logger.info(request.url)
 
-    url = request.url.replace('/sql', '') # Convert the URL to one which mirrors a resource request. 
+    url = request.url.replace('sql', 'api', 1) # Convert the URL to one which mirrors a resource request. 
     page, url = get_page(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)

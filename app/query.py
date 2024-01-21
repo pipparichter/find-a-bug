@@ -55,7 +55,7 @@ class FindABugQuery():
         db = FindABugDatabase(engine)
         
         url = urlparse(url) # Parse the URL string.
-        resource = url.path.replace('/', '') # One of annotations, sequences, or metadata. 
+        resource = url.path.replace('api/', '') # One of annotations, sequences, or metadata. 
         # Define the minimum fields to return when each resource is queried. Also define the primary field, which is what
         # is used to order the response data. These correspond to the primary keys of the tables. 
         if resource == 'annotations':
@@ -70,6 +70,8 @@ class FindABugQuery():
             table = db.get_table('gtdb_r207_metadata')
             fields = ['genome_id'] # Minimum fields to return for this table. 
             primary_field = 'genome_id'
+        else:
+            raise Exception(f'query.FindABugQuery: Invalid resource {resource}.')
         
         query_list = parse_qsl(url.query, separator='&') # Returns a list of key, value pairs. This may be empty. 
         # Collect all fields used in the query, including those affiliated with the main table. 
