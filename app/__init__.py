@@ -33,7 +33,7 @@ def handle_unknown_error(err):
     # logger.error(str(err))
     # exception = sys.exception() # Access the exception. 
     err = traceback.format_exception_only(type(err), err) # Returns a list of strings, usually just one string. 
-    logger.error(err[0].strip())
+    logger.error(err[0].split('\n')[0])
 
     # report = traceback.format_exc() # Return the full traceback. 
     return 'Exception raised, see log for details.', 500, {'Content-Type':'text/plain'}
