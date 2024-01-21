@@ -76,7 +76,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
     return str(fabq), 200
     
 
-@app.route('/<resource>')
+@app.route('/api/<resource>')
 def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     '''Handles a resource request to the server. 
 
@@ -91,8 +91,6 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     page, url = get_page(request.url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
-    # result = fabq.execute()
-    return str(fabq.stmt), 200
     if len(result) == 0:
         # In case of no results.
         return 'NONE', 200
