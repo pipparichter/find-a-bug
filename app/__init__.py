@@ -15,7 +15,7 @@ import re
 from typing import List, Generator, Dict, Tuple
 
 # Instantiate and configure the logger. 
-logging_format = '%(levelname):%(asctime):%(message)'
+logging_format = '%(levelname)s:%(asctime)s:%(message)s'
 logging.basicConfig(filename='find-a-bug.log', filemode='a', format=logging_format)
 logger = logging.getLogger('find-a-bug')
 
