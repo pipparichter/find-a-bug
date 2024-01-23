@@ -33,9 +33,8 @@ def setup(engine):
             # Process the genome files in chunks to avoid crashing the process.
             dfs = []   
             for genome_file in batch:    
-                genome_id = genome_file.replace('_protein.faa', '')    
                 # Remove the prefix. Don't bother adding the source to this table, as it is already present in the metadata table. 
-                genome_id = genome_id[3:]
+                genome_id = genome_file.replace('_protein.faa', '')[3:]    
                 genome_df = pd_from_fasta(os.path.join(path, genome_file))
                 genome_df['genome_id'] = genome_id
                 dfs.append(genome_df)

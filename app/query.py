@@ -92,7 +92,10 @@ class FindABugQuery():
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
-        return self.session.execute(self.stmt).all()
+        output = self.session.execute(self.stmt).all()
+        self.session.close() # Trying to avoid pool limit issues.
+        return result
+
 
     def add_filters(self, query_list:List[Tuple[str, str]]=None, field_to_table_map:Dict[str, Table]=None) -> NoReturn:
         '''Add the specifications in the query list to the statement attribute.
