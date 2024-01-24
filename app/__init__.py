@@ -140,8 +140,9 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     t_init = perf_counter()
 
+    # Make sure to remove both the page and format specifications from the URL. 
     page, url = get_page(request.url)
-    fmt, url = get_format(request.url)
+    fmt, url = get_format(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
