@@ -152,10 +152,10 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         return 'No results', 200
     else:
         # Send a response with in the specified format. 
-        df = pd.DataFrame.from_records(result, columns=result[0]._fields)
+        data = pd.DataFrame.from_records(result, columns=result[0]._fields)
         t_final = perf_counter()
         # Only include the timing if a pretty-print output format is requested. 
-        response = '' if fmt is None else f'{len(df)} results in {np.round(t_final - t_init, 3)} seconds\n\n\n\n'
+        response = '' if fmt is None else f'{len(data)} results in {np.round(t_final - t_init, 3)} seconds\n\n\n\n'
         response += format_data(data, fmt=fmt)
         return response, 200, {'Content-Type':'text/plain'}
 
