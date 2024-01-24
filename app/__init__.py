@@ -65,7 +65,8 @@ def format_data(data:pd.DataFrame, fmt:str=None) -> str:
     :return: A string containing the formatted data. 
     '''
     if fmt is None: # Format the data prettily for browser output. 
-        data = tabulate(data)
+        raise Exception('TODO')
+        # data = tabulate(data)
     elif fmt == 'csv': # Format the DataFrame as a CSV.
         data = data.to_csv() 
     return data
@@ -155,8 +156,9 @@ def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         data = pd.DataFrame.from_records(result, columns=result[0]._fields)
         t_final = perf_counter()
         # Only include the timing if a pretty-print output format is requested. 
-        response = '' if fmt is None else f'{len(data)} results in {np.round(t_final - t_init, 3)} seconds\n\n\n\n'
-        response += format_data(data, fmt=fmt)
+        # response = '' if fmt is None else f'{len(data)} results in {np.round(t_final - t_init, 3)} seconds\n\n\n\n'
+        response = ''
+        response += format_data(data, fmt='csv')
         return response, 200, {'Content-Type':'text/plain'}
 
 
