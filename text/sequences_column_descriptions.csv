@@ -1,0 +1,4 @@
+column_name,data_type,description,primary
+gene_id,str,The GTDB accession of the gene,True
+seq,str,The amino acid sequence of the gene’s coding region,False
+genome_id,str,The GTDB accession of the genome to which the gene belongs,False

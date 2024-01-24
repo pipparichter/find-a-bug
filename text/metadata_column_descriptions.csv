@@ -1,0 +1,127 @@
+column_name,data_type,description,primary
+genome_id,str,The GTDB accession of the genome,True
+gtdb_order,str,The GTDB taxonomical classification at the order level,False
+gtdb_domain,str,The GTDB taxonomical classification at the domain level,False
+gtdb_phylum,str,The GTDB taxonomical classification at the phylum level,False
+gtdb_class,str,The GTDB taxonomical classification at the class level,False
+gtdb_family,str,The GTDB taxonomical classification at the family level,False
+gtdb_genus,str,The GTDB taxonomical classification at the genus level,False
+gtdb_species,str,The GTDB taxonomical classification at the species level,False
+ncbi_order,str,The NCBI taxonomical classification at the order level,False
+ncbi_domain,str,The NCBI taxonomical classification at the domain level,False
+ncbi_phylum,str,The NCBI taxonomical classification at the phylum level,False
+ncbi_class,str,The NCBI taxonomical classification at the class level,False
+ncbi_family,str,The NCBI taxonomical classification at the family level,False
+ncbi_genus,str,The NCBI taxonomical classification at the genus level,False
+ncbi_species,str,The NCBI taxonomical classification at the species level,False
+
+
+| ncbi_taxonomy_u_order           | varchar(38)  | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_domain          | varchar(8)   | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_phylum          | varchar(31)  | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_class           | varchar(35)  | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_family          | varchar(49)  | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_genus           | varchar(38)  | YES  |     | NULL    |       |
+| ncbi_taxonomy_u_species         | varchar(84)  | YES  |     | NULL    |       |
+| ssu_gg_order                    | varchar(24)  | YES  |     | NULL    |       |
+| ssu_gg_domain                   | varchar(4)   | YES  |     | NULL    |       |
+| ssu_gg_phylum                   | varchar(15)  | YES  |     | NULL    |       |
+| ssu_gg_class                    | varchar(21)  | YES  |     | NULL    |       |
+| ssu_gg_family                   | varchar(49)  | YES  |     | NULL    |       |
+| ssu_gg_genus                    | varchar(31)  | YES  |     | NULL    |       |
+| ssu_gg_species                  | varchar(48)  | YES  |     | NULL    |       |
+| ambiguous_bases                 | int(11)      | YES  |     | NULL    |       |
+
+checkm_completeness             | float        | YES  |     | NULL    |       |
+checkm_contamination            | float        | YES  |     | NULL    |       |
+checkm_marker_count             | int(11)      | YES  |     | NULL    |       |
+checkm_marker_lineage           | varchar(35)  | YES  |     | NULL    |       |
+checkm_marker_set_count         | int(11)      | YES  |     | NULL    |       |
+checkm_strain_heterogeneity     | float        | YES  |     | NULL    |       |
+
+| coding_bases                    | int(11)      | YES  |     | NULL    |       |
+| coding_density                  | float        | YES  |     | NULL    |       |
+| contig_count                    | int(11)      | YES  |     | NULL    |       |
+| gc_count                        | int(11)      | YES  |     | NULL    |       |
+| gc_percentage                   | float        | YES  |     | NULL    |       |
+| genome_size                     | int(11)      | YES  |     | NULL    |       |
+| gtdb_genome_representative      | varchar(18)  | YES  |     | NULL    |       |
+| gtdb_representative             | varchar(1)   | YES  |     | NULL    |       |
+| gtdb_type_designation           | varchar(34)  | YES  |     | NULL    |       |
+| gtdb_type_designation_sources   | varchar(4)   | YES  |     | NULL    |       |
+| gtdb_type_species_of_genus      | varchar(1)   | YES  |     | NULL    |       |
+| l50_contigs                     | int(11)      | YES  |     | NULL    |       |
+| l50_scaffolds                   | int(11)      | YES  |     | NULL    |       |
+| longest_contig                  | int(11)      | YES  |     | NULL    |       |
+| longest_scaffold                | int(11)      | YES  |     | NULL    |       |
+| lsu_23s_contig_len              | int(11)      | YES  |     | NULL    |       |
+| lsu_23s_count                   | int(11)      | YES  |     | NULL    |       |
+| lsu_23s_length                  | int(11)      | YES  |     | NULL    |       |
+| lsu_23s_query_id                | varchar(24)  | YES  |     | NULL    |       |
+| lsu_5s_contig_len               | int(11)      | YES  |     | NULL    |       |
+| lsu_5s_count                    | int(11)      | YES  |     | NULL    |       |
+| lsu_5s_length                   | int(11)      | YES  |     | NULL    |       |
+| lsu_5s_query_id                 | varchar(24)  | YES  |     | NULL    |       |
+| mean_contig_length              | int(11)      | YES  |     | NULL    |       |
+| mean_scaffold_length            | int(11)      | YES  |     | NULL    |       |
+| mimag_high_quality              | float        | YES  |     | NULL    |       |
+| mimag_low_quality               | float        | YES  |     | NULL    |       |
+| mimag_medium_quality            | float        | YES  |     | NULL    |       |
+| n50_contigs                     | int(11)      | YES  |     | NULL    |       |
+| n50_scaffolds                   | int(11)      | YES  |     | NULL    |       |
+| ncbi_assembly_level             | varchar(15)  | YES  |     | NULL    |       |
+| ncbi_assembly_name              | varchar(92)  | YES  |     | NULL    |       |
+| ncbi_assembly_type              | varchar(2)   | YES  |     | NULL    |       |
+| ncbi_bioproject                 | varchar(11)  | YES  |     | NULL    |       |
+| ncbi_biosample                  | varchar(14)  | YES  |     | NULL    |       |
+| ncbi_contig_count               | int(11)      | YES  |     | NULL    |       |
+| ncbi_contig_n50                 | int(11)      | YES  |     | NULL    |       |
+| ncbi_country                    | varchar(108) | YES  |     | NULL    |       |
+| ncbi_date                       | varchar(10)  | YES  |     | NULL    |       |
+| ncbi_genbank_assembly_accession | varchar(15)  | YES  |     | NULL    |       |
+| ncbi_genome_category            | varchar(33)  | YES  |     | NULL    |       |
+| ncbi_genome_representation      | varchar(7)   | YES  |     | NULL    |       |
+| ncbi_isolate                    | varchar(77)  | YES  |     | NULL    |       |
+| ncbi_isolation_source           | varchar(660) | YES  |     | NULL    |       |
+| ncbi_lat_lon                    | varchar(41)  | YES  |     | NULL    |       |
+| ncbi_molecule_count             | int(11)      | YES  |     | NULL    |       |
+| ncbi_ncrna_count                | int(11)      | YES  |     | NULL    |       |
+| ncbi_organism_name              | varchar(85)  | YES  |     | NULL    |       |
+| ncbi_protein_count              | int(11)      | YES  |     | NULL    |       |
+| ncbi_refseq_category            | varchar(21)  | YES  |     | NULL    |       |
+| ncbi_rrna_count                 | int(11)      | YES  |     | NULL    |       |
+| ncbi_scaffold_count             | int(11)      | YES  |     | NULL    |       |
+| ncbi_scaffold_l50               | int(11)      | YES  |     | NULL    |       |
+| ncbi_scaffold_n50               | int(11)      | YES  |     | NULL    |       |
+| ncbi_scaffold_n75               | int(11)      | YES  |     | NULL    |       |
+| ncbi_scaffold_n90               | int(11)      | YES  |     | NULL    |       |
+| ncbi_seq_rel_date               | varchar(10)  | YES  |     | NULL    |       |
+| ncbi_spanned_gaps               | int(11)      | YES  |     | NULL    |       |
+| ncbi_species_taxid              | varchar(7)   | YES  |     | NULL    |       |
+| ncbi_ssu_count                  | int(11)      | YES  |     | NULL    |       |
+| ncbi_strain_identifiers         | varchar(124) | YES  |     | NULL    |       |
+| ncbi_taxid                      | varchar(7)   | YES  |     | NULL    |       |
+| ncbi_total_gap_length           | int(11)      | YES  |     | NULL    |       |
+| ncbi_total_length               | int(11)      | YES  |     | NULL    |       |
+| ncbi_trna_count                 | int(11)      | YES  |     | NULL    |       |
+| ncbi_type_material_designation  | varchar(35)  | YES  |     | NULL    |       |
+| ncbi_ungapped_length            | int(11)      | YES  |     | NULL    |       |
+| ncbi_unspanned_gaps             | int(11)      | YES  |     | NULL    |       |
+| ncbi_wgs_master                 | varchar(17)  | YES  |     | NULL    |       |
+| protein_count                   | int(11)      | YES  |     | NULL    |       |
+| scaffold_count                  | int(11)      | YES  |     | NULL    |       |
+| ssu_contig_len                  | int(11)      | YES  |     | NULL    |       |
+| ssu_count                       | int(11)      | YES  |     | NULL    |       |
+| ssu_gg_blast_align_len          | int(11)      | YES  |     | NULL    |       |
+| ssu_gg_blast_bitscore           | float        | YES  |     | NULL    |       |
+| ssu_gg_blast_evalue             | float        | YES  |     | NULL    |       |
+| ssu_gg_blast_perc_identity      | float        | YES  |     | NULL    |       |
+| ssu_gg_blast_subject_id         | varchar(7)   | YES  |     | NULL    |       |
+| ssu_length                      | int(11)      | YES  |     | NULL    |       |
+| ssu_query_id                    | varchar(24)  | YES  |     | NULL    |       |
+| total_gap_length                | int(11)      | YES  |     | NULL    |       |
+| trna_aa_count                   | int(11)      | YES  |     | NULL    |       |
+| trna_count                      | int(11)      | YES  |     | NULL    |       |
+| trna_selenocysteine_count       | int(11)      | YES  |     | NULL    |       |
+| source                          | varchar(2)   | YES  |     | NULL    |       |
++---------------------------------+--------------+------+-----+---------+-------+

@@ -81,7 +81,7 @@ def setup(engine):
     dfs = []
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
 
-        dtypes = pd.read_csv('dtypes.csv').set_index('col').to_dict(orient='dict')['dtype']
+        dtypes = pd.read_csv('data_types.csv').set_index('column_name').to_dict(orient='dict')['data_type']
         usecols = [c for c in get_columns(path) if 'silva' not in c]
         df = pd.read_csv(path, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
 

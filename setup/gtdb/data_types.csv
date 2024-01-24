@@ -1,4 +1,4 @@
-col,dtype
+column_name,data_type
 accession,str
 ambiguous_bases,int
 checkm_completeness,float
