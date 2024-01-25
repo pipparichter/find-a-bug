@@ -9,8 +9,6 @@ import typing
 
 import sys
 sys.path.append('../')
-sys.path.append('/home/prichter/Documents/find-a-bug/setup/')
-
 from utils import *
 
 TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
