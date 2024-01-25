@@ -37,7 +37,7 @@ def parse_genome_file(path:str) -> pd.DataFrame:
         header_info['reverse'] = True if match.group(4) == '-1' else False
         
         # Iterate over the semicolon-separaed information in the final portion of the header, discarding the ID. 
-        for field, value in [item.split('=') in match.group(5).split(';')[1:]]:
+        for field, value in [item.split('=') for item in match.group(5).split(';')[1:]]:
             if field == 'gc_cont':
                 value = float(value)
             header_info[field] = value
