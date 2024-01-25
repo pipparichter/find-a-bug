@@ -49,7 +49,7 @@ def get_format(url:str) -> Tuple[str, str]:
     :return: A tuple containing the format and the URL without a fmt={fmt} specification. 
     '''
     if 'fmt' in url:
-        page = int(re.search('fmt=([a-z]+)', url).group(1))
+        fmt = re.search('fmt=([a-z]+)', url).group(1)
         url = re.sub('[?]*fmt=([a-z]+)[&]*', '', url)
         return fmt, url
     else:
