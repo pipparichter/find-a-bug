@@ -49,10 +49,10 @@ def parse_genome_file(path:str) -> pd.DataFrame:
     with open(path, 'r') as genome_file:
         content = genome_file.read()
         # Extract the amino acid sequences from the FASTA file. 
-        seqs = re.split(r'^>.*', fasta, flags=re.MULTILINE)[1:]
+        seqs = re.split(r'^>.*', content, flags=re.MULTILINE)[1:]
         seqs = [s.replace('\n', '') for s in seqs] # Strip all of the newline characters from the amino acid sequences.
 
-        headers = re.findall(r'^>.*', fasta, re.MULTILINE)
+        headers = re.findall(r'^>.*', content, re.MULTILINE)
         # Parse he headers. This will be a string of dictionaries, which can be converted to a DataFrame. 
         header_info = [parse_header(header) for header in headers]
 
