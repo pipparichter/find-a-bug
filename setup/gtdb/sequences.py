@@ -3,11 +3,14 @@ import sqlalchemy
 import numpy as np
 import os
 from time import perf_counter
+from typing import NoReturn, List, Tuple
 from tqdm import tqdm
 import typing
 
 import sys
 sys.path.append('../')
+sys.path.append('/home/prichter/Documents/find-a-bug/setup/')
+
 from utils import *
 
 TABLE_NAME = 'gtdb_r207_amino_acid_seqs'
@@ -15,9 +18,49 @@ BACTERIA_GENOMES_PATH ='/var/lib/pgsql/data/gtdb/r207/amino_acid_seqs/bacteria/'
 ARCHAEA_GENOMES_PATH = '/var/lib/pgsql/data/gtdb/r207/amino_acid_seqs/archaea/'
 
 
-# NOTE: We can't make genome_id an index because it is not unique. So will need to manually add genome IDs to the 
-# gtdb_r207_annotations_kegg table. To speed up this process, it makes sense to store a map of gene_id to genome_id
-# here, although there may be a way I can get around this with joins. 
+def parse_genome_file(path:str) -> pd.DataFrame:
+    '''Parse a genome FASTA file stored in the protein_aa_reps directory. These files are direct outputs from Prodigal
+    (although the gene coordinates are not included).
+    
+    :param path: The path to the genome file. 
+    :return: a pandas DataFrame containing 
+    '''
+
+    def parse_header(header):
+        '''Parse the header string of an entry in a genome file.'''
+        header_info = {} # Dictionary to store the header info. 
+        # Headers are of the form >DSBS01000028.1_12 # 8070 # 9911 # 1 # ID=38_12;partial=01;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.442
+        pattern = '>([^#]+) # (\d+) # (\d+) # ([-1]+) # ID=(.+)'
+        match = re.match(pattern, header)
+
+        header_info['gene_id'] = match.group(1)
+        header_info['nt_start'] = int(match.group(2))
+        header_info['nt_stop'] = int(match.group(3))
+        header_info['reverse'] = True if match.group(4) == '-1' else False
+        
+        # Iterate over the semicolon-separaed information in the final portion of the header, discarding the ID. 
+        for field, value in [item.split('=') in match.group(5).split(';')[1:]]:
+            if field == 'gc_cont':
+                value = float(value)
+            header_info[field] = value
+
+        return header_info
+
+    with open(path, 'r') as genome_file:
+        content = genome_file.read()
+        # Extract the amino acid sequences from the FASTA file. 
+        seqs = re.split(r'^>.*', fasta, flags=re.MULTILINE)[1:]
+        seqs = [s.replace('\n', '') for s in seqs] # Strip all of the newline characters from the amino acid sequences.
+
+        headers = re.findall(r'^>.*', fasta, re.MULTILINE)
+        # Parse he headers. This will be a string of dictionaries, which can be converted to a DataFrame. 
+        header_info = [parse_header(header) for header in headers]
+
+    df = pd.DataFrame(header_info) # Initialize the DataFrame with the header information. 
+    df['seq'] = seqs # Add the sequences to the DataFrame. 
+
+    return df
+
 
 def setup(engine):
     '''Iterate over all of the genome FASTA files and load the gene IDs, genome IDs, and amino 
@@ -35,11 +78,11 @@ def setup(engine):
             for genome_file in batch:    
                 # Remove the prefix. Don't bother adding the source to this table, as it is already present in the metadata table. 
                 genome_id = genome_file.replace('_protein.faa', '')[3:]    
-                genome_df = pd_from_fasta(os.path.join(path, genome_file))
+                genome_df = parse_genome_file(os.path.join(path, genome_file))
                 genome_df['genome_id'] = genome_id
                 dfs.append(genome_df)
                 
-            df = pd.concat(dfs).fillna('none')
+            df = pd.concat(dfs).fillna('None')
 
             # Put the table into the SQL database. Add a primary key on the first pass. 
             if not table_exists:
@@ -59,4 +102,10 @@ if __name__ == '__main__':
     t_final = perf_counter()
 
     print(f'\nTable {TABLE_NAME} uploaded in {t_final - t_init} seconds.')
+
+
+
+
+
+
  
