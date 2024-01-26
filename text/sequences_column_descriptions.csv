@@ -1,12 +1,14 @@
 column_name,data_type,description,primary
-gene_id,str,"The GTDB accession of the gene",True
+gene_id,str,"The gene identifier, consisting of the the first word of the original FASTA sequence header followed by an underscore followed by the ordinal ID of the protein",True
 seq,str,"The amino acid sequence of the gene’s coding region",False
 genome_id,str,"The GTDB accession of the genome to which the gene belongs",False
 nt_start,int,"The location of the start of the gene in the genome",False
 nt_stop,int,"The location of the end of the gene in the genome",False
 gc_cont,float,"The GC content of the gene",False
 reverse,bool,"Whether or not the gene is read from the reverse strand",False
-start_type,str,"The start codon of the sequence",False
+start_type,str,"TThe sequence of the start codon (usually ATG, GTG, or TTG). If the gene has no start codon, this field will be labeled Edge",False
 rbs_motif,str,"The RBS binding motif detected by Prodigal",False
 rbs_spacer,str,"The RBS spacer detected by Prodigal",False
+prodigal_unique_id,str,"An identifier for each gene consisting of the ordinal ID of the sequence and an ordinal ID of that gene within the sequence (separated by an underscore)",False
+partial,str,"An indicator of if a gene runs off the edge of a sequence or into a gap. 0 indicates the gene has a true boundary, whereas a 1 indicates the gene is incomplete at that edge, e.g. 01 means a gene is partial at the right boundary, 11 indicates both edges are incomplete, 00 indicates a complete gene with a start and stop codon",False
 

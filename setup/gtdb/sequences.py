@@ -28,7 +28,7 @@ def parse_genome_file(path:str) -> pd.DataFrame:
         '''Parse the header string of an entry in a genome file.'''
         header_info = {} # Dictionary to store the header info. 
         # Headers are of the form >DSBS01000028.1_12 # 8070 # 9911 # 1 # ID=38_12;partial=01;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.442
-        pattern = '>([^#]+) # (\d+) # (\d+) # ([-1]+) # ID=(.+)'
+        pattern = '>([^#]+) # (\d+) # (\d+) # ([-1]+) # (.+)'
         match = re.match(pattern, header)
 
         header_info['gene_id'] = match.group(1)
@@ -37,9 +37,9 @@ def parse_genome_file(path:str) -> pd.DataFrame:
         header_info['reverse'] = True if match.group(4) == '-1' else False
         
         # Iterate over the semicolon-separaed information in the final portion of the header, discarding the ID. 
-        for field, value in [item.split('=') for item in match.group(5).split(';')[1:]]:
-            if field == 'gc_cont':
-                value = float(value)
+        for field, value in [item.split('=') for item in match.group(5).split(';')]:
+            value = float(value) if (field == 'gc_cont') else value
+            field = 'prodigal_unique_id' if (field == 'ID') else field
             header_info[field] = value
 
         return header_info
