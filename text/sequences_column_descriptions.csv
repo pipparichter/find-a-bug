@@ -1,4 +1,12 @@
 column_name,data_type,description,primary
-gene_id,str,The GTDB accession of the gene,True
-seq,str,The amino acid sequence of the gene’s coding region,False
-genome_id,str,The GTDB accession of the genome to which the gene belongs,False
+gene_id,str,"The GTDB accession of the gene",True
+seq,str,"The amino acid sequence of the gene’s coding region",False
+genome_id,str,"The GTDB accession of the genome to which the gene belongs",False
+nt_start,int,"The location of the start of the gene in the genome",False
+nt_stop,int,"The location of the end of the gene in the genome",False
+gc_cont,float,"The GC content of the gene",False
+reverse,bool,"Whether or not the gene is read from the reverse strand",False
+start_type,str,"The start codon of the sequence",False
+rbs_motif,str,"The RBS binding motif detected by Prodigal",False
+rbs_spacer,str,"The RBS spacer detected by Prodigal",False
+

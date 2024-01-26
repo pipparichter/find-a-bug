@@ -3,7 +3,7 @@ import sqlalchemy
 import numpy as np
 import os
 from time import perf_counter
-from typing import NoReturn, List, Tuple
+from typing import NoReturn, List, Tuple, Dict
 from tqdm import tqdm
 import typing
 
@@ -24,7 +24,7 @@ def parse_genome_file(path:str) -> pd.DataFrame:
     :return: a pandas DataFrame containing 
     '''
 
-    def parse_header(header):
+    def parse_header(header:str) -> List[Dict]:
         '''Parse the header string of an entry in a genome file.'''
         header_info = {} # Dictionary to store the header info. 
         # Headers are of the form >DSBS01000028.1_12 # 8070 # 9911 # 1 # ID=38_12;partial=01;start_type=GTG;rbs_motif=None;rbs_spacer=None;gc_cont=0.442

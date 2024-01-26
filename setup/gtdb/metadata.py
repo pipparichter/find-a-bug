@@ -82,7 +82,8 @@ def setup(engine):
     for path in [ARCHAEA_METADATA_PATH, BACTERIA_METADATA_PATH]: # Should be one entry per genome_id.
 
         dtypes = pd.read_csv('data_types.csv').set_index('column_name').to_dict(orient='dict')['data_type']
-        usecols = [c for c in get_columns(path) if 'silva' not in c]
+        # Remove some columns that were giving me trouble, and the unfiltered NCBI taxonomy (seemed redundant)
+        usecols = [c for c in get_columns(path) if ('silva' not in c and c != 'ncbi_taxonomy_unfiltered')]
         df = pd.read_csv(path, delimiter='\t', usecols=usecols, converters={c:get_converter(c, dtypes=dtypes) for c in usecols})
 
         df = parse_taxonomy(df) # Split up taxonomy information into multiple columns. 
