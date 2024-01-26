@@ -109,7 +109,7 @@ def pd_to_fasta(df, path=None, textwidth=80):
 def get_sql_dtypes(df:pd.DataFrame):
     '''Explicitly converts the datatypes in a pandas DataFrame to their SQL equivalents. Returns
     a dictionary mapping column names to SQL types.'''
-    dtypes = {'seq':LONGTEXT, 'gene_id':VARCHAR(150), 'genome_id':VARCHAR(150)}
+    dtypes = {'seq':LONGTEXT, 'gene_id':VARCHAR(150), 'genome_id':VARCHAR(150), 'prodigal_unique_id':VARCHAR(150)}
 
     for col in [c for c in df.columns if c not in dtypes]:
         t =  type(df[col].iloc[0]) # Get the type of the first element in the column (assumed to be the same for the whole column.)
