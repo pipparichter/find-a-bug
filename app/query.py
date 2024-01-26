@@ -64,7 +64,7 @@ class FindABugQuery():
             primary_field = 'annotation_id'
         elif resource == 'sequences':
             table = db.get_table('gtdb_r207_amino_acid_seqs')
-            fields = ['gene_id', 'seq', 'genome_id', 'nt_start', 'nt_stop'] # Minimum fields to return for this table. 
+            fields = ['gene_id', 'seq', 'genome_id', 'nt_start', 'nt_stop', 'reverse'] # Minimum fields to return for this table. 
             primary_field = 'gene_id'
         elif resource == 'metadata':
             table = db.get_table('gtdb_r207_metadata')
