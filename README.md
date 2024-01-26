@@ -26,12 +26,3 @@ The Find-A-Bug web app accepts and parses URL strings of the following format. I
 3. `<value>`: The condition to apply to the specified column. This can be of the form `'{operator}{x}` where operator is one of `<`, `>`, or `=`. If no operator is specified, then the equals operator is implied.
 4. `<page>`: The page of results to access. Each page is, at most, 100 results matching the specified criteria. 
 
-#### Examples
-
-## To-do list
-
-1. Add support for regular expressions in queries. 
-2. Display database information neatly and intuitively when requested.
-3. Flesh out error handling.
-4. Finish database testing to ensure correctness.
-5. Allow easy pagination by returning the next page with a request. 

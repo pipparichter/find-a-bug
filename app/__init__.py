@@ -26,7 +26,21 @@ app = Flask(__name__)
 
 ENGINE = create_engine(f'mariadb+pymysql://root:Doledi7-Bebyno2@localhost/findabug')
 
+def get_page(url:str) -> Tuple[int, str]:
+    '''Retrieve the page from the URL, if one is specified, as well as the 
+    URL without the page in the query list.append
+    
+    :param url: The URL sent by the client to the web application.
+    :return: A tuple containing the extracted page number and the URL without a page={page} query. 
+    '''
+    if 'page' in url:
+        page = int(re.search('page=([0-9]+)', url).group(1))
+        url = re.sub('[?]*page=([0-9]+)[&]*', '', url)
+        return page, url
+    else:
+        return 0, url
 
+        
 @app.errorhandler(Exception)
 def handle_unknown_error(err):
     '''Error handling when unanticipated exceptions are raised. '''
@@ -63,7 +77,7 @@ def info(resource:str):
     elif resource == 'sequences':
         return data.to_csv(), 200, {'Content-Type':'text/plain'}
     elif resource == 'metadata': # Not yet implemented because I am lazy.
-        return 'TODO', 200, {'Content-Type':'text/plain'}
+        return data.to_csv(), 200, {'Content-Type':'text/plain'}
 
 
 @app.route('/sql/<resource>')
