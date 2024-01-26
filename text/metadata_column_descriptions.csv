@@ -77,4 +77,4 @@ ncbi_molecule_count,int,"The molecule count",False
 ncbi_ncrna_count,int,"The non-coding RNA count",False
 ncbi_organism_name,str,"The NCBI organism name",False
 ncbi_protein_count,int,"The protein count",False
-ncbi_refseq_category,str,"The NCBI RefSeq genom
+ncbi_refseq_category,str,"The NCBI RefSeq genome",False
