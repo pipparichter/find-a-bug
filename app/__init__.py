@@ -55,7 +55,7 @@ def handle_unknown_error(err):
     #         msg += ' in ' + re.search('line {[0-9]+}, in {[a-zA-Z]}', line).group(0) 
     #         break
     err_type, err_value, err_traceback = sys.exc_info()
-    info, _ = traceback.format_exception(err_type, err_value, err_traceback)[-2]
+    info = traceback.format_exception(err_type, err_value, err_traceback)[-2]
     info = info.lower()
     msg = f'Error in {info}: {str(err)}'
     msg = msg.replace('\n', '') # Remove any remaining newlines.
