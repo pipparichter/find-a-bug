@@ -47,18 +47,21 @@ def handle_unknown_error(err):
     # Log the error. 
     # logger.error(str(err))
     # exception = sys.exception() # Access the exception. 
-    err = traceback.format_exception(type(err), err, None) # Returns a list of strings, each a separate line of the exception message.
-    # Convert the error message to a single-line output. 
-    msg = err[-1].strip()
-    for line in err:
-        if re.search('line {[0-9]+}, in {[a-zA-Z]}', line) is not None:
-            msg += ' in ' + re.search('line {[0-9]+}, in {[a-zA-Z]}', line).group(0) 
-            break
+    # err = traceback.format_exception(type(err), err, None) # Returns a list of strings, each a separate line of the exception message.
+    # # Convert the error message to a single-line output. 
+    # msg = err[-1].strip()
+    # for line in err:
+    #     if re.search('line {[0-9]+}, in {[a-zA-Z]}', line) is not None:
+    #         msg += ' in ' + re.search('line {[0-9]+}, in {[a-zA-Z]}', line).group(0) 
+    #         break
+    err_type, err_obj, err_tb = sys.exc_info()
+    file = os.path.split(err_tb.tb_frame.f_code.co_filename)[1]
+    msg = f'{err_type} in {file} at line {err_tb.tb_lineno}: {str(err)}'
     msg = msg.replace('\n', '') # Remove any remaining newlines.
-    logger.error(msg)
 
+    logger.error(msg)
     # report = traceback.format_exc() # Return the full traceback. 
-    return 'Exception raised, see log for details.', 500, {'Content-Type':'text/plain'}
+    return msg, 500, {'Content-Type':'text/plain'}
 
 
 @app.route('/')
