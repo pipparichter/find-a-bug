@@ -48,7 +48,7 @@ def handle_unknown_error(err):
     err_type, err_value, err_traceback = sys.exc_info()
     info = traceback.format_exception(err_type, err_value, err_traceback)[-2]
     info = info.lower().strip()
-    msg = f'{type(error)} in {info}: {str(err).strip()}'
+    msg = f'{type(err)} in {info}: {str(err).strip()}'
     msg = msg.replace('\n', '') # Remove any remaining newlines.
 
     logger.error(msg) # Log the error
