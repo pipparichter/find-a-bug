@@ -96,8 +96,9 @@ class FindABugDatabase():
             if len(fields) == 0:
                 break
             field_to_table_map.update({f:t for f in fields.intersection(self.get_fields(table))})
-            fields = fields - self.get_fields(table)
+            fields = fields - self.get_fields(t)
 
+        assert len(fields) == 0, 'database.get_field_to_table_map: The fields {fields} were not mapped to a table.'
         return field_to_table_map
 
     def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
