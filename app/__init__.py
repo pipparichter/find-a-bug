@@ -100,17 +100,36 @@ def sql(resource:str=None) -> Tuple[str, int]:
     return str(fabq), 200, {'Content-Type':'text/plain'}
     
 
-@app.route('/api/<resource>')
-def handle(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
-    '''Handles a resource request to the server. 
+@app.route('/count/<resource>')
+def count(resource:str=None):
+    '''Handles a request for a count of the results which match the specified criteria.
 
     :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
-    :return: Calls the respond function (defined below) using the data obtained for the query.
+    :return: The number of entries in the database matching the specidied criteria. 
     '''
+
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
     logger.info(str(request.url))
 
-    t_init = perf_counter()
+    # Make sure to remove both the page and format specifications from the URL. 
+    page, url = get_page(request.url)
+    # fmt, url = get_format(url)
+
+    fabq = FindABugQuery(url, ENGINE, page=None)
+    result = fabq.execute()
+
+    return len(result), 200, {'Content-Type':'text/plain'}
+
+
+@app.route('/get/<resource>')
+def get(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
+    '''Handles a data retrieval request to the server. 
+
+    :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
+    :return: CSV data corresponding to the request parameters.
+    '''
+    assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
+    logger.info(str(request.url))
 
     # Make sure to remove both the page and format specifications from the URL. 
     page, url = get_page(request.url)

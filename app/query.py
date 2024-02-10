@@ -84,11 +84,12 @@ class FindABugQuery():
         self.add_joins(table=table, tables=[t for t in field_to_table_map.values()])
         self.add_filters(query_list=query_list, field_to_table_map=field_to_table_map )
 
-        # Handling pagination. 
-        page_size = 500
-        # Use orderby to enforce consistent behavior. 
-        self.stmt = self.stmt.order_by(getattr(table, primary_field))
-        self.stmt = self.stmt.offset(page * page_size).limit(page_size)
+        # Handling pagination if a page is specified. 
+        if page is not None:
+            page_size = 500
+            # Use orderby to enforce consistent behavior. 
+            self.stmt = self.stmt.order_by(getattr(table, primary_field))
+            self.stmt = self.stmt.offset(page * page_size).limit(page_size)
 
     def execute(self):
         '''Run the query, grabbing the requested information from the database.'''
