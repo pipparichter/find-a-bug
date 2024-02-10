@@ -92,7 +92,7 @@ def sql(resource:str=None) -> Tuple[str, int]:
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.sql: Invalid resource name. Must be one of: annotations, metadata, sequences.'
     logger.info(str(request.url))
 
-    url = request.url.replace('sql', 'api', 1) # Convert the URL to one which mirrors a resource request. 
+    url = request.url.replace('sql', 'get', 1) # Convert the URL to one which mirrors a resource request. 
     page, url = get_page(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
@@ -111,9 +111,7 @@ def count(resource:str=None):
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
     logger.info(str(request.url))
 
-    # Make sure to remove both the page and format specifications from the URL. 
-    page, url = get_page(request.url)
-    # fmt, url = get_format(url)
+    url = request.url.replace('count', 'get', 1) # Convert the URL to one which mirrors a resource request. 
 
     fabq = FindABugQuery(url, ENGINE, page=None)
     result = fabq.execute()
@@ -131,9 +129,8 @@ def get(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     assert resource in ['annotations', 'metadata', 'sequences'], 'app.__init__.handle: Invalid resource name. Must be one of: annotations, metadata, sequences.'
     logger.info(str(request.url))
 
-    # Make sure to remove both the page and format specifications from the URL. 
+    # Make sure to remove page specifications from the URL. 
     page, url = get_page(request.url)
-    # fmt, url = get_format(url)
 
     fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
