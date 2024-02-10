@@ -116,7 +116,7 @@ def count(resource:str=None):
     fabq = FindABugQuery(url, ENGINE, page=None)
     result = fabq.execute()
 
-    return len(result), 200, {'Content-Type':'text/plain'}
+    return str(len(result)), 200, {'Content-Type':'text/plain'}
 
 
 @app.route('/get/<resource>')
