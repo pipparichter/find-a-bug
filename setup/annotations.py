@@ -52,8 +52,8 @@ def setup_pfam(engine, dir_path:str='/var/lib/pgsql/data/gtdb/r207/annotations/p
     :param dir_path: The location of the annotation files. 
     '''
     # If the table already exists, drop it and re-upload things.
-    if sql_table_exists(table_name, engine):
-        drop_sql_table(table_name, engine)
+    if sql_table_exists(engine, table_name=table_name):
+        drop_sql_table(engine, table_name=table_name)
         print(f'Dropped existing table {table_name}.')
 
     def genome_id_from_filename(filename:str) -> str:
