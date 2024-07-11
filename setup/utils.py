@@ -74,6 +74,15 @@ def csv_size(path):
     n = int(n) - 1 # Convert text output to an integer and disregard the header row.
     return n
 
+def remove_prefix(genome_id:str) -> str:
+    '''The genome file names from GTDB have a GB_ or RF_ prefix, indicating whether the source of the genome is GenBank or RefSeq. In order for the genome
+    ID to match correctly with sequence entries, these prefixes need to be removed.
+
+    :param genome_id: A genome ID with the RF_ or GB_ prefix.
+    :return: The genome ID with the prefix removed.
+    '''
+    return genome_id[3:]
+
 
 def pd_from_fasta(path:str) -> pd.DataFrame:
     '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
@@ -81,8 +90,6 @@ def pd_from_fasta(path:str) -> pd.DataFrame:
     gene_ids = fasta_gene_ids(path)
     seqs = fasta_seqs(path)
     df = pd.DataFrame({'seq':seqs, 'gene_id':gene_ids})
-
-
     return df
 
 
@@ -129,53 +136,88 @@ def get_sql_dtypes(df:pd.DataFrame):
     return dtypes
 
 
-def drop_sql_table(name:str,engine:sqlalchemy.engine.Engine) -> NoReturn:
-    '''Deletes a SQL table from the Find-A-Bug database. The connection should already be to a specific 
-    database (as specified in the find-a-bug.cfg file), so no need to specify here.'''
-
+def drop_sql_table(engine:sqlalchemy.engine.Engine, table_name:str,) -> NoReturn:
+    '''Deletes a SQL table from the SQL database'''
     with engine.connect() as conn:
-        conn.execute(sqlalchemy.text(f'DROP TABLE {name}'))
+        conn.execute(sqlalchemy.text(f'DROP TABLE {table_name}'))
 
 
-def sql_table_exists(name:str, engine:sqlalchemy.engine.Engine) -> bool:
+def sql_table_exists(engine:sqlalchemy.engine.Engine, table_name:str) -> bool:
     '''Checks for the existence of a table in the database.'''
-    
     # Collect a list of all tables in the database.
     with engine.connect() as conn:
         # This returns a list of tuples, so need to extract each table name for this to work.
         tables = conn.execute(sqlalchemy.text('SHOW TABLES')).all()
         tables = [t[0] for t in tables]
-    
-    return name in tables
+    return table_name in tables
 
 
-def upload_to_sql_table(  
-    df:pd.DataFrame,
-    name:str,
-    engine:sqlalchemy.engine.Engine,
-    primary_key=None,
-    if_exists='fail'):
-    '''Uploads a pandas DataFrame to the SQL database at URL.
+def upload_to_sql_table(engine:sqlalchemy.engine.Engine, df:pd.DataFrame, table_name:str, primary_key:str=None, if_exists='fail'):
+    '''Uploads a pandas DataFrame to the SQL database.
     
-    args:
-        - df: The DataFrame to load into the SQL database.
-        - name: The name of the table to create.
-        - engine: An engine connected to the SQL database.
-        - primary_key: The primary key of the table. 
-        - if_exists: One of fail or append. Specifies behavior if table already exists.
+    :param engine: The engine connecting the Python script to the SQL database.
+    :param df: The DataFrame to load into the SQL database.
+    :param table_name: The name of the table to create.
+    :param primary_key: The primary key of the table. 
+    :param if_exists: One of fail, replace, or append. Specifies behavior if table already exists.
     '''
-    f = 'utils.create_table'
-    assert df.index.name is not None, f'{f}: A labeled index name must be specified.'
+    assert df.index.name is not None, f'upload_to_sql_table: A labeled index name must be specified.'
 
     # The multi parameter means that multiple rows are passed at once, which is faster.  
     # Setting index to True means df.index is used (this is the default setting).
-    df.to_sql(name, engine, dtype=get_sql_dtypes(df), if_exists=if_exists, chunksize=1000, method='multi')
-    
-    with engine.begin() as conn:
-        if primary_key is not None:
-            conn.execute(sqlalchemy.text(f'ALTER TABLE {name} ADD PRIMARY KEY ({primary_key})'))
+    df.to_sql(table_name, engine, dtype=get_sql_dtypes(df), if_exists=if_exists, chunksize=1000, method='multi')
+    if (if_exists != 'append') and (primary_key is not None): # If appending to an existing table, don't try to set the primary key again.
+        with engine.begin() as conn:
+            conn.execute(sqlalchemy.text(f'ALTER TABLE {table_name} ADD PRIMARY KEY ({primary_key})'))
 
-    # print(f'{f}: Upload to table {name} successful.')
+
+def get_file_batches(dir_path:str, batch_size:int=500) -> np.ndarray:
+    '''There are too many annotation files to process all at once. They must be uploaded to the SQL database in 
+    batches of size batch_size.
+
+    :param dir_path: The location of the files. 
+    :param batch_size: The size of the file batches.
+    :return: An array of arrays, where each sub-array is a list of filenames.
+    '''
+    files = os.listdir(dir_path) # Get all files in the directory, names are {genome_id}_protein.ko.csv.
+    return np.array_split(files, (len(files) // batch_size) + 1)
+
+def batch_upload_to_sql_table(engine:sqlalchemy.engine.Engine, 
+    dir_path:str=None, 
+    genome_id_from_filename=None, 
+    df_from_file=None, table_name:str=None, 
+    primary_key:str=None, 
+    unique_id_name:str=None, 
+    batch_size:int=500,
+    if_exists:str='replace') -> NoReturn:
+    '''Set up a SQL table for a group of files by uploading in batches.
+    
+    :param engine: The engine connecting the Python script to the SQL database.
+    :param dir_path: The location of the annotation files. 
+    :param get_genome_id: A function which extracts the genome ID from the filename. This is different for different
+        annotation files, as the naming schema are not consistent.
+    :param read_annotation_file: A function for reading an annotation file into a pandas DataFrame. 
+    :param table_name: The name of the SQL table.
+    :param primary_key: The name of the field to set as primary key.
+    :param unique_id_name: Name for the unique ID column. If specified, a unique ID is added to the DataFrame.
+    :param batch_size: The number of files to process in each batch.
+    :param if_exists: One of fail, replace, or append. Specifies behavior for the first batch only. 
+    '''
+    unique_id = 0 
+    for batch in tqdm(get_file_batches(dir_path, batch_size=batch_size), desc='setup_kegg'):  
+        batch_df = [] # Accumulate DataFrames over an entire batch of files.
+        for filename in batch:
+            genome_id = genome_id_from_filename(filename) # Extract the genome ID from the filename.
+            df = df_from_file(dir_path, dilename)
+            df['genome_id'] = genome_id
+            if unique_id_name is not None:
+                df[unique_id_name] = np.arange(unique_id, unique_id + len(df)) # Add unique ID for the primary key. 
+            unique_id += len(df)
+            batch_df.append(df)
+        batch_df = pd.concat(batch_df) # Combine all DataFrames for the batch.  
+        
+        upload_to_sql_table(engine, batch_df.set_index(primary_key), table_name, primary_key=primary_key, if_exists=if_exists)
+        if_exists = 'append' # Switch to append mode after the initial pass.
 
 
 # It's possible I'll have to do this in chunks? Using LIMIT and OFFSET for pagination. 
@@ -198,54 +240,3 @@ def get_table_size(engine, table):
         count = conn.execute(sqlalchemy.text(f'SELECT COUNT(*) from {table}')).scalar_one()
         # Because we are only selecting one column at a time, should only be one element in each Row. 
     return count 
-
-
-# def get_duplicate_annotation_info(collect='num_instances'):
-#     '''Found that I was not able to make gene_id the primary key when loading annotations into the SQL database. This
-#     is due to the fact that there were duplicate entries (Josh said this was expected, as genes can have multiple annotations). 
-#     We were curious about characteristics of these duplications. Are there duplications across genome files?
-#     How many duplications are there?'''
-
-#     f = 'utils.get_duplicate_annotation_info'
-#     assert collect in ['num_genomes_with_gene', 'num_instances'], f'{f}: Specified collect option is not recognized'
-    
-#     annotations_path = load_config_paths()['annotations_path']
-#     annotation_files = os.listdir(annotations_path)  
-#     info = {}
-
-#     for file in tqdm(annotation_files, desc=f):    
-
-#         genome_id = file.replace('_protein.ko.csv', '') # Add the genome ID, removing the extra stuff. 
-#         gene_ids = pd.read_csv(os.path.join(annotations_path, file), usecols=['gene name']).values.ravel()
-
-#         # I had to separate because I kept getting booted off of the server when it loaded 95 percent of the genomes. 
-#         for gene_id in np.unique(gene_ids):
-#             if gene_id in info:
-#                 if collect == 'num_instances':
-#                     info[gene_id] += np.sum(gene_ids == gene_id)
-#                 elif collect == 'num_genomes_with_gene':
-#                     info[gene_id] += 1
-#             else: # If the gene has not yet been encountered... 
-#                 if collect == 'num_instances':
-#                     info[gene_id] = np.sum(gene_ids == gene_id)
-#                 elif collect == 'num_genomes_with_gene':
-#                     info[gene_id] = 1
-   
-#     # Save the information as a pickle file. 
-#     with open(f'duplicate_annotation_info_{collect}.pkl', 'wb') as file:
-#         pickle.dump(info, file)
-
-
-
-# if __name__ == '__main__':
-
-
-#     duplicate_annotation_info_num_instances_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_instances.pkl'
-#     with open(duplicate_annotation_info_num_instances_path, 'rb') as file:
-#         info = pickle.load(file)
-#         print('average number of instances:', np.mean(list(info.values())))
-
-#     duplicate_annotation_info_num_genomes_with_gene_path = '/home/prichter/Documents/data/selenobot/gtdb/duplicate_annotation_info_num_genomes_with_gene.pkl'
-#     with open(duplicate_annotation_info_num_genomes_with_gene_path, 'rb') as file:
-#         info = pickle.load(file)
-#         print('number of genes present in multiple genomes:', len([n for n in info.values() if n > 1]))

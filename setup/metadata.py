@@ -15,28 +15,30 @@ BACTERIA_METADATA_PATH = '/var/lib/pgsql/data/gtdb/r207/metadata/bac120_metadata
 ARCHAEA_METADATA_PATH = '/var/lib/pgsql/data/gtdb/r207/metadata/ar53_metadata_r207.tsv'
 TABLE_NAME = 'gtdb_r207_metadata'
 
-# Almost certainly a better way to do what this function does. 
-def parse_taxonomy_col(col:pd.Series, prefix:str='') -> pd.DataFrame:
-    '''Takes a DataFrame subset containing taxonomy data as input (e.g. ncbi_taxonomy) as input, and returns
-    a new DataFrame with the column split into individual columns.'''
-    m = {'o':f'{prefix}_order', 'd':f'{prefix}_domain', 'p':f'{prefix}_phylum', 'c':f'{prefix}_class', 'f':f'{prefix}_family', 'g':f'{prefix}_genus', 's':f'{prefix}_species'}
-    rows = []
-    for row in col: # Iterate over taxonomy strings in column.
-        new_row = {v:'none' for v in m.values()}
-        if row == 'none': # This is an edge case. Just fill in all none values if this happens. 
-            rows.append(new_row)
-        else:
-            for tax in row.strip().split(';'):
-                flag, entry = tax[0], tax[3:] # Can't use split('__') because of edge cases where there is a __ in the species name. 
-                if flag in m.keys() and len(entry) > 0: # Also handles case of empty entry. 
-                    new_row[m[flag]] = entry
-            rows.append(new_row)
-    return pd.DataFrame.from_records(rows)
-
 
 def parse_taxonomy(df:pd.DataFrame) -> pd.DataFrame:
     '''Genome taxonomy is represented as super long strings separated using semicolons. This expands
-    the taxonomy string into multiple columns. '''
+    the taxonomy string into multiple columns. '''# Almost certainly a better way to do what this function does. 
+
+    def parse_taxonomy_col(col:pd.Series, prefix:str='') -> pd.DataFrame:
+        '''Takes a DataFrame subset containing taxonomy data as input (e.g. ncbi_taxonomy) as input, and returns
+        a new DataFrame with the column split into individual columns.'''
+        m = {'o':f'{prefix}_order', 'd':f'{prefix}_domain', 'p':f'{prefix}_phylum', 'c':f'{prefix}_class', 'f':f'{prefix}_family', 'g':f'{prefix}_genus', 's':f'{prefix}_species'}
+        rows = []
+        for row in col: # Iterate over taxonomy strings in column.
+            new_row = {v:'none' for v in m.values()}
+            if row == 'none': # This is an edge case. Just fill in all none values if this happens. 
+                rows.append(new_row)
+            else:
+                for tax in row.strip().split(';'):
+                    flag, entry = tax[0], tax[3:] # Can't use split('__') because of edge cases where there is a __ in the species name. 
+                    if flag in m.keys() and len(entry) > 0: # Also handles case of empty entry. 
+                        new_row[m[flag]] = entry
+                rows.append(new_row)
+        return pd.DataFrame.from_records(rows)
+
+
+
     dfs = []
     for col in [c for c in df.columns if 'taxonomy' in c]:
         prefix = col[:-len('_taxonomy')] # e.g. ncbi.

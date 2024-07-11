@@ -45,7 +45,14 @@ class AASeqs_r207(Reflected, Base):
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
     gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
             back_populates='gtdb_r207_amino_acid_seqs')
-     
+
+
+# class AnnotationsReference(Reflected, Base):
+
+#     __tablename__ = 'annotations_ref'
+    
+#     genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'), primary_key=True)
+
 
 class AnnotationsKegg_r207(Reflected, Base):
 
@@ -65,7 +72,25 @@ class AnnotationsKegg_r207(Reflected, Base):
     gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
             back_populates='gtdb_r207_annotations_kegg', uselist=False)
     gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+
+
+class AnnotationsPfam_r207(Reflected, Base):
+    release = 207
+    annotation_type = 'kegg'
+
+    __tablename__ = 'gtdb_r207_annotations_kegg'
     
+    annotation_id = mapped_column(String, primary_key=True)
+    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+
+    # Because the relationship from amino acid sequences to annotations
+    # should be one-to-one, should specify uselist=False. Note that here we
+    # are considering the annotations table to be the "parent table" to the
+    # amino acid sequence table. 
+    gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
+            back_populates='gtdb_r207_annotations_pfam', uselist=False)
+    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+  
 
 class FindABugDatabase():
     '''The class which mediates the interactions between the database and Flask app.'''

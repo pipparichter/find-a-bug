@@ -119,6 +119,10 @@ def count(resource:str=None):
     return str(len(result)), 200, {'Content-Type':'text/plain'}
 
 
+# def get_annotations(genome_id:str):
+#     '''Retrieval of annotations is handled slightly differently to avoid inverted indexing across multiple tables.'''
+
+
 @app.route('/get/<resource>')
 def get(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     '''Handles a data retrieval request to the server. 
@@ -134,7 +138,6 @@ def get(resource:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     fabq = FindABugQuery(url, ENGINE, page=page)
     result = fabq.execute()
-
     if len(result) == 0:
         # In case of no results.
         return 'No results', 200
