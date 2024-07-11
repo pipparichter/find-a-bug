@@ -86,8 +86,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('annotation_type', choices=['pfam', 'kegg'], type=str, help='The type of annotation file to create.')
-    parser.add_argument('--table-name', '-n', type=str, optional=True, default=None, help='The name of the SQL table to be created.')
-    parser.add_argument('--dir-path', '-d', type=str, optional=True, default=None, help='The data directory where the annotation files are stored.')
+    parser.add_argument('--table-name', '-n', type=str, default=None, help='The name of the SQL table to be created.')
+    parser.add_argument('--dir-path', '-d', type=str, default=None, help='The data directory where the annotation files are stored.')
 
     args = parser.parse_args()
 
