@@ -215,9 +215,9 @@ def batch_upload_to_sql_table(engine:sqlalchemy.engine.Engine,
                 df[unique_id_name] = np.arange(unique_id, unique_id + len(df)) # Add unique ID for the primary key. 
             unique_id += len(df)
             batch_df.append(df)
-            
+
         batch_df = pd.concat(batch_df) # Combine all DataFrames for the batch.  
-        print(f'batch_upload_to_sql_table: Uploading {len(batch_df)} items to the SQL database.') 
+        # print(f'batch_upload_to_sql_table: Uploading {len(batch_df)} items to the SQL database.') 
         upload_to_sql_table(engine, batch_df.set_index(primary_key), table_name, primary_key=primary_key, if_exists=if_exists)
         if_exists = 'append' # Switch to append mode after the initial pass.
 
