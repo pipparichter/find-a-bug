@@ -15,7 +15,7 @@ import subprocess
 
 def get_database_url() -> str:
     '''Load the URL to use for accessing the SQL Database.''' 
-    host = 'localhost'
+    host = '127.0.0.1' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
     dialect = 'mariadb'
     driver = 'pymysql'
     user = 'root'
@@ -84,7 +84,7 @@ def remove_prefix(genome_id:str) -> str:
     return genome_id[3:]
 
 
-def pd_from_fasta(path:str) -> pd.DataFrame:
+def df_from_fasta(path:str) -> pd.DataFrame:
     '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
     add the genome ID as an additional column.'''
     gene_ids = fasta_gene_ids(path)
@@ -93,13 +93,13 @@ def pd_from_fasta(path:str) -> pd.DataFrame:
     return df
 
 
-def pd_to_fasta(df, path=None, textwidth=80):
+def df_to_fasta(df, path=None, textwidth=80):
     '''Convert a pandas DataFrame containing FASTA data to a FASTA file format.'''
 
-    assert df.index.name == 'id', 'utils.pd_to_fasta: Gene ID must be set as the DataFrame index before writing.'
+    assert df.index.name == 'id', 'utils.df_to_fasta: Gene ID must be set as the DataFrame index before writing.'
 
     fasta = ''
-    for row in tqdm(df.itertuples(), desc='utils.pd_to_fasta', total=len(df)):
+    for row in tqdm(df.itertuples(), desc='utils.df_to_fasta', total=len(df)):
         fasta += '>|' + str(row.Index) + '|\n'
 
         # Split the sequence up into shorter, sixty-character strings.
@@ -208,7 +208,7 @@ def batch_upload_to_sql_table(engine:sqlalchemy.engine.Engine,
         batch_df = [] # Accumulate DataFrames over an entire batch of files.
         for filename in batch:
             genome_id = genome_id_from_filename(filename) # Extract the genome ID from the filename.
-            df = df_from_file(dir_path, dilename)
+            df = df_from_file(dir_path, filename)
             df['genome_id'] = genome_id
             if unique_id_name is not None:
                 df[unique_id_name] = np.arange(unique_id, unique_id + len(df)) # Add unique ID for the primary key. 
