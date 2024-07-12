@@ -204,7 +204,7 @@ def batch_upload_to_sql_table(engine:sqlalchemy.engine.Engine,
     :param if_exists: One of fail, replace, or append. Specifies behavior for the first batch only. 
     '''
     unique_id = 0 
-    for batch in tqdm(get_file_batches(dir_path, batch_size=batch_size), desc='setup_kegg'):  
+    for batch in tqdm(get_file_batches(dir_path, batch_size=batch_size), desc='batch_upload_to_sql_table'):  
         batch_df = [] # Accumulate DataFrames over an entire batch of files.
         for filename in batch:
             genome_id = genome_id_from_filename(filename) # Extract the genome ID from the filename.
@@ -215,7 +215,7 @@ def batch_upload_to_sql_table(engine:sqlalchemy.engine.Engine,
             unique_id += len(df)
             batch_df.append(df)
         batch_df = pd.concat(batch_df) # Combine all DataFrames for the batch.  
-        
+        print(f'batch_upload_to_sql_table: Uploading {len(batch_df)} items to the SQL database.') 
         upload_to_sql_table(engine, batch_df.set_index(primary_key), table_name, primary_key=primary_key, if_exists=if_exists)
         if_exists = 'append' # Switch to append mode after the initial pass.
 
