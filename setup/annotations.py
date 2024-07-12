@@ -77,8 +77,9 @@ def setup_pfam(engine, dir_path:str='/var/lib/pgsql/data/gtdb/r207/annotations/p
         # Headers are not provided in the Pfam annotation files. 
         headers = ['gene_id', 'digest', 'length', 'analysis', 'signature_accession', 'signature_description', 'start', 'stop', 'e_value', 'match_status', 'data', 'interpro_accession', 'interpro_description']
         return pd.read_csv(os.path.join(dir_path, filename), header=None, names=headers, sep='\t') # Read in the TSV file. 
-    
-    batch_upload_to_sql_table(engine, dir_path=dir_path, genome_id_from_filename=genome_id_from_filename, primary_key='kegg_id', unique_id_name='kegg_id', df_from_file=df_from_file, table_name=table_name)
+
+    # It seems that there are too many annotations in each Pfam file, so made the batch size smaller.     
+    batch_upload_to_sql_table(engine, dir_path=dir_path, genome_id_from_filename=genome_id_from_filename, primary_key='kegg_id', unique_id_name='kegg_id', df_from_file=df_from_file, table_name=table_name, batch_size=5)
 
 
 
