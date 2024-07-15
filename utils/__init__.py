@@ -1,5 +1,3 @@
-'''Utilities for reading and writing from FASTA files (and probably some other generic use stuff later on).'''
-
 import pandas as pd
 import numpy as np
 import re
@@ -8,13 +6,31 @@ import sqlalchemy
 from sqlalchemy import Integer, Float, Boolean
 from sqlalchemy.dialects.mysql import VARCHAR, LONGTEXT
 import os   
-from typing import Dict, TypeVar, NoReturn
+from typing import Dict, TypeVar, NoReturn, List
 import pickle
 import subprocess
 
+# Define some key directories. TODO: Might want to dump this in a designated configuration file. 
+DATA_DIR = '/var/lib/pgsql/data/gtdb/'
+
+
+def get_current_release() -> int:
+    '''Get the most recent GTDB release in the database.'''
+    path = os.dirname(os.path.abspath(__file__))
+    release = pd.read_csv(os.path.join(path, 'updates.csv'), index_col=0).release.values[-1]
+    return release
+
+
+def get_all_releases() -> List[int]:
+    '''Get all available GTDB releases in the database.'''
+    path = os.dirname(os.path.abspath(__file__))
+    updates = pd.read_csv(os.path.join(path, 'updates.csv'), index_col=0)
+    updates = releases[releases.active] # Get all releases which are currently active, i.e. stored in the SQL database. 
+    return releases.release.values # Return a list of the releases. 
+
 
 def get_database_url() -> str:
-    '''Load the URL to use for accessing the SQL Database.''' 
+    '''Load the URL to use for accessing the SQL database.''' 
     host = '127.0.0.1' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
     dialect = 'mariadb'
     driver = 'pymysql'
@@ -36,6 +52,7 @@ def read(path:str) -> str:
     with open(path, 'r', encoding='UTF-8') as f:
         text = f.read()
     return text
+
 
 # NOTE: Seems as though these FASTA files have slightly different header conventions. 
 def get_gene_id(head:str) -> str:

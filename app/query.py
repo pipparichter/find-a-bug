@@ -3,6 +3,7 @@ server from a client, and builds a query which can be sent to the SQL database.'
 from warnings import warn
 from sqlalchemy import or_, func, desc, select, text, column, Table
 from sqlalchemy.schema import Column
+from versioned import versioned_session
 from urllib.parse import parse_qsl, urlparse
 from typing import Set, List, Dict, NoReturn, Tuple
 from app.database import FindABugDatabase
@@ -49,6 +50,8 @@ class FindABugQuery():
 
          # Create a new session, storing the table names in the info field. 
         Session = sqlalchemy.orm.sessionmaker(bind=engine)
+        versioned_session(Session) # Make it a versioned session... 
+        
         self.session = Session()
 
         # Reflect the Database. 
@@ -59,15 +62,15 @@ class FindABugQuery():
         # Define the minimum fields to return when each resource is queried. Also define the primary field, which is what
         # is used to order the response data. These correspond to the primary keys of the tables. 
         if resource == 'annotations':
-            table = db.get_table('gtdb_r207_annotations_kegg')
+            table = db.get_table('gtdb_annotations_kegg')
             fields = ['gene_id', 'ko', 'genome_id', 'annotation_id'] # Minimum fields to return for this table. 
             primary_field = 'annotation_id'
         elif resource == 'sequences':
-            table = db.get_table('gtdb_r207_amino_acid_seqs')
+            table = db.get_table('gtdb_amino_acid_seqs')
             fields = ['gene_id', 'seq', 'genome_id', 'nt_start', 'nt_stop', 'reverse'] # Minimum fields to return for this table. 
             primary_field = 'gene_id'
         elif resource == 'metadata':
-            table = db.get_table('gtdb_r207_metadata')
+            table = db.get_table('gtdb_metadata')
             fields = ['genome_id'] # Minimum fields to return for this table. 
             primary_field = 'genome_id'
         else:

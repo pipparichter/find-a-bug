@@ -3,16 +3,21 @@ import os
 from sqlalchemy import inspect
 import sqlalchemy
 import sqlalchemy.orm
-from sqlalchemy import String, ForeignKey # , ForeignKeyConstraint
+from releaseed import releaseed
+from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint # , ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
 
+# TODO: Read https://www.geeksforgeeks.org/sqlalchemy-orm-declaring-mapping/
+
+# NOTE: Useful documentation for managing relationships here: https://docs.sqlalchemy.org/en/20/orm/relationship_api.html
 
 class Base(DeclarativeBase):
     pass
 
 
+# TODO: Need a refresher on what the declarative mapping is doing. 
 class Reflected(DeferredReflection):
     '''To accommodate the use case of declaring mapped classes where reflection of table metadata can occur afterwards. 
     It alters the declarative mapping process to be delayed, and will integrate the results with the declarative table
@@ -20,86 +25,127 @@ class Reflected(DeferredReflection):
     __abstract__ = True # NOTE: What does this mean?
 
 
-class Metadata_r207(Reflected, Base):
+class MetadataHistory(Reflected, Base):
+    __tablename__ = 'gtdb_metadata_history'
 
-    release = 207
+    genome_id = mapped_column(String, primary_key=True)
+    release = mapped_column(Integer, primary_key=True)
+    
+    __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__))
 
-    __tablename__ = 'gtdb_r207_metadata'
+    # Need to think about how to configure the relationships. Do I want each table pointing back to its histories, or
+    # all of the histories interacting with each other? 
+    gtdb_amino_acid_seqs_history = relationship('AminoAcidSeqsHistory', foreign_keys=[genome_id, release])
+    gtdb_annotations_kegg_history = relationship('AnnotationsKeggHistory', foreign_keys=[genome_id, release])
+    gtdb_annotations_pfam_history = relationship('AnnotationsPfamHistory', foreign_keys=[genome_id, release])
+
+
+class AminoAcidSeqsHistory(Reflected, Base):
+    __tablename__ = 'gtdb_amino_acid_seqs_history'
+
+    gene_id = mapped_column(String, primary_key=True)
+    release = mapped_column(String, primary_key=True)
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata_history.genome_id'))
+
+    __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__))
+    
+    
+    gtdb_metadata_history = relationship('MetadataHistory', viewonly=True, foreign_keys=[genome_id, release])
+    gtdb_annotations_kegg_history = relationship('AnnotationsKeggHistory', foreign_keys=[gene_id, release], back_populates='gtdb_amino_acid_seqs_history')
+    gtdb_annotations_pfam_history = relationship('AnnotationsPfamHistory', foreign_keys=[gene_id, release], back_populates='gtdb_amino_acid_seqs_history')
+
+
+class AnnotationsKeggHistory(Reflected, Base):
+    __tablename__ = 'gtdb_annotations_kegg_history'
+    
+    annotation_id = mapped_column(String, primary_key=True)
+    release = mapped_column(String, primary_key=True)
+    gene_id = mapped_column(String, ForeignKey('gtdb_amino_acid_seqs_history.gene_id'))
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata_history.genome_id'))
+
+    __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__))
+    
+    gtdb_amino_acid_seqs_history = relationship('AminoAcidSeqsHistory', foreign_keys=[gene_id, release], back_populates='gtdb_annotations_kegg_history', uselist=False)
+    gtdb_metadata_history = relationship('MetadataHistory', foreign_keys=[genome_id, release], viewonly=True)
+
+
+class AnnotationsPfamHistory(Reflected, Base):
+    __tablename__ = 'gtdb_annotations_pfam_history'
+    
+    annotation_id = mapped_column(String, primary_key=True) # These annotation IDs are different than those in the KEGG annotation table. 
+    release = mapped_column(String, primary_key=True)
+    gene_id = mapped_column(String, ForeignKey('gtdb_amino_acid_seqs_history.gene_id'))
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata.genome_id'))
+
+    __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__))
+
+    # NOTE: The back_populates parameter indicates the name of a relationship() on the related class that will be synchronized 
+    # with this one. It is usually expected that the relationship() on the related class also refer to this one. This allows objects 
+    # on both sides of each relationship() to synchronize state changes.
+
+    # NOTE: Because the relationship from amino acid sequences to annotations should be one-to-one, should specify uselist=False.
+    # NOTE: The viewonly=True specifies that the relationship should not be used for persistence operations, only for accessing values.
+    gtdb_amino_acid_seqs_history = relationship('AminoAcidSeqsHistory', foreign_keys=[gene_id, release], back_populates='gtdb_annotations_pfam_history', uselist=False)
+    gtdb_metadata_history = relationship('MetadataHistory', foreign_keys=[genome_id, release], viewonly=True)
+    
+
+
+class Metadata(Reflected, Base):
+
+    __tablename__ = 'gtdb_metadata'
     
     # Specify columns which will have additional features.
     genome_id = mapped_column(String, primary_key=True)
+    release = mapped_column(Integer)
     
-    gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207')
-    gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207')
-
-
-class AASeqs_r207(Reflected, Base):
+    gtdb_amino_acid_seqs = relationship('AminoAcidSeqs')
+    gtdb_annotations_kegg = relationship('AnnotationsKegg')
     
-    release = 207
+    gtdb_metadata_history = relationship('MetadataHistory')
 
-    __tablename__ = 'gtdb_r207_amino_acid_seqs'
 
-    gene_id = mapped_column(String, ForeignKey('gtdb_r207_annotations_kegg.gene_id'), primary_key=True)
-    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+class AminoAcidSeqs(Reflected, Base):
+
+    __tablename__ = 'gtdb_amino_acid_seqs'
+
+    gene_id = mapped_column(String, ForeignKey('gtdb_annotations_kegg.gene_id'), primary_key=True)
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata.genome_id'))
     
-    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
-    gtdb_r207_annotations_kegg = relationship('AnnotationsKegg_r207',
-            back_populates='gtdb_r207_amino_acid_seqs')
+    gtdb_metadata = relationship('Metadata', viewonly=True)
+    gtdb_annotations_kegg = relationship('AnnotationsKegg', back_populates='gtdb_amino_acid_seqs')
 
 
-# class AnnotationsReference(Reflected, Base):
+class AnnotationsKegg(Reflected, Base):
+    __tablename__ = 'gtdb_annotations_kegg'
 
-#     __tablename__ = 'annotations_ref'
-    
-#     genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'), primary_key=True)
-
-
-class AnnotationsKegg_r207(Reflected, Base):
-
-    release = 207
-    annotation_type = 'kegg'
-
-    __tablename__ = 'gtdb_r207_annotations_kegg'
-    
-    # gene_name = mapped_column(String, primary_key=True)
     annotation_id = mapped_column(String, primary_key=True)
-    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata.genome_id'))
 
-    # Because the relationship from amino acid sequences to annotations
-    # should be one-to-one, should specify uselist=False. Note that here we
-    # are considering the annotations table to be the "parent table" to the
-    # amino acid sequence table. 
-    gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
-            back_populates='gtdb_r207_annotations_kegg', uselist=False)
-    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+    # Because the relationship from amino acid sequences to annotations should be one-to-one, should specify uselist=False. 
+    gtdb_amino_acid_seqs = relationship('AminoAcidSeqs', back_populates='gtdb_annotations_kegg', uselist=False)
+    gtdb_metadata = relationship('Metadata', viewonly=True)
 
 
-class AnnotationsPfam_r207(Reflected, Base):
-    release = 207
-    annotation_type = 'kegg'
-
-    __tablename__ = 'gtdb_r207_annotations_kegg'
+class AnnotationsPfam(Reflected, Base):
+    __tablename__ = 'gtdb_annotations_pfam'
     
     annotation_id = mapped_column(String, primary_key=True)
-    genome_id = mapped_column(String, ForeignKey('gtdb_r207_metadata.genome_id'))
+    genome_id = mapped_column(String, ForeignKey('gtdb_metadata.genome_id'))
 
-    # Because the relationship from amino acid sequences to annotations
-    # should be one-to-one, should specify uselist=False. Note that here we
-    # are considering the annotations table to be the "parent table" to the
-    # amino acid sequence table. 
-    gtdb_r207_amino_acid_seqs = relationship('AASeqs_r207',
-            back_populates='gtdb_r207_annotations_pfam', uselist=False)
-    gtdb_r207_metadata = relationship('Metadata_r207', viewonly=True)
+    gtdb_amino_acid_seqs = relationship('AminoAcidSeqs', back_populates='gtdb_annotations_pfam', uselist=False)
+    gtdb_metadata = relationship('Metadata', viewonly=True)
   
 
-class FindABugDatabase():
+
+class Database():
     '''The class which mediates the interactions between the database and Flask app.'''
 
     def __init__(self, engine):
         
         # First need to reflect the current database into Table objects.
         Reflected.prepare(engine)
-        self.tables = [Metadata_r207, AASeqs_r207, AnnotationsKegg_r207]
+        self.tables = [Metadata, AminoAcidSeqs, AnnotationsKegg, AnnotationsPfam, 
+            MetadataHistory, AminoAcidSeqsHistory, AnnotationsKeggHistory, AnnotationsPfamHistory]
     
     def get_field_to_table_map(self, fields:Set[str], table:sqlalchemy.Table=None) -> Dict[str, sqlalchemy.Table]:
         '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
@@ -123,7 +169,7 @@ class FindABugDatabase():
             field_to_table_map.update({f:t for f in fields.intersection(self.get_fields(t))})
             fields = fields - self.get_fields(t)
 
-        assert len(fields) == 0, 'database.get_field_to_table_map: The fields {fields} were not mapped to a table.'
+        assert len(fields) == 0, f'database.get_field_to_table_map: The fields {fields} were not mapped to a table.'
         return field_to_table_map
 
     def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
