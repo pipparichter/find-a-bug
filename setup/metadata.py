@@ -6,9 +6,7 @@ import os
 from time import perf_counter
 from tqdm import tqdm
 from typing import Dict
-
 import sys
-sys.path.append('../') # Make the utils directory accessible. 
 from utils import *
 
 BACTERIA_METADATA_PATH = '/var/lib/pgsql/data/gtdb/r207/metadata/bac120_metadata_r207.tsv'
