@@ -1,8 +1,0 @@
-column_name,data_type,description,primary
-annotation_id,int,"A unique integer ID labeling each annotation",True
-gene_id,str,"The gene identifier, consisting of the the first word of the original FASTA sequence header followed by an underscore followed by the ordinal ID of the protein",True
-ko,str,"The KEGG Orthology group with which the gene was annotated",False
-threshold,float,"The adaptive threshold for the bitscore generated using Kofamscan",False
-score,float,"The bit score generated using Kofamscan which gives a measure of similarity between the gene and the KO family",False
-e_value,float,"The number of expected hits of similar quality (score) that could be found just by chance",False
-genome_id,str,"The GTDB accession of the genome to which the gene belongs",False
