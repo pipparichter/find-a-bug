@@ -1,8 +1,12 @@
 import sqlalchemy
 from app import tables
-from utils import get_database_url
+from utils import get_database_url, list_tables, drop_table, table_exists
 
-def create_tables(engine:sqlalchemy.engine.Engine):
+def create_tables(engine:sqlalchemy.engine.Engine, clear_existing:bool=True):
+
+    if clear_existing:
+        for table_name in list_tables(engine):
+            drop_table(engine, table_name)
 
     tables.AnnotationsKegg.__table__.create(bind=engine)
     tables.AnnotationsPfam.__table__.create(bind=engine)
