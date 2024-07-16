@@ -3,7 +3,7 @@ server from a client, and builds a query which can be sent to the SQL database.'
 from warnings import warn
 from sqlalchemy import or_, func, desc, select, text, column, Table
 from sqlalchemy.schema import Column
-from versioned import versioned_session
+# from versioned import versioned_session
 from urllib.parse import parse_qsl, urlparse
 from typing import Set, List, Dict, NoReturn, Tuple
 from app.database import FindABugDatabase
@@ -50,7 +50,7 @@ class FindABugQuery():
 
          # Create a new session, storing the table names in the info field. 
         Session = sqlalchemy.orm.sessionmaker(bind=engine)
-        versioned_session(Session) # Make it a versioned session... 
+        # versioned_session(Session) # Make it a versioned session... 
         
         self.session = Session()
 
