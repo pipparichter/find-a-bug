@@ -1,7 +1,6 @@
 import setuptools
 import os
 
-print(setuptools.find_packages())
 
 setuptools.setup(
     name='Find-A-Bug',

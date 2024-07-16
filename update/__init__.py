@@ -4,7 +4,8 @@ import wget
 import glob 
 import gzip 
 import zipfile 
-import tarfile 
+import tarfile
+import sqlalchemy 
 import shutil
 import os 
 
