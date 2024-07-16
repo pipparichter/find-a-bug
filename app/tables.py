@@ -7,6 +7,8 @@ from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float 
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
+from utils import MAX_GENE_LENGTH, GENOME_ID_LENGTH, GENE_ID_LENGTH, DEFAULT_STRING_LENGTH
+
 
 # TODO: Read https://www.geeksforgeeks.org/sqlalchemy-orm-declaring-mapping/
 
@@ -34,32 +36,32 @@ class Reflected(DeferredReflection):
 class ProteinsBase(Reflected, Base):
     __abstract__ = True
 
-    gene_id = mapped_column(String, primary_key=True)
+    gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
-    genome_id = mapped_column(String)
+    genome_id = mapped_column(String(GENOME_ID_LENGTH))
     
-    seq = mapped_column(String, comment='The amino acid sequence.')
+    seq = mapped_column(String(MAX_GENE_LENGTH), comment='The amino acid sequence.')
     start = mapped_column(Integer, comment='The start location of the gene in the genome.')
     stop = mapped_column(Integer, comment='The stop location of the gene in the genome.')
     gc_content = mapped_column(Float) # The GC content of the gene. 
     strand = mapped_column(String(1)) # Whether the gene is on the forward of reverse strand. 
-    start_type = mapped_column(String) # Either a codon or indicates that the gene is incomplete. 
-    partial = mapped_column(String) # Indicating if the gene is partial, i.e. runs off a contig. 
-    rbs_motif = mapped_column(String) # The RBS binding motif detected by Prodigal. 
-    rbs_spacer = mapped_column(String) # The RBS spacer detected by Prodigal. 
-    scaffold_id = mapped_column(String) # TODO: How do I extract this?
+    start_type = mapped_column(String(5), comment='The sequence of the start codon. If the gene has no start codon, this field will be labeled "Edge."')
+    partial = mapped_column(String(2), comment='An indicator of if a gene runs off the edge of a sequence or into a gap. A 0 indicates the gene has a true boundary (a start or a stop), whereas a 1 indicates the gene is partial at that edge. For example, 00 indicates a complete gene with a start and stop codon.') 
+    rbs_motif = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS binding motif detected by Prodigal. 
+    rbs_spacer = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS spacer detected by Prodigal. 
+    scaffold_id = mapped_column(String(DEFAULT_STRING_LENGTH)) # TODO: How do I extract this?
 
 
 # Should I combine PFAM and KEGG annotations in the same table?
 class AnnotationsKeggBase(Reflected, Base):
     __abstract__ = True
  
-    annotation_id = mapped_column(String, primary_key=True)
+    annotation_id = mapped_column(Integer, primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
-    gene_id = mapped_column(String)
-    genome_id = mapped_column(String)
+    gene_id = mapped_column(String(DEFAULT_STRING_LENGTH))
+    genome_id = mapped_column(String(DEFAULT_STRING_LENGTH))
 
-    ko = mapped_column(String) # The KEGG Orthology group with which the gene was annotated.
+    ko = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
     threshold = mapped_column(Float) # The adaptive threshold for the bitscore generated using Kofamscan
     score = mapped_column(Float) # The bit score generated using Kofamscan which gives a measure of similarity between the gene and the KO family.
     e_value = mapped_column(Float)
@@ -68,18 +70,18 @@ class AnnotationsKeggBase(Reflected, Base):
 class AnnotationsPfamBase(Reflected, Base):
     __abstract__ = True
 
-    annotation_id = mapped_column(String, primary_key=True)
+    annotation_id = mapped_column(Integer, primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
-    gene_id = mapped_column(String)
-    genome_id = mapped_column(String)
+    gene_id = mapped_column(String(DEFAULT_STRING_LENGTH))
+    genome_id = mapped_column(String(DEFAULT_STRING_LENGTH))
 
-    pfam = mapped_column(String) # The KEGG Orthology group with which the gene was annotated.
+    pfam = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
     start = mapped_column(Integer)
     stop = mapped_column(Integer)
     length = mapped_column(Integer)
     e_value = mapped_column(Float)
-    interpro_accession = mapped_column(String)
-    interpro_description = mapped_column(String)
+    interpro_accession = mapped_column(String(DEFAULT_STRING_LENGTH))
+    interpro_description = mapped_column(String(DEFAULT_STRING_LENGTH))
  
 
 class MetadataBase(Reflected, Base):
@@ -88,13 +90,13 @@ class MetadataBase(Reflected, Base):
     genome_id = mapped_column(String, primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
 
-    gtdb_order = mapped_column(String)
-    gtdb_domain = mapped_column(String)
-    gtdb_phylum = mapped_column(String)
-    gtdb_class = mapped_column(String)
-    gtdb_family = mapped_column(String)
-    gtdb_genus = mapped_column(String)
-    gtdb_species = mapped_column(String)
+    gtdb_order = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_domain = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_phylum = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_class = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_family = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_genus = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gtdb_species = mapped_column(String(DEFAULT_STRING_LENGTH))
     checkm_completeness = mapped_column(Float)
     checkm_contamination = mapped_column(Float)
     coding_bases = mapped_column(Integer)
@@ -110,7 +112,7 @@ class MetadataBase(Reflected, Base):
     longest_scaffold = mapped_column(Integer)
     mean_contig_length = mapped_column(Float)
     mean_scaffold_length = mapped_column(Float)
-    ncbi_genome_representation = mapped_column(String)
+    ncbi_genome_representation = mapped_column(String(DEFAULT_STRING_LENGTH))
 
 
 

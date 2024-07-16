@@ -10,6 +10,11 @@ from typing import Dict, TypeVar, NoReturn, List
 import pickle
 import subprocess
 
+MAX_GENE_LENGTH = 700 # The maximum number of amino acids allowed for a protein sequence. 
+GENOME_ID_LENGTH = 20 # Length of the GTDB genome accessions. 
+GENE_ID_LENGTH = 20 # Approximate length of GTDB gene accessions. 
+DEFAULT_STRING_LENGTH = 50
+
 # Define some key directories. TODO: Might want to dump this in a designated configuration file. 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 
