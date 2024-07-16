@@ -20,7 +20,7 @@ from typing import List, Dict, Set
 # NOTE: The viewonly=True specifies that the relationship should not be used for persistence operations, only for accessing values.
 
 # NOTE: I think I am going to make the design choice to have the Proteins table as the primary table, and access everything else from there. 
-# There should always be a many-to-one (proteins to MetaData) or one-to-many (proteins to annotations) relationship.
+# There should always be a many-to-one (proteins to Metadata) or one-to-many (proteins to annotations) relationship.
 
 
 class Base(DeclarativeBase):
@@ -82,7 +82,7 @@ class AnnotationsPfamBase(Reflected, Base):
     interpro_description = mapped_column(String)
  
 
-class MetaDataBase(Reflected, Base):
+class MetadataBase(Reflected, Base):
     __abstract__ = True 
 
     genome_id = mapped_column(String, primary_key=True)
@@ -114,13 +114,13 @@ class MetaDataBase(Reflected, Base):
 
 
 
-class MetaDataHistory(MetaDataBase):
-    __tablename__ = 'MetaData_history'
+class MetadataHistory(MetadataBase):
+    __tablename__ = 'metadata_history'
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__),)
 
-    proteins_history = relationship('AminoAcidSeqsHistory', back_populates='MetaData_history')
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='MetaData_history')
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='MetaData_history')
+    proteins_history = relationship('AminoAcidSeqsHistory', back_populates='metadata_history')
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history')
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history')
 
 
 
@@ -128,7 +128,7 @@ class ProteinsHistory(ProteinsBase):
     __tablename__ = 'proteins_history'
     __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__),)
 
-    MetaData_history = relationship('MetaDataHistory', foreign_keys=['MetaData.genome_id', 'MetaData.release'], back_populates='proteins_history')
+    metadata_history = relationship('MetadataHistory', foreign_keys=['metadata.genome_id', 'metadata.release'], back_populates='proteins_history')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history')
 
@@ -138,7 +138,7 @@ class AnnotationsKeggHistory(AnnotationsKeggBase):
     __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__),)
 
     proteins_history = relationship('ProteinsHistory', foreign_keys=['proteins_history.gene_id', 'proteins_history.release'], back_populates='annotations_kegg_history')
-    MetaData_history = relationship('MetaDataHistory', foreign_keys=['MetaData_history.genome_id', 'MetaData_history.release'], back_populates='annotations_kegg_history')
+    metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.release'], back_populates='annotations_kegg_history')
     
 
 
@@ -147,21 +147,21 @@ class AnnotationsPfamHistory(AnnotationsPfamBase):
     __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__),)
    
     proteins_history = relationship('ProteinsHistory', foreign_keys=['proteins_history.gene_id', 'proteins_history.release'], back_populates='annotations_pfam_history')
-    MetaData_history = relationship('MetaDataHistory', foreign_keys=['MetaData_history.genome_id', 'MetaData_history.release'], back_populates='annotations_pfam_history')
+    Metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.release'], back_populates='annotations_pfam_history')
     
 
-class MetaData(MetaDataBase):
-    __tablename__ = 'MetaData'
+class Metadata(MetadataBase):
+    __tablename__ = 'metadata'
     
-    proteins = relationship('Proteins', back_populates='MetaData')
-    annotations_kegg = relationship('AnnotationsKegg', back_populates='MetaData')
-    annotations_kegg = relationship('AnnotationsPfam', back_populates='MetaData')
+    proteins = relationship('Proteins', back_populates='Metadata')
+    annotations_kegg = relationship('AnnotationsKegg', back_populates='metadata_')
+    annotations_kegg = relationship('AnnotationsPfam', back_populates='metadata_')
 
 
 class Proteins(ProteinsBase):
     __tablename__ = 'proteins'
 
-    MetaData = relationship('MetaData', back_populates='proteins', foreign_keys=['proteins.gene_id'])
+    metadata_ = relationship('Metadata', back_populates='proteins', foreign_keys=['proteins.gene_id'])
     annotations_kegg = relationship('AnnotationsKegg', back_populates='proteins')
     annotations_pfam = relationship('AnnotationsPfam', back_populates='proteins')
 
@@ -170,14 +170,14 @@ class AnnotationsKegg(AnnotationsKeggBase):
     __tablename__ = 'annotations_kegg'
 
     proteins = relationship('Proteins', back_populates='annotations_kegg')
-    MetaData = relationship('MetaData', back_populates='annotations_kegg')
+    metadata_ = relationship('Metadata', back_populates='annotations_kegg')
 
 
 class AnnotationsPfam(AnnotationsPfamBase):
     __tablename__ = 'annotations_pfam'
 
     proteins = relationship('Proteins', back_populates='annotations_pfam', foreign_keys=['proteins.gene_id'])
-    MetaData = relationship('MetaData', back_populates='annotations_pfam', foreign_keys=['MetaData.genome_id'])
+    metadata_ = relationship('Metadata', back_populates='annotations_pfam', foreign_keys=['metadata.genome_id'])
 
 
 class Database():
@@ -187,8 +187,8 @@ class Database():
         
         # First need to reflect the current database into Table objects.
         Reflected.prepare(engine)
-        self.tables = [MetaData, AminoAcidSeqs, AnnotationsKegg, AnnotationsPfam, 
-            MetaDataHistory, AminoAcidSeqsHistory, AnnotationsKeggHistory, AnnotationsPfamHistory]
+        self.tables = [Metadata, AminoAcidSeqs, AnnotationsKegg, AnnotationsPfam, 
+            MetadataHistory, AminoAcidSeqsHistory, AnnotationsKeggHistory, AnnotationsPfamHistory]
     
     def get_field_to_table_map(self, fields:Set[str], table:sqlalchemy.Table=None) -> Dict[str, sqlalchemy.Table]:
         '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
