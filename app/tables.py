@@ -35,7 +35,7 @@ class ProteinsBase(Reflected, Base):
     __abstract__ = True
 
     gene_id = mapped_column(String, primary_key=True)
-    release = mapped_column(Integer)
+    release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
     genome_id = mapped_column(String)
     
     seq = mapped_column(String, comment='The amino acid sequence.')
@@ -55,7 +55,7 @@ class AnnotationsKeggBase(Reflected, Base):
     __abstract__ = True
  
     annotation_id = mapped_column(String, primary_key=True)
-    release = mapped_column(String)
+    release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
     gene_id = mapped_column(String)
     genome_id = mapped_column(String)
 
@@ -69,7 +69,7 @@ class AnnotationsPfamBase(Reflected, Base):
     __abstract__ = True
 
     annotation_id = mapped_column(String, primary_key=True)
-    release = mapped_column(String)
+    release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
     gene_id = mapped_column(String)
     genome_id = mapped_column(String)
 
@@ -86,7 +86,8 @@ class MetadataBase(Reflected, Base):
     __abstract__ = True 
 
     genome_id = mapped_column(String, primary_key=True)
-    
+    release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
+
     gtdb_order = mapped_column(String)
     gtdb_domain = mapped_column(String)
     gtdb_phylum = mapped_column(String)
