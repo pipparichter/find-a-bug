@@ -3,7 +3,6 @@ import os
 from sqlalchemy import inspect
 import sqlalchemy
 import sqlalchemy.orm
-from releaseed import releaseed
 from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float # , ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
