@@ -1,5 +1,6 @@
 import sqlalchemy
 from app import tables
+from utils import get_database_url
 
 def create_tables(engine:sqlalchemy.engine.Engine):
 
@@ -12,3 +13,8 @@ def create_tables(engine:sqlalchemy.engine.Engine):
     tables.AnnotationsPfamHistory.__table__.create(bind=engine)
     tables.MetadataHistory.__table__.create(bind=engine)
     tables.ProteinsHistory.__table__.create(bind=engine)
+
+
+engine = sqlalchemy.create_engine(get_database_url())
+create_tables(engine)
+

@@ -87,7 +87,7 @@ class AnnotationsPfamBase(Reflected, Base):
 class MetadataBase(Reflected, Base):
     __abstract__ = True 
 
-    genome_id = mapped_column(String, primary_key=True)
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
 
     gtdb_order = mapped_column(String(DEFAULT_STRING_LENGTH))
