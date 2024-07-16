@@ -180,60 +180,60 @@ class AnnotationsPfam(AnnotationsPfamBase):
     metadata = relationship('Metadata', back_populates='annotations_pfam', foreign_keys=['metadata.genome_id'])
 
 
-# class Database():
-#     '''The class which mediates the interactions between the database and Flask app.'''
+class Database():
+    '''The class which mediates the interactions between the database and Flask app.'''
 
-#     def __init__(self, engine):
+    def __init__(self, engine):
         
-#         # First need to reflect the current database into Table objects.
-#         Reflected.prepare(engine)
-#         self.tables = [Metadata, AminoAcidSeqs, AnnotationsKegg, AnnotationsPfam, 
-#             MetadataHistory, AminoAcidSeqsHistory, AnnotationsKeggHistory, AnnotationsPfamHistory]
+        # First need to reflect the current database into Table objects.
+        Reflected.prepare(engine)
+        self.tables = [Metadata, AminoAcidSeqs, AnnotationsKegg, AnnotationsPfam, 
+            MetadataHistory, AminoAcidSeqsHistory, AnnotationsKeggHistory, AnnotationsPfamHistory]
     
-#     def get_field_to_table_map(self, fields:Set[str], table:sqlalchemy.Table=None) -> Dict[str, sqlalchemy.Table]:
-#         '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
-#         they are found. Minimizes the number of tables required to cover the fields.
+    def get_field_to_table_map(self, fields:Set[str], table:sqlalchemy.Table=None) -> Dict[str, sqlalchemy.Table]:
+        '''Returns a dictionary mapping the fields in the input to the SQLAlchemy table in which
+        they are found. Minimizes the number of tables required to cover the fields.
         
-#         :param fields: The fields which must be covered in the set of tables returned by this function. 
-#         :param table: The main query table, i.e. the one which corresponds to the requested resource. 
-#         :return: A dictionary mapping each input field to a table which contains it. 
-#         '''
-#         # Initialize the field_to_table_map with the fields in the main table. 
-#         # This will hopefully avoid any unnecessary joins. 
-#         field_to_table_map = {f:table for f in fields.intersection(self.get_fields(table))}
-#         fields = fields - self.get_fields(table) # Remove the fields which have already been added. 
+        :param fields: The fields which must be covered in the set of tables returned by this function. 
+        :param table: The main query table, i.e. the one which corresponds to the requested resource. 
+        :return: A dictionary mapping each input field to a table which contains it. 
+        '''
+        # Initialize the field_to_table_map with the fields in the main table. 
+        # This will hopefully avoid any unnecessary joins. 
+        field_to_table_map = {f:table for f in fields.intersection(self.get_fields(table))}
+        fields = fields - self.get_fields(table) # Remove the fields which have already been added. 
 
-#         # Sort the tables according to the number of columns they "cover." 
-#         all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c))
-#         all_tables.remove(table) # Exclude the main query table. 
-#         for t in all_tables:
-#             if len(fields) == 0:
-#                 break
-#             field_to_table_map.update({f:t for f in fields.intersection(self.get_fields(t))})
-#             fields = fields - self.get_fields(t)
+        # Sort the tables according to the number of columns they "cover." 
+        all_tables = sorted(self.tables, key=lambda t: len(t.__table__.c))
+        all_tables.remove(table) # Exclude the main query table. 
+        for t in all_tables:
+            if len(fields) == 0:
+                break
+            field_to_table_map.update({f:t for f in fields.intersection(self.get_fields(t))})
+            fields = fields - self.get_fields(t)
 
-#         assert len(fields) == 0, f'database.get_field_to_table_map: The fields {fields} were not mapped to a table.'
-#         return field_to_table_map
+        assert len(fields) == 0, f'database.get_field_to_table_map: The fields {fields} were not mapped to a table.'
+        return field_to_table_map
 
-#     def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
-#         '''Get all the fields stored in the table.
+    def get_fields(self, table:sqlalchemy.Table) -> Set[str]:
+        '''Get all the fields stored in the table.
         
-#         :param table: A SQLAlchemy table for which to grab the field names. 
-#         :return: A set of strings representing the columns of the table. 
-#         '''
-#         return set([c.name for c in table.__table__.c])
+        :param table: A SQLAlchemy table for which to grab the field names. 
+        :return: A set of strings representing the columns of the table. 
+        '''
+        return set([c.name for c in table.__table__.c])
 
-#     def get_table(self, name:str) -> sqlalchemy.Table:
-#         '''Get the table corresponding to the given name.
+    def get_table(self, name:str) -> sqlalchemy.Table:
+        '''Get the table corresponding to the given name.
         
-#         :param name: The name of the table to grab.
-#         :return: The SQLAlchemy table object with the specified name. 
-#         :raise: ValueError if the input table name does not match any in the database. 
-#         '''
-#         # Probably should treat this like a dictionary, eventually. 
-#         for table in self.tables:
-#             if table.__tablename__ == name:
-#                 return table
+        :param name: The name of the table to grab.
+        :return: The SQLAlchemy table object with the specified name. 
+        :raise: ValueError if the input table name does not match any in the database. 
+        '''
+        # Probably should treat this like a dictionary, eventually. 
+        for table in self.tables:
+            if table.__tablename__ == name:
+                return table
 
-#         raise ValueError('database.FindABugDatabase.get_table: Table {name} is not present in the database.')
+        raise ValueError('database.FindABugDatabase.get_table: Table {name} is not present in the database.')
    

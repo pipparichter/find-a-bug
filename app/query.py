@@ -6,7 +6,7 @@ from sqlalchemy.schema import Column
 # from versioned import versioned_session
 from urllib.parse import parse_qsl, urlparse
 from typing import Set, List, Dict, NoReturn, Tuple
-from app.database import FindABugDatabase
+from app.tables import Database
 import sqlalchemy
 
 # URL format ------------------------------------------------------------------------------
