@@ -2,14 +2,23 @@
 import argparse
 from utils.database import Database
 from utils import DATA_DIR
-from setup import upload_files
 from utils.files import * 
 import os
 
+def upload_files(database:Database, release:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
-database = Database()
+    file_names = file_name in os.listdir(data_dir)
+    chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+    for chunk in tqdm(chunks, desc=f'upload_files: Uploading files to {table_name}.'):
+        entries = []
+        for file_name in chunks:
+            file = file_class(os.path.join(data_dir, file_name), release=release)
+            entries += file.entries()
+        database.bulk_upload(table_name, entries)
+
 
 if __name__ == '__main__':
+    database = Database()
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--release', default=207, type=int, help='The GTDB release to upload to the SQL database. Initial release used was r207')
