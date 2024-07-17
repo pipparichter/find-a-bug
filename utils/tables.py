@@ -121,10 +121,11 @@ class MetadataHistory(MetadataBase):
     __tablename__ = 'metadata_history'
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__),)
 
-    proteins_history = relationship('ProteinsHistory', back_populates='metadata_history', primaryjoin='and_(ProteinsHistory.release==MetadataHistory.release, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
 
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsKeggHistory.release==MetadataHistory.release, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsPfamHistory.release==MetadataHistory.release, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
+
+    proteins_history = relationship('ProteinsHistory', back_populates='metadata_history') # , primaryjoin='and_(ProteinsHistory.release==MetadataHistory.release, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history') # , primaryjoin='and_(AnnotationsKeggHistory.release==MetadataHistory.release, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history') # , primaryjoin='and_(AnnotationsPfamHistory.release==MetadataHistory.release, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
 
 
 
@@ -132,7 +133,10 @@ class ProteinsHistory(ProteinsBase):
     __tablename__ = 'proteins_history'
     __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__),)
 
-    metadata_history = relationship('MetadataHistory', foreign_keys=['metadata.genome_id', 'metadata.release'], back_populates='proteins_history')
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), ForeignKey(MetadataHistory.genome_id))
+    release = mapped_column(Integer, ForeignKey(MetadataHistory.release))
+
+    metadata_history = relationship('MetadataHistory', foreign_keys=[MetadataHistory.genome_id, MetadataHistory.release], back_populates='proteins_history')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history')
 
