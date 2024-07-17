@@ -12,7 +12,7 @@ def upload_files(database:Database, release:int=None, data_dir:str=None, table_n
     chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
     for chunk in tqdm(chunks, desc=f'upload_files: Uploading files to {table_name}.'):
         entries = []
-        for file_name in chunks:
+        for file_name in chunk:
             file = file_class(os.path.join(data_dir, file_name), release=release)
             entries += file.entries()
         database.bulk_upload(table_name, entries)
