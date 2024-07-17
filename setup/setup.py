@@ -18,7 +18,7 @@ def upload_files(database:Database, release:int=None, data_dir:str=None, table_n
 
 
 if __name__ == '__main__':
-    database = Database()
+    database = Database(reflect=False)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--release', default=207, type=int, help='The GTDB release to upload to the SQL database. Initial release used was r207')

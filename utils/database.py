@@ -13,10 +13,11 @@ class Database():
     name = 'findabug'
     url = f'{dialect}+{driver}://{user}:{password}@{host}/{name}'
 
-    def __init__(self):
+    def __init__(self, reflect:bool=True):
 
         self.engine = sqlalchemy.create_engine(Database.url)
-        Reflected.prepare(self.engine)
+        if reflect:
+            Reflected.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)
         self.tables = [Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam]
