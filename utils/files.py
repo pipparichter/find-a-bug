@@ -1,6 +1,5 @@
 import os 
 import re
-from tables import Metadata
 from sqlalchemy import Float, String, Integer
 
 def get_converter(dtype):
