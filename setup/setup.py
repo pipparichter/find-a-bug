@@ -34,6 +34,8 @@ if __name__ == '__main__':
     for table_name in args.table_names:
         print(f'Initializing table {table_name}.')
         database.create(table_name, args.drop_existing)
+
+    database.reflect()
     
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')

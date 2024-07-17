@@ -69,5 +69,8 @@ class Database():
         assert 'history' not in table_name
         history_table_name = table_name + '_history'
 
+    def reflect(self):
+        Reflected.prepare(self.engine)
+
     def close(self):
         self.session.close()
