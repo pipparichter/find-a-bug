@@ -122,8 +122,9 @@ class MetadataHistory(MetadataBase):
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__),)
 
     proteins_history = relationship('ProteinsHistory', back_populates='metadata_history')
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history')
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history')
+
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsKeggHistory.release==MetadataHistory.release, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsPfamHistory.release==MetadataHistory.release, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
 
 
 
@@ -135,17 +136,6 @@ class ProteinsHistory(ProteinsBase):
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history')
 
-import pandas as pd
-import numpy as np
-import re
-from tqdm import tqdm
-import sqlalchemy
-from sqlalchemy import Integer, Float, Boolean
-from sqlalchemy.dialects.mysql import VARCHAR, LONGTEXT
-import os   
-from typing import Dict, TypeVar, NoReturn, List
-import pickle
-import subprocess
 
 class AnnotationsKeggHistory(AnnotationsKeggBase):
     __tablename__ = 'annotations_kegg_history'
