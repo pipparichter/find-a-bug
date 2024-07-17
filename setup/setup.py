@@ -4,6 +4,7 @@ from utils.database import Database
 from utils import DATA_DIR
 from utils.files import * 
 import os
+from tqdm import tqdm
 
 def upload_files(database:Database, release:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
