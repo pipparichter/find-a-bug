@@ -59,8 +59,8 @@ class AnnotationsKeggBase(Reflected, Base):
  
     annotation_id = mapped_column(Integer, primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
-    gene_id = mapped_column(String(DEFAULT_STRING_LENGTH))
-    genome_id = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gene_id = mapped_column(String(GENE_ID_LENGTH))
+    genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
     ko = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
     threshold = mapped_column(Float) # The adaptive threshold for the bitscore generated using Kofamscan
@@ -73,8 +73,8 @@ class AnnotationsPfamBase(Reflected, Base):
 
     annotation_id = mapped_column(Integer, primary_key=True)
     release = mapped_column(Integer, comment='The GTDB release from which the data was obtained.')
-    gene_id = mapped_column(String(DEFAULT_STRING_LENGTH))
-    genome_id = mapped_column(String(DEFAULT_STRING_LENGTH))
+    gene_id = mapped_column(String(GENE_ID_LENGTH))
+    genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
     pfam = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
     start = mapped_column(Integer)
