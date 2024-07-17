@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     
-    release_dir = os.path.join(DATA_DIR, f'r{release}')
+    release_dir = os.path.join(DATA_DIR, f'r{args.release}')
 
     for table_name in args.table_names:
         print(f'Initializing table {table_name}.')
@@ -37,24 +37,24 @@ if __name__ == '__main__':
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(release_dir, 'annotations', 'pfam')
-        upload_files(database, release=release, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
+        upload_files(database, release=args.release, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
     
     if 'annotations_kegg' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
         data_dir = os.path.join(release_dir, 'annotations', 'kegg')
-        upload_files(database, release=release, data_dir=data_dir, table_name='annotations_kegg', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
+        upload_files(database, release=args.release, data_dir=data_dir, table_name='annotations_kegg', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
 
     if 'metadata' in args.table_names:
         print('Uploading initial data to the metadata table.')
         data_dir = os.path.join(release_dir, 'metadata')
-        upload_files(database, release=release, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=1)
+        upload_files(database, release=args.release, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=1)
     
     if 'proteins' in args.table_names:
         print('Uploading initial data to the proteins table.')
         data_dir = os.path.join(release_dir, 'proteins', 'bacteria')
-        upload_files(database, release=release, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
+        upload_files(database, release=args.release, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
         data_dir = os.path.join(release_dir, 'proteins', 'archaea')
-        upload_files(database, release=release, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
+        upload_files(database, release=args.release, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
 
     database.close()
     
