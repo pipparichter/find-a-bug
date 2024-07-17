@@ -1,7 +1,8 @@
 '''Script for initializing the Find-A-Bug database using the data already present on the microbes.gps.caltech.edu server.'''
 import argparse
 from utils.database import Database
-from utils import DATA_DIR, upload_files
+from utils import DATA_DIR
+from setup import upload_files
 from utils.files import * 
 import os
 
