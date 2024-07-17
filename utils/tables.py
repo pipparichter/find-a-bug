@@ -1,7 +1,8 @@
-'''Setting up ORM for the Find-A-Bug database. Reflects SQL tables which already exist, as created by scripts in the data subdirectory.'''
 import os
 from sqlalchemy import inspect
 import sqlalchemy
+import pandas as pd 
+import numpy as np
 import sqlalchemy.orm
 from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float # , ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
