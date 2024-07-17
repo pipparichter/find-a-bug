@@ -121,7 +121,7 @@ class MetadataHistory(MetadataBase):
     __tablename__ = 'metadata_history'
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__),)
 
-    proteins_history = relationship('ProteinsHistory', back_populates='metadata_history')
+    proteins_history = relationship('ProteinsHistory', back_populates='metadata_history', primaryjoin='and_(ProteinsHistory.release==MetadataHistory.release, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
 
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsKeggHistory.release==MetadataHistory.release, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history', primaryjoin='and_(AnnotationsPfamHistory.release==MetadataHistory.release, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
