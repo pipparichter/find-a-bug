@@ -1,6 +1,7 @@
 import os 
 import re
 from sqlalchemy import Float, String, Integer
+from typing import Dict, List, NoReturn
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
