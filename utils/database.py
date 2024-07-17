@@ -1,6 +1,7 @@
 import sqlalchemy
 from sqlalchemy import insert
 from utils.tables import Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam, Reflected
+from typing import List, Dict, NoReturn
 
 class Database():
 
