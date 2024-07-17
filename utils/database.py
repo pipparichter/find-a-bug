@@ -51,7 +51,7 @@ class Database():
             self.drop(table_name)
 
         table = self.get_table(table_name)
-        table.__table__.create(bind=engine)
+        table.__table__.create(bind=self.engine)
 
     def create_all(self, drop_existing:bool=True):
 
