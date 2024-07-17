@@ -18,7 +18,7 @@ class Database():
         self.engine = sqlalchemy.create_engine(Database.url)
         Reflected.prepare(self.engine)
 
-        self.session = sqlalchemy.Session(self.engine, autobegin=True)
+        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)
         self.tables = [Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam]
         self.table_names = [table.__tablename__ for table in self.tables]
 
