@@ -87,7 +87,7 @@ class FastaFile(File):
     def dataframe(self) -> pd.DataFrame:
         '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
         add the genome ID as an additional column.'''
-        df = [parse_header(header) for header in self.headers()]
+        df = [self.parse_header(header) for header in self.headers()]
         for row, seq in zip(df, self.sequences()):
             row['seq'] = seq
         return pd.DataFrame(df)

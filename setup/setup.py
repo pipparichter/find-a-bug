@@ -15,11 +15,13 @@ def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, ta
     else:
         chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
     
-    for chunk in tqdm(chunks, desc=f'upload_files: Uploading files to {table_name}.'):
+    pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to {table_name}.')
+    for chunk in chunks:
         entries = []
         for file_name in chunk:
             file = file_class(os.path.join(data_dir, file_name), gtdb_version=gtdb_version)
             entries += file.entries()
+            pbar.update(1)
 
         database.bulk_upload(table_name, entries)
 
