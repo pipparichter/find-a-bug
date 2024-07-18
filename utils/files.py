@@ -4,7 +4,7 @@ from sqlalchemy import Float, String, Integer
 from typing import Dict, List, NoReturn
 import pandas as pd 
 import numpy as np
-from utils import MAX_GENE_LENGTH 
+from utils import MAX_SEQ_LENGTH 
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
@@ -77,8 +77,6 @@ class FastaFile(File):
         seqs = re.split(r'^>.*', self.content, flags=re.MULTILINE)[1:]
         # Strip all of the newline characters from the amino acid sequences. 
         seqs = [s.replace('\n', '') for s in seqs]
-        for seq in seqs:
-            print(len(seq))
         return seqs
 
     def size(self):
