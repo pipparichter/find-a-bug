@@ -62,9 +62,10 @@ class Database():
             self.create(table_name, drop_existing=drop_existing)
 
     def bulk_upload(self, table_name:str, entries:List[Dict]) -> NoReturn:
-
-        table = self.get_table(table_name)
-        self.session.execute(insert(table), entries) 
+        # Sometimes the list of entries is empty, which can cause some errors with SQLAlchemy. 
+        if len(entries) > 0:
+            table = self.get_table(table_name)
+            self.session.execute(insert(table), entries) 
 
     def move_to_history(self, table_name:str):
         '''Move a current table to history.'''

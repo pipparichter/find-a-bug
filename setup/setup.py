@@ -9,12 +9,18 @@ from tqdm import tqdm
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
-    chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+    
+    if chunk_size is None:
+        chunks = [file_names]
+    else:
+        chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+    
     for chunk in tqdm(chunks, desc=f'upload_files: Uploading files to {table_name}.'):
         entries = []
         for file_name in chunk:
             file = file_class(os.path.join(data_dir, file_name), gtdb_version=gtdb_version)
             entries += file.entries()
+
         database.bulk_upload(table_name, entries)
 
 
@@ -44,7 +50,7 @@ if __name__ == '__main__':
     if 'metadata' in args.table_names:
         print('Uploading initial data to the metadata table.')
         data_dir = os.path.join(gtdb_version_dir, 'metadata')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=1)
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=None)
 
     if 'proteins' in args.table_names:
         print('Uploading initial data to the proteins table.')
