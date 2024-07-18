@@ -27,10 +27,10 @@ def get_converter(dtype):
 
 class File():
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
 
         self.path = path 
-        self.release = release
+        self.gtdb_version = gtdb_version
         self.dir_name, self.file_name = os.path.split(path) 
         self.data = None # This will be populated with a DataFrame in child classes. 
 
@@ -46,15 +46,15 @@ class File():
         for entry in entries:
             # Add the genome ID to the entries as another field.
             entry['genome_id'] = self.genome_id
-            entry['release'] = self.release
+            entry['gtdb_version'] = self.gtdb_version
         return entries
 
 
 class FastaFile(File):
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
 
-        super().__init__(path, release=release) 
+        super().__init__(path, gtdb_version=gtdb_version) 
 
         self.n_entries = None
         with open(path, 'r') as f:
@@ -95,9 +95,9 @@ class ProteinsFile(FastaFile):
 
     fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'rbs_spacer', 'scaffold_id']
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
 
-        super().__init__(path, release=release)
+        super().__init__(path, gtdb_version=gtdb_version)
 
     def parse_header(self, header:str) -> Dict[str, object]:
         '''Parse the header string of an entry in a genome file. Headers are of the form:
@@ -167,9 +167,9 @@ class MetadataFile(File):
         return parsed
 
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
         
-        super().__init__(path, release=release)
+        super().__init__(path, gtdb_version=gtdb_version)
 
         data = pd.read_csv(path, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
         data = data.rename(columns={'gc_percentage':'gc_content', 'accession':'genome_id'}) # Fix some of the column names for consistency. 
@@ -189,9 +189,9 @@ class KeggAnnotationsFile(File):
 
     fields = ['gene_id', 'ko', 'threshold', 'score', 'e_value'] # Define the new column headers. 
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
 
-        super().__init__(path, release=release)
+        super().__init__(path, gtdb_version=gtdb_version)
         
         # Replace the existing headers in the CSV file with new headers. 
         self.data = pd.read_csv(path, header=0, names=KeggAnnotationsFile.fields) # Read in the CSV file. 
@@ -214,9 +214,9 @@ class PfamAnnotationsFile(File):
         'interpro_accession', 
         'interpro_description']
 
-    def __init__(self, path:str, release:int=None):
+    def __init__(self, path:str, gtdb_version:int=None):
 
-        super().__init__(path, release=release)
+        super().__init__(path, gtdb_version=gtdb_version)
         
         # The Pfam annotation files do not contain headers, so need to define them. 
         data = pd.read_csv(path, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
