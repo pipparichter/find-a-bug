@@ -134,9 +134,6 @@ class ProteinsHistory(ProteinsBase):
                         ForeignKeyConstraint(['genome_id'], ['metadata_history.genome_id']), 
                         ForeignKeyConstraint(['release'], ['metadata_history.release']))
 
-    genome_id = mapped_column(String(GENOME_ID_LENGTH), ForeignKey(MetadataHistory.genome_id))
-    release = mapped_column(Integer, ForeignKey(MetadataHistory.release))
-
     # metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.release'], back_populates='proteins_history')
     metadata_history = relationship('MetadataHistory', back_populates='proteins_history')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
