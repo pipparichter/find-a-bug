@@ -122,9 +122,9 @@ class MetadataHistory(MetadataBase):
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'gtdb_version', name=__tablename__),)
 
 
-    proteins_history = relationship('ProteinsHistory', back_populates='metadata_history', passive_deletes=True) # , primaryjoin='and_(ProteinsHistory.gtdb_version==MetadataHistory.gtdb_version, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history', passive_deletes=True) # , primaryjoin='and_(AnnotationsKeggHistory.gtdb_version==MetadataHistory.gtdb_version, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history', passive_deletes=True) # , primaryjoin='and_(AnnotationsPfamHistory.gtdb_version==MetadataHistory.gtdb_version, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
+    proteins_history = relationship('ProteinsHistory', passive_deletes=True) # , primaryjoin='and_(ProteinsHistory.gtdb_version==MetadataHistory.gtdb_version, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', passive_deletes=True) # , primaryjoin='and_(AnnotationsKeggHistory.gtdb_version==MetadataHistory.gtdb_version, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', passive_deletes=True) # , primaryjoin='and_(AnnotationsPfamHistory.gtdb_version==MetadataHistory.gtdb_version, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
 
 
 
@@ -134,9 +134,9 @@ class ProteinsHistory(ProteinsBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'))
 
     # metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.gtdb_version'], back_populates='proteins_history')
-    metadata_history = relationship('MetadataHistory', back_populates='proteins_history')
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history', passive_deletes=True)
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history', passive_deletes=True)
+    # metadata_history = relationship('MetadataHistory', back_populates='proteins_history')
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', passive_deletes=True)
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', passive_deletes=True)
 
 
 class AnnotationsKeggHistory(AnnotationsKeggBase):
@@ -145,8 +145,8 @@ class AnnotationsKeggHistory(AnnotationsKeggBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'], ondelete='cascade'))
 
-    proteins_history = relationship('ProteinsHistory', back_populates='annotations_kegg_history')
-    metadata_history = relationship('MetadataHistory', back_populates='annotations_kegg_history')
+    # proteins_history = relationship('ProteinsHistory', back_populates='annotations_kegg_history')
+    # metadata_history = relationship('MetadataHistory', back_populates='annotations_kegg_history')
     
 
 
@@ -156,8 +156,8 @@ class AnnotationsPfamHistory(AnnotationsPfamBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'], ondelete='cascade')) 
 
-    proteins_history = relationship('ProteinsHistory', back_populates='annotations_pfam_history')
-    metadata_history = relationship('MetadataHistory', back_populates='annotations_pfam_history')
+    # proteins_history = relationship('ProteinsHistory', back_populates='annotations_pfam_history')
+    # metadata_history = relationship('MetadataHistory', back_populates='annotations_pfam_history')
     
 
 class Metadata(MetadataBase):
