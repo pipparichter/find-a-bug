@@ -187,7 +187,7 @@ class MetadataFile(File):
         data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
 
         n = len(data)
-        self.data = data[~pd.isnumm(data.genome_id)] # I think some of these are None, which is messing things up. 
+        self.data = data[~pd.isnull(data.genome_id)] # I think some of these are None, which is messing things up. 
         print(f'MetadataFile.__init__: Dropped {len(self.data) - n} rows where the genome ID was null.')
 
 
