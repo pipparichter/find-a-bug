@@ -79,7 +79,7 @@ class FastaFile(File):
         seqs = [s.replace('\n', '') for s in seqs]
 
         for seq in seqs:
-            assert len(seq) < MAX_SEQ_LENGTH, f'ProteinFile.sequences: Sequence has length {len(seq)}, which exceeds the maximum allowed sequence length of {MAX_SEQ_LENGTH}.'
+            assert len(seq) < MAX_SEQ_LENGTH, f'ProteinFile.sequences: Sequence has length {len(seq)}, which exceeds the maximum allowed sequence length of {MAX_SEQ_LENGTH}.\n {seq}'
         return seqs
 
     def size(self):
