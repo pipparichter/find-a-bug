@@ -2,7 +2,7 @@ import os
 
 MAX_SEQ_LENGTH = 20000 # The maximum number of amino acids allowed for a protein sequence. 
 GENOME_ID_LENGTH = 20 # Length of the GTDB genome accessions. 
-GENE_ID_LENGTH = 20 # Approximate length of GTDB gene accessions. 
+GENE_ID_LENGTH = 50 # Approximate length of GTDB gene accessions. 
 DEFAULT_STRING_LENGTH = 50
 
 # Define some key directories. TODO: Might want to dump this in a designated configuration file. 
