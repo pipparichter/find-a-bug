@@ -66,6 +66,7 @@ class Database():
         if len(entries) > 0:
             table = self.get_table(table_name)
             self.session.execute(insert(table), entries) 
+            self.session.commit()
 
     def move_to_history(self, table_name:str):
         '''Move a current table to history.'''
