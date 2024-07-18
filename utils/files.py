@@ -184,7 +184,9 @@ class MetadataFile(File):
         taxonomy_data = pd.DataFrame(taxonomy_data)
 
         # Merge the parsed taxonomy data and the rest of the metadata, dropping the taxonomy string column. 
-        self.data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
+        data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
+        data['genome_id'] = data.genome_id.str.replace(r'GB_', '').str.replace(r'RS_', '') # Remove the prefixes from the genome IDs. 
+        self.data = data
 
         # self.data = data[~pd.isnull(data.genome_id)] # I think some of these are None, which is messing things up. 
 
