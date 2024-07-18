@@ -133,8 +133,6 @@ class ProteinsHistory(ProteinsBase):
     __table_args__ = (PrimaryKeyConstraint('gene_id', 'gtdb_version', name=__tablename__),
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'))
 
-    # metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.gtdb_version'], back_populates='proteins_history')
-    # metadata_history = relationship('MetadataHistory', back_populates='proteins_history')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', passive_deletes=True)
     annotations_pfam_history = relationship('AnnotationsPfamHistory', passive_deletes=True)
 
@@ -145,10 +143,6 @@ class AnnotationsKeggHistory(AnnotationsKeggBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'], ondelete='cascade'))
 
-    # proteins_history = relationship('ProteinsHistory', back_populates='annotations_kegg_history')
-    # metadata_history = relationship('MetadataHistory', back_populates='annotations_kegg_history')
-    
-
 
 class AnnotationsPfamHistory(AnnotationsPfamBase):
     __tablename__ = 'annotations_pfam_history'
@@ -156,36 +150,31 @@ class AnnotationsPfamHistory(AnnotationsPfamBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'], ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'], ondelete='cascade')) 
 
-    # proteins_history = relationship('ProteinsHistory', back_populates='annotations_pfam_history')
-    # metadata_history = relationship('MetadataHistory', back_populates='annotations_pfam_history')
-    
 
 class Metadata(MetadataBase):
     __tablename__ = 'metadata'
     
-    proteins = relationship('Proteins', back_populates='Metadata')
-    annotations_kegg = relationship('AnnotationsKegg', back_populates='metadata_')
-    annotations_kegg = relationship('AnnotationsPfam', back_populates='metadata_')
+    proteins_history = relationship('Proteins', passive_deletes=True) 
+    annotations_kegg_history = relationship('AnnotationsKegg', passive_deletes=True) 
+    annotations_pfam_history = relationship('AnnotationsPfam', passive_deletes=True) 
 
 
 class Proteins(ProteinsBase):
     __tablename__ = 'proteins'
+    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id'], ondelete='cascade'),)
 
-    metadata_ = relationship('Metadata', back_populates='proteins', foreign_keys=['proteins.gene_id'])
-    annotations_kegg = relationship('AnnotationsKegg', back_populates='proteins')
-    annotations_pfam = relationship('AnnotationsPfam', back_populates='proteins')
+    annotations_kegg_history = relationship('AnnotationsKegg', passive_deletes=True)
+    annotations_pfam_history = relationship('AnnotationsPfam', passive_deletes=True)
 
 
 class AnnotationsKegg(AnnotationsKeggBase):
     __tablename__ = 'annotations_kegg'
-
-    proteins = relationship('Proteins', back_populates='annotations_kegg')
-    metadata_ = relationship('Metadata', back_populates='annotations_kegg')
+    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id'], ondelete='cascade'),
+                        ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'], ondelete='cascade')) 
 
 
 class AnnotationsPfam(AnnotationsPfamBase):
     __tablename__ = 'annotations_pfam'
-
-    proteins = relationship('Proteins', back_populates='annotations_pfam', foreign_keys=['proteins.gene_id'])
-    metadata_ = relationship('Metadata', back_populates='annotations_pfam', foreign_keys=['metadata.genome_id'])
+    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id'], ondelete='cascade'),
+                        ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'], ondelete='cascade')) 
 
