@@ -4,7 +4,7 @@ import sqlalchemy
 import pandas as pd 
 import numpy as np
 import sqlalchemy.orm
-from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint
+from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint, Text
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
@@ -41,7 +41,8 @@ class ProteinsBase(Reflected, Base):
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
     genome_id = mapped_column(String(GENOME_ID_LENGTH))
     
-    seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
+    # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
+    seq = mapped_column(Text, comment='The amino acid sequence.')
     start = mapped_column(Integer, comment='The start location of the gene in the genome.')
     stop = mapped_column(Integer, comment='The stop location of the gene in the genome.')
     gc_content = mapped_column(Float) # The GC content of the gene. 
