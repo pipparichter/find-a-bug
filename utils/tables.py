@@ -131,10 +131,10 @@ class MetadataHistory(MetadataBase):
 class ProteinsHistory(ProteinsBase):
     __tablename__ = 'proteins_history'
     __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__),
-                        ForeignKeyConstraint(['genome_id', 'release'], ['metadata_history.genome_id', 'metadata_history.release'], ondelete='cascade'))
+                        ForeignKeyConstraint(['genome_id', 'release'], ['metadata_history.genome_id', 'metadata_history.release']))
 
     # metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.release'], back_populates='proteins_history')
-    metadata_history = relationship('MetadataHistory', back_populates='proteins_history')
+    metadata_history = relationship('MetadataHistory', viewonly=True, back_populates='proteins_history')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history')
 
