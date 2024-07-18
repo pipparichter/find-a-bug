@@ -20,7 +20,7 @@ class Database():
             Reflected.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)
-        self.tables = [Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam]
+        self.tables = [Metadata, MetadataHistory, Proteins, ProteinsHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam]
         self.table_names = [table.__tablename__ for table in self.tables]
 
     def has_table(self, table_name:str) -> bool:
