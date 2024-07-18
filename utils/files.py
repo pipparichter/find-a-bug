@@ -33,6 +33,7 @@ class File():
         self.gtdb_version = gtdb_version
         self.dir_name, self.file_name = os.path.split(path) 
         self.data = None # This will be populated with a DataFrame in child classes. 
+        self.genome_id = None # This will be populated with the genome ID extracted from the filename for everything but the MetadataFile class.
 
     def dataframe(self):
         return self.data
