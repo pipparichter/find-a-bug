@@ -125,7 +125,7 @@ class ProteinsFile(FastaFile):
                 entry['gc_content'] = float(value)
             elif field == 'ID':
                 entry['scaffold_id'] = value.split('_')[0]
-            elif field in ProdigalFile.fields:
+            elif field in ProteinsFile.fields:
                 entry[field] = value
 
         return entry
