@@ -31,7 +31,7 @@ if __name__ == '__main__':
     
     gtdb_version_dir = os.path.join(DATA_DIR, f'r{args.gtdb_version}')
 
-    for table_name in args.table_names:
+    for table_name in args.table_names[::-1]:
         print(f'Initializing table {table_name}.')
         database.create(table_name, args.drop_existing)
 
