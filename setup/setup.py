@@ -40,7 +40,19 @@ if __name__ == '__main__':
         database.create(table_name)
 
     database.reflect()
-    
+
+    if 'metadata' in args.table_names:
+        print('Uploading initial data to the metadata table.')
+        data_dir = os.path.join(gtdb_version_dir, 'metadata')
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=1)
+
+    if 'proteins' in args.table_names:
+        print('Uploading initial data to the proteins table.')
+        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'bacteria')
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
+        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'archaea')
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
+
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')
@@ -50,18 +62,6 @@ if __name__ == '__main__':
         print('Uploading initial data to the annotations_kegg table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'kegg')
         upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_kegg', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
-
-    if 'metadata' in args.table_names:
-        print('Uploading initial data to the metadata table.')
-        data_dir = os.path.join(gtdb_version_dir, 'metadata')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=1)
-    
-    if 'proteins' in args.table_names:
-        print('Uploading initial data to the proteins table.')
-        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'bacteria')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
-        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'archaea')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
 
     database.close()
     
