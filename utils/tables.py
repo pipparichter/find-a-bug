@@ -161,7 +161,7 @@ class Metadata(MetadataBase):
 
 class Proteins(ProteinsBase):
     __tablename__ = 'proteins'
-    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id'])) # , ondelete='cascade'),)
+    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']),) # , ondelete='cascade'),)
 
     annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True)
     annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True)
