@@ -181,6 +181,9 @@ class MetadataFile(File):
             row['genome_id'] = genome_id
         taxonomy_data = pd.DataFrame(taxonomy_data)
 
+        print(data.columns)
+        print(taxonomy_data.columns)
+
         # Merge the parsed taxonomy data and the rest of the metadata, dropping the taxonomy string column. 
         self.data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
 
