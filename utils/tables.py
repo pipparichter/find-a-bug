@@ -4,7 +4,7 @@ import sqlalchemy
 import pandas as pd 
 import numpy as np
 import sqlalchemy.orm
-from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float # , ForeignKeyConstraint
+from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
@@ -122,7 +122,6 @@ class MetadataHistory(MetadataBase):
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'release', name=__tablename__),)
 
 
-
     proteins_history = relationship('ProteinsHistory', back_populates='metadata_history') # , primaryjoin='and_(ProteinsHistory.release==MetadataHistory.release, ProteinsHistory.genome_id==MetadataHistory.genome_id)')
     annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='metadata_history') # , primaryjoin='and_(AnnotationsKeggHistory.release==MetadataHistory.release, AnnotationsKeggHistory.genome_id==MetadataHistory.genome_id)')
     annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='metadata_history') # , primaryjoin='and_(AnnotationsPfamHistory.release==MetadataHistory.release, AnnotationsPfamHistory.genome_id==MetadataHistory.genome_id)')
@@ -131,7 +130,9 @@ class MetadataHistory(MetadataBase):
 
 class ProteinsHistory(ProteinsBase):
     __tablename__ = 'proteins_history'
-    __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__),)
+    __table_args__ = (PrimaryKeyConstraint('gene_id', 'release', name=__tablename__),
+                        ForeignKeyConstraint(['genome_id'], ['metadata_history.genome_id']), 
+                        ForeignKeyConstraint(['release'], ['metadata_history.release']))
 
     genome_id = mapped_column(String(GENOME_ID_LENGTH), ForeignKey(MetadataHistory.genome_id))
     release = mapped_column(Integer, ForeignKey(MetadataHistory.release))
