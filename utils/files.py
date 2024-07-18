@@ -77,6 +77,9 @@ class FastaFile(File):
         seqs = re.split(r'^>.*', self.content, flags=re.MULTILINE)[1:]
         # Strip all of the newline characters from the amino acid sequences. 
         seqs = [s.replace('\n', '') for s in seqs]
+
+        for seq in seqs:
+            assert len(seq) < MAX_SEQ_LENGTH, f'ProteinFile.sequences: Sequence {gene_id} has length {len(seq)}, which exceeds the maximum allowed sequence length of {MAX_SEQ_LENGTH}.'
         return seqs
 
     def size(self):
