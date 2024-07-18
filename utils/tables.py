@@ -135,15 +135,15 @@ class ProteinsHistory(ProteinsBase):
 
     # metadata_history = relationship('MetadataHistory', foreign_keys=['metadata_history.genome_id', 'metadata_history.release'], back_populates='proteins_history')
     # metadata_history = relationship('MetadataHistory', viewonly=True, back_populates='proteins_history')
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history')
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history')
+    annotations_kegg_history = relationship('AnnotationsKeggHistory', back_populates='proteins_history', passive_deletes=True)
+    annotations_pfam_history = relationship('AnnotationsPfamHistory', back_populates='proteins_history', passive_deletes=True)
 
 
 class AnnotationsKeggHistory(AnnotationsKeggBase):
     __tablename__ = 'annotations_kegg_history'
     __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__),
                         ForeignKeyConstraint(['genome_id', 'release'], ['metadata_history.genome_id', 'metadata_history.release'], ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id', 'release'], ['proteins_history.genome_id', 'proteins_history.release'], ondelete='cascade'))
+                        ForeignKeyConstraint(['gene_id', 'release'], ['proteins_history.gene_id', 'proteins_history.release'], ondelete='cascade'))
 
     # proteins_history = relationship('ProteinsHistory', back_populates='annotations_kegg_history')
     # metadata_history = relationship('MetadataHistory', back_populates='annotations_kegg_history')
@@ -154,7 +154,7 @@ class AnnotationsPfamHistory(AnnotationsPfamBase):
     __tablename__ = 'annotations_pfam_history'
     __table_args__ = (PrimaryKeyConstraint('annotation_id', 'release', name=__tablename__),
                         ForeignKeyConstraint(['genome_id', 'release'], ['metadata_history.genome_id', 'metadata_history.release'], ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id', 'release'], ['proteins_history.genome_id', 'proteins_history.release'], ondelete='cascade')) 
+                        ForeignKeyConstraint(['gene_id', 'release'], ['proteins_history.gene_id', 'proteins_history.release'], ondelete='cascade')) 
 
     # proteins_history = relationship('ProteinsHistory', back_populates='annotations_pfam_history')
     # metadata_history = relationship('MetadataHistory', back_populates='annotations_pfam_history')
