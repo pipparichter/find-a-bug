@@ -184,11 +184,9 @@ class MetadataFile(File):
         taxonomy_data = pd.DataFrame(taxonomy_data)
 
         # Merge the parsed taxonomy data and the rest of the metadata, dropping the taxonomy string column. 
-        data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
+        self.data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
 
-        n = len(data)
-        self.data = data[~pd.isnull(data.genome_id)] # I think some of these are None, which is messing things up. 
-        print(f'MetadataFile.__init__: Dropped {len(self.data) - n} rows where the genome ID was null.')
+        # self.data = data[~pd.isnull(data.genome_id)] # I think some of these are None, which is messing things up. 
 
 
 class KeggAnnotationsFile(File):
