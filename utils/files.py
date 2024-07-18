@@ -34,9 +34,6 @@ class File():
         self.dir_name, self.file_name = os.path.split(path) 
         self.data = None # This will be populated with a DataFrame in child classes. 
 
-        # Extract the genome ID from the filename. 
-        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
-
     def dataframe(self):
         return self.data
 
@@ -44,8 +41,9 @@ class File():
         '''Get the file entries in a format which can be easily added to a SQL table.'''
         entries = self.dataframe().to_dict(orient='records')
         for entry in entries:
-            # Add the genome ID to the entries as another field.
-            entry['genome_id'] = self.genome_id
+            # Add the genome ID to the entries as another field if it is present as a File attribute.
+            if self.genome_id is not None:
+                entry['genome_id'] = self.genome_id
             entry['gtdb_version'] = self.gtdb_version
         return entries
 
@@ -59,6 +57,9 @@ class FastaFile(File):
         self.n_entries = None
         with open(path, 'r') as f:
             self.content = f.read()
+
+        # Extract the genome ID from the filename. 
+        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
 
     def parse_header(self, header:str) -> Dict:
@@ -184,7 +185,6 @@ class MetadataFile(File):
         self.data = data.drop(columns='gtdb_taxonomy').merge(taxonomy_data, left_on='genome_id', right_on='genome_id')
 
 
-
 class KeggAnnotationsFile(File):
 
     fields = ['gene_id', 'ko', 'threshold', 'score', 'e_value'] # Define the new column headers. 
@@ -195,6 +195,9 @@ class KeggAnnotationsFile(File):
         
         # Replace the existing headers in the CSV file with new headers. 
         self.data = pd.read_csv(path, header=0, names=KeggAnnotationsFile.fields) # Read in the CSV file. 
+
+        # Extract the genome ID from the filename. 
+        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
 
 
@@ -224,7 +227,8 @@ class PfamAnnotationsFile(File):
         data = data.rename(columns={'signature_accession':'pfam'})
         self.data = data[['gene_id', 'pfam', 'e_value', 'interpro_accession', 'interpro_description', 'start', 'stop', 'length']]
 
-
+        # Extract the genome ID from the filename. 
+        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
 
 
