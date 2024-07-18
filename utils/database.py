@@ -36,26 +36,28 @@ class Database():
 
     def drop(self, table_name:str) -> NoReturn:
         '''Deletes a SQL table from the SQL database'''
-        if self.has_table(table_name):
+        if self.has_table(table_name): # Only try to drop tables that actually exist.
             table = self.get_table(table_name)
             table.__table__.drop(self.engine)
 
     def drop_all(self) -> NoReturn:
         '''Delete all tables found in the Database.'''
-        for table_name in self.get_existing_tables():
+        # Due to relationships between tables, the AnnotationsHistory tables need to be deleted first, followed by the ProteinsHistory table, 
+        # and then the MetadataHistory table.
+        existing_tables = self.get_existing_tables()
+        table_names = [table_name for table_name in self.table_names[::-1] if table_name in existing_tables]
+
+        for table_name in table_names:
             self.drop(table_name)
 
-    def create(self, table_name:str, drop_existing:bool=True):
-
-        # If specified, drop the table if it already exists. 
-        if self.has_table(table_name) and drop_existing:
-            self.drop(table_name)
+    def create(self, table_name:str):
 
         table = self.get_table(table_name)
         table.__table__.create(bind=self.engine)
 
     def create_all(self, drop_existing:bool=True):
-
+        # Due to relationships between tables, the MetadataHistory table needs to be created first, followed by the ProteinsHistory
+        # table, and then the Annotations tables. They need to be deleted in the opposite order. 
         for table_name in self.table_names:
             self.create(table_name, drop_existing=drop_existing)
 
