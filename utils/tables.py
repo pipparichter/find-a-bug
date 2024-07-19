@@ -27,8 +27,7 @@ from utils import MAX_SEQ_LENGTH, GENOME_ID_LENGTH, GENE_ID_LENGTH, DEFAULT_STRI
 
 
 class Base(DeclarativeBase):
-    pass
-
+    pass 
 
 class Reflected(DeferredReflection):
     __abstract__ = True
