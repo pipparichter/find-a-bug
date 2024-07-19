@@ -83,7 +83,7 @@ class AnnotationsPfamBase(Reflected, Base):
     length = mapped_column(Integer)
     e_value = mapped_column(Float)
     interpro_accession = mapped_column(String(DEFAULT_STRING_LENGTH))
-    interpro_description = mapped_column(String(DEFAULT_STRING_LENGTH))
+    interpro_description = mapped_column(String(200))
  
 
 class MetadataBase(Reflected, Base):
