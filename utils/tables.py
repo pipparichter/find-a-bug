@@ -123,9 +123,9 @@ class MetadataHistory(MetadataBase):
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'gtdb_version', name=__tablename__),)
 
 
-    proteins_history = relationship('ProteinsHistory', viewonly=True) # , passive_deletes=True)
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
+    # proteins_history = relationship('ProteinsHistory', viewonly=True) # , passive_deletes=True)
+    # annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
+    # annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
 
 
 
@@ -136,6 +136,7 @@ class ProteinsHistory(ProteinsBase):
 
     annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
     annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
+    metadata_history = relationship('MetadataHistory', viewonly=True)
 
 
 class AnnotationsKeggHistory(AnnotationsKeggBase):
@@ -144,6 +145,8 @@ class AnnotationsKeggHistory(AnnotationsKeggBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'])) # , ondelete='cascade'))
 
+    proteins_history = relationship('ProteinsHistory', viewonly=True)
+    metadata_history = relationship('MetadataHistory', viewonly=True)
 
 class AnnotationsPfamHistory(AnnotationsPfamBase):
     __tablename__ = 'annotations_pfam_history'
@@ -151,6 +154,8 @@ class AnnotationsPfamHistory(AnnotationsPfamBase):
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'])) # , ondelete='cascade')) 
 
+    proteins_history = relationship('ProteinsHistory', viewonly=True)
+    metadata_history = relationship('MetadataHistory', viewonly=True)
 
 class Metadata(MetadataBase):
     __tablename__ = 'metadata'

@@ -10,79 +10,42 @@ from app.tables import Database
 import sqlalchemy
 
 # URL format ------------------------------------------------------------------------------
-# https://microbes.gps.caltech.edu/annotations?{x1}={y1}&{x2}={y2}...#page
-# https://microbes.gps.caltech.edu/metadata?{x1}={y1}&{x2}={y2}...#page
-# https://microbes.gps.caltech.edu/sequences?{x1}={y1}&{x2}={y2}...#page
+# https://microbes.gps.caltech.edu/get/annotations_kegg?{x1}={y1}&{x2}={y2}...#page
+# https://microbes.gps.caltech.edu/get/annotations_pfam?{x1}={y1}&{x2}={y2}...#page
+# https://microbes.gps.caltech.edu/get/metadata?{x1}={y1}&{x2}={y2}...#page
+# https://microbes.gps.caltech.edu/get/proteins?{x1}={y1}&{x2}={y2}...#page
 # -----------------------------------------------------------------------------------------
-# Will eventually probably add stuff like "gtdb/r207/v1" to the front.
 
+# Allowed operators... [eq], [gt], [gte], [lt], [lte], [to], [and]
+
+# ko[and]gene_id[eq]x[or]y[or]z[and]e_value[gt]x[and]threshold[eq]a[to]b
+# ko    gene_id[eq]x[or]y[or][z]    e_value[gt]x    threshold[eq]a[to]b
 
 # NOTE: Thinking that it is not worth supporting OR statements in the query string, as you could just do multiple queries.
 # Might make sense to put the onus of doing this on the user. 
 
 OPERATORS = ['=', '<', '>']
 
-def get_filter(col:Column, operator:str, value:str):
-    '''Generates a filter which can be added to a SQLAlchemy Select object. 
 
-    :param col: The SQLAlchemy column object to which the filter will be applied. 
-    :param operator: A string representing the comparison operator. One of < > or =. 
-    :param value: A string representing the value on the operator right-hand side. 
-    :raise: A ValueError if a non-numerical value is provided with a < or > operator. 
-    :raise: A ValueError if the operator is not one of < > or =. 
-    '''
-    # Extract the relevant column from the provided table. 
-    if operator == '=':
-        return col == value
-    # If a < or > is used, the value must be numerical. 
-    elif operator == '<':
-        return col < float(value)
-    elif operator == '>':
-        return col > float(value)
-    else:
-        raise ValueError(f'app.query.get_filter: {operator} is an invalid operator.')
+class Filter():
+
+    def __int__(self, string):
+        pass 
 
 
-class FindABugQuery():
+class Query():
     
-    def __init__(self, url, engine, page=None):
-        '''Initialize a FindABugQuery object.'''
+    def __init__(self, url, database:Database):
+        '''Initialize a  object.'''
 
-         # Create a new session, storing the table names in the info field. 
-        Session = sqlalchemy.orm.sessionmaker(bind=engine)
-        # versioned_session(Session) # Make it a versioned session... 
-        
-        self.session = Session()
-
-        # Reflect the Database. 
-        db = FindABugDatabase(engine)
-        
         url = urlparse(url) # Parse the URL string.
-        resource = url.path.replace('/get/', '') # One of annotations, sequences, or metadata. 
-        # Define the minimum fields to return when each resource is queried. Also define the primary field, which is what
-        # is used to order the response data. These correspond to the primary keys of the tables. 
-        if resource == 'annotations':
-            table = db.get_table('gtdb_annotations_kegg')
-            fields = ['gene_id', 'ko', 'genome_id', 'annotation_id'] # Minimum fields to return for this table. 
-            primary_field = 'annotation_id'
-        elif resource == 'sequences':
-            table = db.get_table('gtdb_amino_acid_seqs')
-            fields = ['gene_id', 'seq', 'genome_id', 'nt_start', 'nt_stop', 'reverse'] # Minimum fields to return for this table. 
-            primary_field = 'gene_id'
-        elif resource == 'metadata':
-            table = db.get_table('gtdb_metadata')
-            fields = ['genome_id'] # Minimum fields to return for this table. 
-            primary_field = 'genome_id'
-        else:
-            raise Exception(f'query.FindABugQuery: Invalid resource {resource}.')
-        
-        query_list = parse_qsl(url.query, separator='&') # Returns a list of key, value pairs. This may be empty. 
-        # Collect all fields used in the query, including those affiliated with the main table. 
+        table_name = url.path.replace('/get/', '') # One of annotations, sequences, or metadata.
+        table = database.get_table(table_name)
+        # Collect all fields used in the query. 
         fields = set(fields).union({field for field, _ in query_list})
         field_to_table_map = db.get_field_to_table_map(fields, table=table)
-
-        # Make sure to include all columns being referenced in the SELECT statement. 
-        self.stmt = select(*[getattr(t, f) for f, t in field_to_table_map.items()])
+ 
+        self.stmt = select(table)
 
         self.add_joins(table=table, tables=[t for t in field_to_table_map.values()])
         self.add_filters(query_list=query_list, field_to_table_map=field_to_table_map )
@@ -134,6 +97,10 @@ class FindABugQuery():
         Mostly for debugging purposes.'''
         # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
         return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
+
+
+class HistoryQuery():
+    pass
 
 
 
