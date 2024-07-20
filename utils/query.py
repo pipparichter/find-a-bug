@@ -2,7 +2,7 @@
 server from a client, and builds a query which can be sent to the SQL database.'''
 from sqlalchemy import or_, select 
 from sqlalchemy.schema import Column
-from sqlalchemy.sql.expression import Statement
+from sqlalchemy.sql.expression import Select
 # from versioned import versioned_session
 from typing import Set, List, Dict, NoReturn, Tuple
 import sqlalchemy
@@ -63,25 +63,25 @@ class Filter():
         table = self.field_to_table_map[field]
         return getattr(table, field)
 
-    def equal_to(self, stmt:Statement, col:Column=None, value:str=None):
+    def equal_to(self, stmt:Select, col:Column=None, value:str=None):
         if '[or]' in value:
             return stmt.filter(col.in_(value.split('[or]')))
         else:
             return stmt.filter(col == value)
 
-    def less_than(self, stmt:Statement, col:Column=None, value:str=None):
+    def less_than(self, stmt:Select, col:Column=None, value:str=None):
         return stmt.filter(col < float(value))
          
-    def less_than_or_equal_to(self, stmt:Statement, col:Column=None, value:str=None):
+    def less_than_or_equal_to(self, stmt:Select, col:Column=None, value:str=None):
         return stmt.filter(col <= float(value))
 
-    def greater_than(self, stmt:Statement, col:Column=None, value:str=None):
+    def greater_than(self, stmt:Select, col:Column=None, value:str=None):
         return stmt.filter(col > float(value))
 
-    def greater_than_or_equal_to(self, stmt:Statement, col:Column=None, value:str=None):
+    def greater_than_or_equal_to(self, stmt:Select, col:Column=None, value:str=None):
         return stmt.filter(col >= float(value))
 
-    def in_range(self, stmt:Statement, col:Column=None, value:str=None):
+    def in_range(self, stmt:Select, col:Column=None, value:str=None):
         low, high = value.split('[to]')
         return stmt.filter(col.between(float(low), float(high)))
 
