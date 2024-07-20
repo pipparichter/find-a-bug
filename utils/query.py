@@ -152,7 +152,7 @@ class Filter():
         if query.page is not None:
             # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
             stmt = stmt.order_by(getattr(self.table, 'genome_id'))
-            stmt = stmt.offset(query.page * query.page_size).limit(page_size)
+            stmt = stmt.offset(query.page * query.page_size).limit(query.page_size)
 
         # Add all relevant columns to the return statement.
         for field in self.include + list(self.filters.keys()):
