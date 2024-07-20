@@ -49,8 +49,8 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         filter_ = Filter(database, table_name, filter_string)
         filter_(query)
 
-
     result = query.submit(database)
+    database.close()
 
     data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
     return data.to_csv(), 200, {'Content-Type':'text/plain'}
