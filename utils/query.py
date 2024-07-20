@@ -37,12 +37,6 @@ class Query():
 
     def submit(self, database):
 
-        # Handling pagination if a page is specified. 
-        if self.page is not None:
-            # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-            self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
-            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
-
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
     
@@ -137,10 +131,6 @@ class Filter():
             # I don't think we can use joinedload with a many-to-one relationship and get the behavior I want. 
             # stmt = stmt.option(sqlalchemy.orm.joinedload(getattr(table, relationship)))
 
-        # Add all relevant columns to the return statement.
-        for field in self.include + list(self.filters.keys()):
-            stmt = stmt.add_columns(self.get_column(field))
-
         for field, (operator, value) in self.filters.items():
             col = self.get_column(field)
 
@@ -156,7 +146,18 @@ class Filter():
                 stmt = self.equal_to(stmt, col, value)
             elif operator == '[in]':
                 stmt = self.in_range(stmt, col, value)
-        
+    
+        # Try applying the limit before adding columns... 
+        # Handling pagination if a page is specified. 
+        if query.page is not None:
+            # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
+            stmt = stmt.order_by(getattr(self.table, 'genome_id'))
+            stmt = stmt.offset(query.page * query.page_size).limit(page_size)
+
+        # Add all relevant columns to the return statement.
+        for field in self.include + list(self.filters.keys()):
+            stmt = stmt.add_columns(self.get_column(field))
+
         query.stmt = stmt # Modify the query that was passed in to the filter. 
         return query # Return the query so that methods can be chained. 
 
