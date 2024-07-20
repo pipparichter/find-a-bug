@@ -16,6 +16,46 @@ import sqlalchemy
 # Might make sense to put the onus of doing this on the user. 
 
 
+
+
+class Query():
+    
+    def __init__(self, database, table_name:str, page:int=None):
+
+        self.table = database.get_table(table_name)
+        self.stmt = select(self.table)
+        self.page = page
+        self.page_size = 500
+
+
+    def apply_filter(self, filter_:Filter) -> NoReturn:
+
+        self.stmt = filter_(stmt)
+
+
+    def __str__(self):
+        '''Return a string representation of the query, which is the statement sent to the SQL database.
+        Mostly for debugging purposes.'''
+        # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
+        return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
+
+    def execute(self, database):
+
+        # Handling pagination if a page is specified. 
+        if self.page is not None:
+            # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
+            self.stmt = self.stmt.order_by(getattr(table, 'genome_id'))
+            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
+
+        return database.session.execute(self.stmt).all()
+    
+
+class HistoryQuery(Query):
+    pass
+
+
+
+
 class Filter():
 
     operators = ['[eq]', '[gt]', '[gte]', '[lt]', '[lte]', '[in]']
@@ -113,46 +153,6 @@ class Filter():
         
         query.stmt = stmt # Modify the query that was passed in to the filter. 
         return query # Return the query so that methods can be chained. 
-
-
-
-class Query():
-    
-    def __init__(self, database, table_name:str, page:int=None):
-
-        self.table = database.get_table(table_name)
-        self.stmt = select(self.table)
-        self.page = page
-        self.page_size = 500
-
-
-    def apply_filter(self, filter_:Filter) -> NoReturn:
-
-        self.stmt = filter_(stmt)
-
-
-    def __str__(self):
-        '''Return a string representation of the query, which is the statement sent to the SQL database.
-        Mostly for debugging purposes.'''
-        # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
-        return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
-
-    def execute(self, database):
-
-        # Handling pagination if a page is specified. 
-        if self.page is not None:
-            # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-            self.stmt = self.stmt.order_by(getattr(table, 'genome_id'))
-            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
-
-        return database.session.execute(self.stmt).all()
-
-
-    
-
-class HistoryQuery(Query):
-    pass
-
 
 
 
