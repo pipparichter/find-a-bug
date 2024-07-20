@@ -133,8 +133,9 @@ class ProteinsHistory(ProteinsBase, Reflected):
     __table_args__ = (PrimaryKeyConstraint('gene_id', 'gtdb_version', name=__tablename__),
                         ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'])) # , ondelete='cascade'))
 
-    annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
-    annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
+    
+    # annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
+    # annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
     metadata_history = relationship('MetadataHistory', viewonly=True)
 
 
@@ -159,17 +160,16 @@ class AnnotationsPfamHistory(AnnotationsPfamBase, Reflected):
 class Metadata(MetadataBase, Reflected):
     __tablename__ = 'metadata'
     
-    proteins_history = relationship('Proteins', viewonly=True) # , passive_deletes=True) 
-    annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True) 
-    annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True) 
+    # proteins_history = relationship('Proteins', viewonly=True) # , passive_deletes=True) 
+    # annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True) 
+    # annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True) 
 
 
 class Proteins(ProteinsBase, Reflected):
     __tablename__ = 'proteins'
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']),) # , ondelete='cascade'),)
 
-    annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True)
-    annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True)
+    metadata = relationship('Metadata', viewonly=True)
 
 
 class AnnotationsKegg(AnnotationsKeggBase, Reflected):
@@ -177,9 +177,14 @@ class AnnotationsKegg(AnnotationsKeggBase, Reflected):
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
 
+    metadata = relationship('Metadata', viewonly=True)
+    proteins = relationship('Proteins', viewonly=True)
+
 
 class AnnotationsPfam(AnnotationsPfamBase, Reflected):
     __tablename__ = 'annotations_pfam'
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
 
+    metadata = relationship('Metadata', viewonly=True)
+    proteins = relationship('Proteins', viewonly=True)
