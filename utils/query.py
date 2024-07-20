@@ -28,11 +28,6 @@ class Query():
         self.page_size = 500
 
 
-    def apply_filter(self, filter_:Filter) -> NoReturn:
-
-        self.stmt = filter_(stmt)
-
-
     def __str__(self):
         '''Return a string representation of the query, which is the statement sent to the SQL database.
         Mostly for debugging purposes.'''
@@ -52,7 +47,6 @@ class Query():
 
 class HistoryQuery(Query):
     pass
-
 
 
 
