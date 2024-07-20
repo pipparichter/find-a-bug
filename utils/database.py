@@ -5,7 +5,8 @@ from typing import List, Dict, NoReturn
 
 class Database():
 
-    host = '127.0.0.1' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
+    # host = '127.0.0.1' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
+    host = 'localhost' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
     dialect = 'mariadb'
     driver = 'pymysql'
     user = 'root'

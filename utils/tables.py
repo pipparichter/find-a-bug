@@ -33,7 +33,7 @@ class Reflected(DeferredReflection):
     __abstract__ = True
 
 
-class ProteinsBase(Reflected, Base):
+class ProteinsBase(Base):
     __abstract__ = True
 
     gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
@@ -54,7 +54,7 @@ class ProteinsBase(Reflected, Base):
 
 
 # Should I combine PFAM and KEGG annotations in the same table?
-class AnnotationsKeggBase(Reflected, Base):
+class AnnotationsKeggBase(Base):
     __abstract__ = True
  
     annotation_id = mapped_column(Integer, primary_key=True)
@@ -68,7 +68,7 @@ class AnnotationsKeggBase(Reflected, Base):
     e_value = mapped_column(Float)
 
 
-class AnnotationsPfamBase(Reflected, Base):
+class AnnotationsPfamBase(Base):
     __abstract__ = True
 
     annotation_id = mapped_column(Integer, primary_key=True)
@@ -85,7 +85,7 @@ class AnnotationsPfamBase(Reflected, Base):
     interpro_description = mapped_column(String(200))
  
 
-class MetadataBase(Reflected, Base):
+class MetadataBase(Base):
     __abstract__ = True 
 
     genome_id = mapped_column(String(GENOME_ID_LENGTH), primary_key=True)
@@ -117,7 +117,7 @@ class MetadataBase(Reflected, Base):
 
 
 
-class MetadataHistory(MetadataBase):
+class MetadataHistory(Reflected, MetadataBase):
     __tablename__ = 'metadata_history'
     __table_args__ = (PrimaryKeyConstraint('genome_id', 'gtdb_version', name=__tablename__),)
 
