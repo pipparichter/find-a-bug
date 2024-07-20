@@ -92,7 +92,7 @@ class Filter():
             rel_table = database.get_table(rel)
             self.field_to_table_map.update({col.name:rel_table for col in rel_table.__table__.c})
 
-        self.tables_to_join = [self.field_to_table_map.get(field) for field in list(self.filters.values()) + self.include]
+        self.tables_to_join = [self.field_to_table_map.get(field) for field in list(self.filters.keys()) + self.include]
 
     def get_column(self, field:str):
         '''Get the Column object corresponding to the specified field.'''
