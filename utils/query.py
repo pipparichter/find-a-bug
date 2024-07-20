@@ -133,6 +133,10 @@ class Filter():
             # I don't think we can use joinedload with a many-to-one relationship and get the behavior I want. 
             # stmt = stmt.option(sqlalchemy.orm.joinedload(getattr(table, relationship)))
 
+        # Add all relevant columns to the return statement.
+        for field in self.include + list(self.filters.keys()):
+            stmt = stmt.add_columns(self.get_column(field))
+
         for field, (operator, value) in self.filters.items():
             col = self.get_column(field)
 
