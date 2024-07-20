@@ -39,7 +39,7 @@ class Query():
         # Handling pagination if a page is specified. 
         if self.page is not None:
             # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-            self.stmt = self.stmt.order_by(getattr(table, 'genome_id'))
+            self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         return database.session.execute(self.stmt).all()
