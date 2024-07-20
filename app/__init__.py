@@ -29,11 +29,8 @@ def welcome():
 
 @app.route('/get/<table_name>')
 def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
-    '''Handles a data retrieval request to the server. 
-
-    :param resource: One of 'annotations', 'metadata', or 'sequences'. Indicates the table to access. 
-    :return: CSV data corresponding to the request parameters.
-    '''
+    '''Handles a data retrieval request to the server.'''
+    url = request.url # Get the URL that was sent to the app. How does this work, I wonder?
     page = 0
     if '#' in request.url: # Removes the page from the URL string. 
         url, page = url.split('#')
