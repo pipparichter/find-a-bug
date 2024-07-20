@@ -42,7 +42,7 @@ class Query():
             self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
-        return database.session.execute(self.stmt).all()
+        return database.session.execute(self.stmt) # .all()
     
 
 class HistoryQuery(Query):
