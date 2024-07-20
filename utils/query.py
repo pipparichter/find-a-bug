@@ -69,14 +69,17 @@ class Filter():
     def parse(cls, filter_string:str):
         
         filters = dict()
+        include = []
 
         for filter_ in filter_string.split(Filter.connector):
             operator = Filter.get_operator(filter_)
             if operator is not None:
                 field, value = filter_.split(operator)
                 filters[field].append((operator, value))
+            else:
+                include.append(field)
 
-        return filters
+        return filters, include
 
 
     def __init__(self, database, table_name:str, filter_string:str):
@@ -84,8 +87,7 @@ class Filter():
         self.table_name = table_name 
         self.table = database.get_table(table_name)
         
-        self.include = []
-        self.filters = Filter.parse(filter_string)
+        self.filters, self.include = Filter.parse(filter_string)
 
         self.field_to_table_map = dict()
         for rel, _ in self.table.__mapper__.relationships.items():
