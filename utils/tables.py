@@ -169,7 +169,7 @@ class Proteins(ProteinsBase, Reflected):
     __tablename__ = 'proteins'
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']),) # , ondelete='cascade'),)
 
-    metadata = relationship('Metadata', viewonly=True)
+    metadata_ = relationship('Metadata', viewonly=True)
 
 
 class AnnotationsKegg(AnnotationsKeggBase, Reflected):
@@ -177,7 +177,7 @@ class AnnotationsKegg(AnnotationsKeggBase, Reflected):
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
 
-    metadata = relationship('Metadata', viewonly=True)
+    metadata_ = relationship('Metadata', viewonly=True)
     proteins = relationship('Proteins', viewonly=True)
 
 
@@ -186,5 +186,5 @@ class AnnotationsPfam(AnnotationsPfamBase, Reflected):
     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
 
-    metadata = relationship('Metadata', viewonly=True)
+    metadata_ = relationship('Metadata', viewonly=True)
     proteins = relationship('Proteins', viewonly=True)

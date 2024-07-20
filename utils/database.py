@@ -29,6 +29,9 @@ class Database():
         return sqlalchemy.inspect(self.engine).has_table(table_name)
 
     def get_table(self, table_name:str):
+        # TODO: There is probably a better way to handle this. 
+        table_name = 'metadata' if table_name == 'metadata_' else table_name
+
         idx = self.table_names.index(table_name)
         return self.tables[idx]
 
