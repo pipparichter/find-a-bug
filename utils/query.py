@@ -131,7 +131,9 @@ class Filter():
         for relationship in self.tables_to_join:
             # TODO: Should probably have a failure condition here if a relationship is not found. 
             if relationship is not None:
-                stmt = stmt.join(getattr(self.table, relationship.__table__.name))
+                # TODO: Figure out a better way to handle this...
+                table_name = 'metadata_' if (relationship.__table__.name == 'metadata') else relationship.__table__.name 
+                stmt = stmt.join(getattr(self.table, table_name))
             # I don't think we can use joinedload with a many-to-one relationship and get the behavior I want. 
             # stmt = stmt.option(sqlalchemy.orm.joinedload(getattr(table, relationship)))
 
