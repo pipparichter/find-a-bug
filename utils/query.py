@@ -43,7 +43,7 @@ class Query():
             self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
-        return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
+        # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
     
 
