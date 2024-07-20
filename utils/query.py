@@ -24,7 +24,7 @@ class Query():
     def __init__(self, database, table_name:str, page:int=None):
 
         self.table = database.get_table(table_name)
-        self.stmt = select(*self.table.__table__.c)
+        self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
         self.page_size = 500
 

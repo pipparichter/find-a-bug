@@ -46,7 +46,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     filter_string = None if '?' not in url else url.split('?')[-1] # Extract the filter information, if present.
     if filter_string is not None:
-        filter_ = Filter(database, filter_string)
+        filter_ = Filter(database, table_name, filter_string)
         filter_(query)
 
     result = query.submit(database)
