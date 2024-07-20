@@ -38,6 +38,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
 
     database = Database()
+    database.reflect()
 
     query = Query(database, table_name, page=int(page))
 
