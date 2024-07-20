@@ -5,6 +5,7 @@ from sqlalchemy.schema import Column
 from sqlalchemy.sql.expression import Select
 # from versioned import versioned_session
 from typing import Set, List, Dict, NoReturn, Tuple
+from utils.tables import Metadata
 import sqlalchemy
 
 # Allowed operators... [eq], [gt], [gte], [lt], [lte], [to], [and]
@@ -42,6 +43,7 @@ class Query():
             self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
+        return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
     
 
