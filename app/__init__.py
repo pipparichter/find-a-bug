@@ -39,8 +39,8 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
 
     database = Database(reflect=True)
 
-    from sqlalchemy import inspect 
-    return list(inspect(database.engine).get_table_names())
+    # from sqlalchemy import inspect 
+    # return list(inspect(database.engine).get_table_names())
 
     query = Query(database, table_name, page=int(page))
 
