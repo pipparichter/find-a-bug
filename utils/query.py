@@ -88,7 +88,7 @@ class Filter():
         self.filters = Filter.parse(filter_string)
 
         self.field_to_table_map = dict()
-        for rel, _ in table.__mapper__.relationships.items():
+        for rel, _ in self.table.__mapper__.relationships.items():
             rel_table = database.get_table(rel)
             self.field_to_table_map.update({col.name:rel_table for col in rel_table.__table__.c})
 
