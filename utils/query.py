@@ -68,7 +68,7 @@ class Filter():
     @classmethod
     def parse(cls, filter_string:str):
         
-        filters = {operator:[] for operator in Filter.operators}
+        filters = dict()
 
         for filter_ in filter_string.split(Filter.connector):
             operator = Filter.get_operator(filter_)
