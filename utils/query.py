@@ -77,7 +77,7 @@ class Filter():
                 field, value = filter_.split(operator)
                 filters[field].append((operator, value))
             else:
-                include.append(field)
+                include.append(filter_)
 
         return filters, include
 
