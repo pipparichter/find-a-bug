@@ -34,7 +34,7 @@ class Query():
         # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
         return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
 
-    def execute(self, database):
+    def submit(self, database):
 
         # Handling pagination if a page is specified. 
         if self.page is not None:
@@ -42,7 +42,7 @@ class Query():
             self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
-        return database.session.execute(self.stmt).all()
+        return database.session.execute(self.stmt).all()._asdict()
     
 
 class HistoryQuery(Query):

@@ -46,7 +46,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         filter_ = Filter(database, filter_string)
         filter_(query)
 
-    result = query.execute(database)
+    result = query.submit(database)
 
     if len(result) == 0: # In case of no results.
         return 'No results', 200
