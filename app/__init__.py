@@ -50,8 +50,6 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         filter_(query)
 
     result = query.submit(database)
-    for row in result:
-        return f'{row} {row._asdict()}'
 
     data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
     return data.to_csv(), 200, {'Content-Type':'text/plain'}

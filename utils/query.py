@@ -44,7 +44,7 @@ class Query():
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
-        return database.session.execute(self.stmt.add_columns(Metadata.genome_id)) # .all()
+        return database.session.execute(self.stmt.add_columns(*self.table.__table__.c)) # .all()
     
 
 class HistoryQuery(Query):
