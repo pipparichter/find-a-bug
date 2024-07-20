@@ -51,7 +51,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     if len(result) == 0: # In case of no results.
         return 'No results', 200
     else:
-        return f'{(len(result))} {result}'
+        return str(query)
         data = pd.DataFrame.from_records([row._asdict() for row in result], columns=result[0]._fields)
         return data.to_csv(), 200, {'Content-Type':'text/plain'}
 
