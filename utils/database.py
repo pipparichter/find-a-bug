@@ -36,7 +36,6 @@ class Database():
         return self.engine.table_names()
 
 
-
     def drop(self, table_name:str) -> NoReturn:
         '''Deletes a SQL table from the SQL database'''
         if self.has_table(table_name): # Only try to drop tables that actually exist.
