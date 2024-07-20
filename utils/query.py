@@ -24,7 +24,7 @@ class Query():
     def __init__(self, database, table_name:str, page:int=None):
 
         self.table = database.get_table(table_name)
-        self.stmt = select(self.table)
+        self.stmt = select(*self.table.__table__.c)
         self.page = page
         self.page_size = 500
 
@@ -44,7 +44,7 @@ class Query():
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
-        return database.session.execute(self.stmt.add_columns(*self.table.__table__.c)) # .all()
+        return database.session.execute(self.stmt) # .all()
     
 
 class HistoryQuery(Query):
