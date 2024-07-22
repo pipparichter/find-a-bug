@@ -25,8 +25,14 @@ class Query():
 
         self.table = database.get_table(table_name)
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
-        self.page = page
+        self.page = page if page is None else 0
         self.page_size = 500
+
+        # Handling pagination if a page is specified. Does it matter when I add the limit statement?
+
+        # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
+        self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
+        self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
 
     def __str__(self):
@@ -36,12 +42,6 @@ class Query():
         return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
 
     def submit(self, database):
-
-        # Handling pagination if a page is specified. 
-        if self.page is not None:
-            # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-            self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
-            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()

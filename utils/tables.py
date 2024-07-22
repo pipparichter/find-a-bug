@@ -50,7 +50,7 @@ class ProteinsBase(Base):
     partial = mapped_column(String(2), comment='An indicator of if a gene runs off the edge of a sequence or into a gap. A 0 indicates the gene has a true boundary (a start or a stop), whereas a 1 indicates the gene is partial at that edge. For example, 00 indicates a complete gene with a start and stop codon.') 
     rbs_motif = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS binding motif detected by Prodigal. 
     rbs_spacer = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS spacer detected by Prodigal. 
-    scaffold_id = mapped_column(String(DEFAULT_STRING_LENGTH)) # TODO: How do I extract this?
+    scaffold_id = mapped_column(Integer) # TODO: How do I extract this?
 
 
 # Should I combine PFAM and KEGG annotations in the same table?

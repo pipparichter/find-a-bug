@@ -11,6 +11,7 @@ import numpy as np
 import re
 from utils.query import Query, Filter 
 from utils.database import Database
+import traceback
 
 from typing import List, Generator, Dict, Tuple
 
@@ -42,20 +43,24 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     # from sqlalchemy import inspect 
     # return f"{str(list(inspect(database.engine).get_table_names()))} {str(list(inspect(database.engine).get_columns('metadata')))}"
 
-    query = Query(database, table_name, page=int(page))
+    try:
+        query = Query(database, table_name, page=int(page))
+        filter_string = None if '?' not in url else url.split('?')[-1] # Extract the filter information, if present.
+        if filter_string is not None:
+            filter_ = Filter(database, table_name, filter_string)
+            filter_(query)
+        return str(query)
+        result = query.submit(database)
 
-    filter_string = None if '?' not in url else url.split('?')[-1] # Extract the filter information, if present.
-    if filter_string is not None:
-        filter_ = Filter(database, table_name, filter_string)
-        filter_(query)
+        database.close()
 
-    return str(query)
+        data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
+        return data.to_csv(), 200, {'Content-Type':'text/plain'}
 
-    result = query.submit(database)
-    database.close()
+    except Exception as err:
 
-    data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
-    return data.to_csv(), 200, {'Content-Type':'text/plain'}
+        database.close()
+        return traceback.format_exc(), 500, {'Content-Type':'text/plain'}
 
 
 
