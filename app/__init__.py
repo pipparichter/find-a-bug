@@ -49,7 +49,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         filter_ = Filter(database, table_name, filter_string)
         filter_(query)
 
-    # return str(query)
+    return str(query)
 
     result = query.submit(database)
     database.close()
