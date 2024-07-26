@@ -86,8 +86,8 @@ class Database():
         self.session.close()
 
     def explain(self, query):
-        sql = self.__str__()
-        result = self.session.execute(text(f'EXPLAIN {sql};'))
+        sql = str(query)
+        result = self.session.execute(text(f'EXPLAIN {sql}'))
         result = [row._asdict() for row in result]
         return pd.DataFrame(result)
 
