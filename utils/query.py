@@ -40,13 +40,17 @@ class Query():
     def submit(self, database):
 
         # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-        self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
+        self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
         self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
 
     def get_outer_table(self, database):
+        '''The database engine picks a table for the "outer" part of the query, i.e. the table on the left side of the join (this table is not always the first one
+        added to the select statement). If the ORDER BY does not use this outer table, then it creates a temporary table with the outer table's values sorted according to the 
+        inner table's values (I think), which is very slow and uses a lot of memory. this function figures out what the outer table is, and ensures that the ORDER BY is 
+        called on that table.'''
         if not self.filtered:
             return self.table 
         else:
