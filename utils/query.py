@@ -27,7 +27,6 @@ class Query():
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page if page is None else 0
         self.page_size = 500
-        self.filtered = False
 
         # Handling pagination if a page is specified. Does it matter when I add the limit statement?
 
@@ -52,13 +51,11 @@ class Query():
         added to the select statement). If the ORDER BY does not use this outer table, then it creates a temporary table with the outer table's values sorted according to the 
         inner table's values (I think), which is very slow and uses a lot of memory. this function figures out what the outer table is, and ensures that the ORDER BY is 
         called on that table.'''
-        if not self.filtered:
-            return self.table 
-        else:
-            sql = self.__str__()
-            result = database.session.execute(f'EXPLAIN {sql}').first() # Get the first row from the result of EXPLAIN. 
-            outer_table_name = result._asdict()['table']
-            return database.get_table(table_name)
+
+        sql = self.__str__()
+        result = database.explain(self)  
+        outer_table_name = result['table'].values[0] # Get the first row from the result of EXPLAIN.
+        return database.get_table(outer_table_name)
 
     
 
@@ -172,7 +169,6 @@ class Filter():
         for field in self.include + list(self.filters.keys()):
             stmt = stmt.add_columns(self.get_column(field))
 
-            
         query.stmt = stmt # Modify the query that was passed in to the filter. 
         return query # Return the query so that methods can be chained. 
 

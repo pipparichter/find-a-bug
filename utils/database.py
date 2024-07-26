@@ -2,6 +2,7 @@ import sqlalchemy
 from sqlalchemy import insert
 from utils.tables import Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam, Reflected
 from typing import List, Dict, NoReturn
+import pandas as pd
 
 class Database():
 
@@ -83,3 +84,10 @@ class Database():
 
     def close(self):
         self.session.close()
+
+    def explain(self, query):
+        sql = self.__str__()
+        result = database.session.execute(f'EXPLAIN {sql}')
+        result = [row._asdict() for row in result]
+        return pd.DataFrame(result)
+
