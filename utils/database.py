@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import insert
+from sqlalchemy import insert, text
 from utils.tables import Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam, Reflected
 from typing import List, Dict, NoReturn
 import pandas as pd
@@ -87,7 +87,7 @@ class Database():
 
     def explain(self, query):
         sql = self.__str__()
-        result = self.session.execute(f'EXPLAIN {sql}')
+        result = self.session.execute(text(f'EXPLAIN {sql}'))
         result = [row._asdict() for row in result]
         return pd.DataFrame(result)
 
