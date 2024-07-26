@@ -4,7 +4,7 @@ import sqlalchemy
 import pandas as pd 
 import numpy as np
 import sqlalchemy.orm
-from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint, Text
+from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint, Text, CHAR
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
@@ -36,16 +36,16 @@ class Reflected(DeferredReflection):
 class ProteinsBase(Base):
     __abstract__ = True
 
-    gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
+    gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True, unique=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    genome_id = mapped_column(String(GENOME_ID_LENGTH))
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True, comment='The GTDB genome ID.')
     
     # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
     seq = mapped_column(Text, comment='The amino acid sequence.')
     start = mapped_column(Integer, comment='The start location of the gene in the genome.')
     stop = mapped_column(Integer, comment='The stop location of the gene in the genome.')
     gc_content = mapped_column(Float) # The GC content of the gene. 
-    strand = mapped_column(String(1)) # Whether the gene is on the forward of reverse strand. 
+    strand = mapped_column(CHAR) # Whether the gene is on the forward of reverse strand. 
     start_type = mapped_column(String(5), comment='The sequence of the start codon. If the gene has no start codon, this field will be labeled "Edge."')
     partial = mapped_column(String(2), comment='An indicator of if a gene runs off the edge of a sequence or into a gap. A 0 indicates the gene has a true boundary (a start or a stop), whereas a 1 indicates the gene is partial at that edge. For example, 00 indicates a complete gene with a start and stop codon.') 
     rbs_motif = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS binding motif detected by Prodigal. 
@@ -59,10 +59,10 @@ class AnnotationsKeggBase(Base):
  
     annotation_id = mapped_column(Integer, primary_key=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    gene_id = mapped_column(String(GENE_ID_LENGTH))
-    genome_id = mapped_column(String(GENOME_ID_LENGTH))
+    gene_id = mapped_column(String(GENE_ID_LENGTH), index=True)
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True)
 
-    ko = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
+    ko = mapped_column(String(DEFAULT_STRING_LENGTH), index=True) # The KEGG Orthology group with which the gene was annotated.
     threshold = mapped_column(Float) # The adaptive threshold for the bitscore generated using Kofamscan
     score = mapped_column(Float) # The bit score generated using Kofamscan which gives a measure of similarity between the gene and the KO family.
     e_value = mapped_column(Float)
@@ -73,10 +73,10 @@ class AnnotationsPfamBase(Base):
 
     annotation_id = mapped_column(Integer, primary_key=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    gene_id = mapped_column(String(GENE_ID_LENGTH))
-    genome_id = mapped_column(String(GENOME_ID_LENGTH))
+    gene_id = mapped_column(String(GENE_ID_LENGTH), index=True)
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True)
 
-    pfam = mapped_column(String(DEFAULT_STRING_LENGTH)) # The KEGG Orthology group with which the gene was annotated.
+    pfam = mapped_column(String(DEFAULT_STRING_LENGTH), index=True) # The KEGG Orthology group with which the gene was annotated.
     start = mapped_column(Integer)
     stop = mapped_column(Integer)
     length = mapped_column(Integer)

@@ -27,13 +27,9 @@ class Query():
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page if page is None else 0
         self.page_size = 500
+        self.filtered = False
 
         # Handling pagination if a page is specified. Does it matter when I add the limit statement?
-
-        # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-        self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
-        self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
-
 
     def __str__(self):
         '''Return a string representation of the query, which is the statement sent to the SQL database.
@@ -43,8 +39,22 @@ class Query():
 
     def submit(self, database):
 
+        # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
+        self.stmt = self.stmt.order_by(getattr(self.table, 'genome_id'))
+        self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
+
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
+
+    def get_outer_table(self, database):
+        if not self.filtered:
+            return self.table 
+        else:
+            sql = self.__str__()
+            result = database.session.execute(f'EXPLAIN {sql}').first() # Get the first row from the result of EXPLAIN. 
+            outer_table_name = result._asdict()['table']
+            return database.get_table(table_name)
+
     
 
 class HistoryQuery(Query):
