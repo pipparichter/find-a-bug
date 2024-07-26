@@ -38,10 +38,11 @@ class Query():
         return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
 
     def submit(self, database):
-
         # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
         self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
         self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
+
+        return str(self)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
         return database.session.execute(self.stmt) # .all()
