@@ -85,7 +85,7 @@ class Filter():
             operator = Filter.get_operator(filter_)
             if operator is not None:
                 field, value = filter_.split(operator)
-                filters[field].append((operator, value))
+                filters[field] = (operator, value)
             else:
                 include.append(filter_)
 
