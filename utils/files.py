@@ -52,7 +52,7 @@ class File():
 
 class FastaFile(File):
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, gtdb_version:int=None, type_:str='nucleotide'):
 
         super().__init__(path, gtdb_version=gtdb_version) 
 
@@ -60,9 +60,14 @@ class FastaFile(File):
         with open(path, 'r') as f:
             self.content = f.read()
 
-        # Extract the genome ID from the filename. 
+        # Extract the genome ID from the filename. This should take care of removing the prefix. 
         self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
+        # Detect the file type, indicating it contains nucleotides or amino acids. 
+        if 'fna' in self.file_name:
+            self.type_ = 'nt'
+        elif 'faa' in self.file_name:
+            self.type_ = 'aa'
 
     def parse_header(self, header:str) -> Dict:
         gene_id = header.split('#')[0]
@@ -99,11 +104,18 @@ class FastaFile(File):
 
 class ProteinsFile(FastaFile):
 
-    fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'rbs_spacer', 'scaffold_id']
+    fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'scaffold_id']
 
     def __init__(self, path:str, gtdb_version:int=None):
+        '''Initialize a FastaFile object.
+        
+        : path: The path to the FASTA file. 
+        : gtdb_version: The version of GTDB associated with the file. 
+        : type_: One of 'nucleotide' or 'amino_acid', indicating the type of sequence contained in the FASTA file. 
+        '''
 
         super().__init__(path, gtdb_version=gtdb_version)
+
 
     def parse_header(self, header:str) -> Dict[str, object]:
         '''Parse the header string of an entry in a genome file. Headers are of the form:
@@ -118,8 +130,8 @@ class ProteinsFile(FastaFile):
         match = re.match(pattern, header)
 
         entry['gene_id'] = match.group(1)
-        entry['nt_start'] = int(match.group(2))
-        entry['nt_stop'] = int(match.group(3))
+        entry['start'] = int(match.group(2))
+        entry['stop'] = int(match.group(3))
         entry['strand'] = '-' if match.group(4) == '-1' else '+'
         
         # Iterate over the semicolon-separated information in the final portion of the header. 
@@ -134,6 +146,18 @@ class ProteinsFile(FastaFile):
 
         return entry
 
+    def dataframe(self) -> pd.DataFrame:
+        '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
+        add the genome ID as an additional column.'''
+        df = [self.parse_header(header) for header in self.headers()]
+        for row, seq in zip(df, self.sequences()):
+            row[f'{self.type_}_seq'] = seq
+            # Add the start and stop codons, if the file contains nucleotides. 
+            if self.type_ == 'nt':
+                row['start_codon'] = seq[:3]
+                row['stop_codon'] = seq[:3]
+
+        return pd.DataFrame(df)
 
 class MetadataFile(File):
 
@@ -156,6 +180,7 @@ class MetadataFile(File):
         'n50_contigs':float, 
         'n50_scaffolds':float, 
         'ncbi_contig_count':int, 
+        'sec_trna_count':int,
         'ncbi_contig_n50':float}
 
     @staticmethod
@@ -178,7 +203,7 @@ class MetadataFile(File):
         super().__init__(path, gtdb_version=gtdb_version)
 
         data = pd.read_csv(path, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
-        data = data.rename(columns={'gc_percentage':'gc_content', 'accession':'genome_id'}) # Fix some of the column names for consistency. 
+        data = data.rename(columns={'gc_percentage':'gc_content', 'accession':'genome_id', 'trna_selenocysteine_count':'sec_trna_count'}) # Fix some of the column names for consistency. 
 
         taxonomy_data = []
         for taxonomy, genome_id in zip(data['gtdb_taxonomy'], data['genome_id']):

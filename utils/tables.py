@@ -41,15 +41,16 @@ class ProteinsBase(Base):
     genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True, comment='The GTDB genome ID.')
     
     # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
-    seq = mapped_column(Text, comment='The amino acid sequence.')
+    aa_seq = mapped_column(Text, comment='The amino acid sequence.')
+    nt_seq = mapped_column(Text, comment='The nucleotide acid sequence.')
     start = mapped_column(Integer, comment='The start location of the gene in the genome.')
     stop = mapped_column(Integer, comment='The stop location of the gene in the genome.')
+    start_codon = mapped_column(String(3), comment='The start codon of the sequence.')
+    stop_codon = mapped_column(String(3), comment='The stop codon of the sequence.')
     gc_content = mapped_column(Float) # The GC content of the gene. 
     strand = mapped_column(CHAR) # Whether the gene is on the forward of reverse strand. 
-    start_type = mapped_column(String(5), comment='The sequence of the start codon. If the gene has no start codon, this field will be labeled "Edge."')
     partial = mapped_column(String(2), comment='An indicator of if a gene runs off the edge of a sequence or into a gap. A 0 indicates the gene has a true boundary (a start or a stop), whereas a 1 indicates the gene is partial at that edge. For example, 00 indicates a complete gene with a start and stop codon.') 
     rbs_motif = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS binding motif detected by Prodigal. 
-    rbs_spacer = mapped_column(String(DEFAULT_STRING_LENGTH)) # The RBS spacer detected by Prodigal. 
     scaffold_id = mapped_column(Integer) # TODO: How do I extract this?
 
 
@@ -112,6 +113,7 @@ class MetadataBase(Base):
     longest_contig = mapped_column(Integer)
     longest_scaffold = mapped_column(Integer)
     mean_contig_length = mapped_column(Float)
+    sec_trna_count = mapped_column(Integer)
     mean_scaffold_length = mapped_column(Float)
     ncbi_genome_representation = mapped_column(String(DEFAULT_STRING_LENGTH))
 

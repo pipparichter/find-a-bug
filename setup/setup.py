@@ -26,6 +26,38 @@ def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, ta
         database.bulk_upload(table_name, entries)
 
 
+def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:str=None, nt_data_dir:str=None, chunk_size:int=100):
+    '''A function for handling upload of protein sequence files to the database, which is necessary because separate nucleotide and 
+    amino acid files need to be combined in a single upload to the proteins table.'''
+    # Sort the file name lists, so that the ordering of genome IDs is the same. 
+    # NOTE: Can we assume that the ordering of protein sequences is the same within each file? I suspect yes. 
+    aa_file_names = sorted(os.listdir(aa_data_dir))
+    nt_file_names = sorted(os.listdir(nt_data_dir))
+    assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
+    file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
+    
+    if chunk_size is None:
+        chunks = [file_names]
+    else:
+        chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+    
+    pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to  proteins.')
+    for chunk in chunks:
+        entries = []
+        for aa_file_name, nt_file_name in chunk:
+            aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
+            nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
+            entries = []
+            for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
+                aa_entry.update(nt_entry) # Merge the nucleotide and amino acid entries. 
+                entries.append(aa_entry)
+
+            pbar.update(1)
+
+        database.bulk_upload('proteins', entries) 
+
+
+
 if __name__ == '__main__':
     database = Database(reflect=False)
 
@@ -56,11 +88,12 @@ if __name__ == '__main__':
 
     if 'proteins' in args.table_names:
         print('Uploading initial data to the proteins table.')
-        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'bacteria')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
-        data_dir = os.path.join(gtdb_version_dir, 'proteins', 'archaea')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='proteins', file_class=ProteinsFile, chunk_size=args.chunk_size)
-
+        for domain in ['bacteria', 'archaea']:
+            # Need to upload amino acid and nucleotide data simultaneously.
+            aa_data_dir = os.path.join(gtdb_version_dir, 'proteins', 'amino_acids', domain)
+            nt_data_dir = os.path.join(gtdb_version_dir, 'proteins', 'nucleotides', domain)
+            upload_proteins_files(database, gtdb_version=args.gtdb_version, aa_data_dir=aa_data_dir, nt_data_dir=nt_data_dir, chunk_size=args.chunk_size) 
+            
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')
