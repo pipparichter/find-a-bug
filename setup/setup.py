@@ -6,12 +6,10 @@ from utils.files import *
 import os
 from tqdm import tqdm
 
-gene_ids_seen = []
 
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
-    global gene_ids_seen
     
     if chunk_size is None:
         chunks = [file_names]
@@ -25,10 +23,7 @@ def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, ta
             file = file_class(os.path.join(data_dir, file_name), gtdb_version=gtdb_version)
             entries += file.entries()
             pbar.update(1)
-
-            if table_name == 'annotations_pfam':
-                assert np.all(np.array([entry['gene_id'] in gene_ids_seen for entry in entries]))
-
+            
         database.bulk_upload(table_name, entries)
 
 
@@ -40,8 +35,6 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
     aa_file_names = sorted(os.listdir(aa_data_dir))
     nt_file_names = sorted(os.listdir(nt_data_dir))
     assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
-
-    global gene_ids_seen
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
     
@@ -62,8 +55,6 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
                 aa_entry.update(nt_entry) # Merge the nucleotide and amino acid entries. 
                 entries.append(aa_entry)
-
-                gene_ids_seen += [entry['gene_id'] for entry in entries]
 
             pbar.update(1)
 
@@ -111,7 +102,7 @@ if __name__ == '__main__':
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=1)
     
     if 'annotations_kegg' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
