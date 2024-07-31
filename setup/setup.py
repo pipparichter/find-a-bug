@@ -54,12 +54,15 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
             nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
             entries = []
-            print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
+            # print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
-                aa_entry.update(nt_entry) # Merge the nucleotide and amino acid entries. 
-                entries.append(aa_entry)
+                entry = dict()
+                # Merge the nucleotide and amino acid entries. 
+                entry.update(aa_entry)
+                entry.update(nt_entry) 
+                entries.append(entry)
 
             pbar.update(1)
 
