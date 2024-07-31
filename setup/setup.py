@@ -67,7 +67,6 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
         for aa_file_name, nt_file_name in chunk:
             aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
             nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
-            entries = []
             # print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
@@ -79,7 +78,6 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
                 entries.append(entry)
 
             pbar.update(1)
-        print(len(entries))
         database.bulk_upload('proteins', entries) 
 
 
@@ -124,7 +122,7 @@ if __name__ == '__main__':
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=1)
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=100)
     
     if 'annotations_kegg' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
