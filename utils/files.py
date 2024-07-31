@@ -109,9 +109,9 @@ class ProteinsFile(FastaFile):
     def __init__(self, path:str, gtdb_version:int=None):
         '''Initialize a FastaFile object.
         
-        : path: The path to the FASTA file. 
-        : gtdb_version: The version of GTDB associated with the file. 
-        : type_: One of 'nucleotide' or 'amino_acid', indicating the type of sequence contained in the FASTA file. 
+        :param path: The path to the FASTA file. 
+        :param gtdb_version: The version of GTDB associated with the file. 
+        :param type_: One of 'nucleotide' or 'amino_acid', indicating the type of sequence contained in the FASTA file. 
         '''
 
         super().__init__(path, gtdb_version=gtdb_version)

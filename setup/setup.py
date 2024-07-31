@@ -6,6 +6,8 @@ from utils.files import *
 import os
 from tqdm import tqdm
 
+gene_ids_seen = []
+
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
@@ -34,6 +36,7 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
     aa_file_names = sorted(os.listdir(aa_data_dir))
     nt_file_names = sorted(os.listdir(nt_data_dir))
     assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
+
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
     
     if chunk_size is None:
@@ -48,7 +51,9 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
             nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
             entries = []
+            assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
+                assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
                 aa_entry.update(nt_entry) # Merge the nucleotide and amino acid entries. 
                 entries.append(aa_entry)
 
