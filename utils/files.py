@@ -180,7 +180,7 @@ class MetadataFile(File):
         'n50_contigs':float, 
         'n50_scaffolds':float, 
         'ncbi_contig_count':int, 
-        'sec_trna_count':int,
+        'trna_selenocysteine_count':int,
         'ncbi_contig_n50':float}
 
     @staticmethod
