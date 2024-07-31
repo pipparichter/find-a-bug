@@ -155,7 +155,7 @@ class ProteinsFile(FastaFile):
             # Add the start and stop codons, if the file contains nucleotides. 
             if self.type_ == 'nt':
                 row['start_codon'] = seq[:3]
-                row['stop_codon'] = seq[:3]
+                row['stop_codon'] = seq[-3:]
 
         return pd.DataFrame(df)
 

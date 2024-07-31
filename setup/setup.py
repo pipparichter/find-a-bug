@@ -73,6 +73,7 @@ if __name__ == '__main__':
 
     if args.drop_existing:
         for table_name in args.table_names[::-1]:
+            print(f'Dropping existing table {table_name}.')
             database.drop(table_name)
 
     for table_name in args.table_names:
@@ -93,7 +94,7 @@ if __name__ == '__main__':
             aa_data_dir = os.path.join(gtdb_version_dir, 'proteins', 'amino_acids', domain)
             nt_data_dir = os.path.join(gtdb_version_dir, 'proteins', 'nucleotides', domain)
             upload_proteins_files(database, gtdb_version=args.gtdb_version, aa_data_dir=aa_data_dir, nt_data_dir=nt_data_dir, chunk_size=args.chunk_size) 
-            
+
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')

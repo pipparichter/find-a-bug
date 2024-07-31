@@ -36,9 +36,9 @@ class Reflected(DeferredReflection):
 class ProteinsBase(Base):
     __abstract__ = True
 
-    gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True, unique=True)
+    gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True, comment='The GTDB genome ID.')
+    genome_id = mapped_column(String(GENOME_ID_LENGTH), comment='The GTDB genome ID.')
     
     # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
     aa_seq = mapped_column(Text, comment='The amino acid sequence.')
@@ -60,8 +60,8 @@ class AnnotationsKeggBase(Base):
  
     annotation_id = mapped_column(Integer, primary_key=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    gene_id = mapped_column(String(GENE_ID_LENGTH), index=True)
-    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True)
+    gene_id = mapped_column(String(GENE_ID_LENGTH))
+    genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
     ko = mapped_column(String(DEFAULT_STRING_LENGTH), index=True) # The KEGG Orthology group with which the gene was annotated.
     threshold = mapped_column(Float) # The adaptive threshold for the bitscore generated using Kofamscan
@@ -74,8 +74,8 @@ class AnnotationsPfamBase(Base):
 
     annotation_id = mapped_column(Integer, primary_key=True)
     gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
-    gene_id = mapped_column(String(GENE_ID_LENGTH), index=True)
-    genome_id = mapped_column(String(GENOME_ID_LENGTH), index=True)
+    gene_id = mapped_column(String(GENE_ID_LENGTH))
+    genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
     pfam = mapped_column(String(DEFAULT_STRING_LENGTH), index=True) # The KEGG Orthology group with which the gene was annotated.
     start = mapped_column(Integer)
