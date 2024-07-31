@@ -25,6 +25,9 @@ def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, ta
             entries += file.entries()
             pbar.update(1)
 
+            if table_name == 'annotations_pfam':
+                assert np.all(np.array([entry['gene_id'] in gene_ids_seen for entry in entries]))
+
         database.bulk_upload(table_name, entries)
 
 
@@ -56,6 +59,8 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
                 aa_entry.update(nt_entry) # Merge the nucleotide and amino acid entries. 
                 entries.append(aa_entry)
+
+                gene_ids_seen += [entry['gene_id'] for entry in entries]
 
             pbar.update(1)
 
