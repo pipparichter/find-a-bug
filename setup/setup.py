@@ -57,11 +57,13 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             # print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
+                print(aa_entry)
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
-                entry = dict()
+                entry = aa_entry.copy()
                 # Merge the nucleotide and amino acid entries. 
-                entry.update(aa_entry)
-                entry.update(nt_entry) 
+                entry['nt_seq'] = nt_entry['nt_seq']
+                entry['start_codon'] = nt_entry['start_codon']
+                entry['stop_codon'] = nt_entry['stop_codon']
                 entries.append(entry)
 
             pbar.update(1)
