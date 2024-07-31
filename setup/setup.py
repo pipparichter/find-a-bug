@@ -11,6 +11,7 @@ gene_ids_seen = []
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
+    global gene_ids_seen
     
     if chunk_size is None:
         chunks = [file_names]
@@ -39,6 +40,8 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
     aa_file_names = sorted(os.listdir(aa_data_dir))
     nt_file_names = sorted(os.listdir(nt_data_dir))
     assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
+
+    global gene_ids_seen
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
     
