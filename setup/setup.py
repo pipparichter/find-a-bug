@@ -79,7 +79,7 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
                 entries.append(entry)
 
             pbar.update(1)
-
+        print(len(entries))
         database.bulk_upload('proteins', entries) 
 
 
