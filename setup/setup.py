@@ -41,34 +41,47 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
     
-    if chunk_size is None:
-        chunks = [file_names]
-    else:
-        chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
-        assert sum([len(chunk) for chunk in chunks]) == len(file_names), 'upload_proteins_files: Chunking files dropped some file names.' 
+    for aa_file_name, nt_file_name in tqdm(file_names):    
+        aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
+        nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
     
-    pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to  proteins.')
-    for chunk in chunks:
-        entries = []
-        for aa_file_name, nt_file_name in chunk:
-            aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
-            nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
-            entries = []
-            # print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
-            assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
-            for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
-                print(aa_entry)
-                assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
-                entry = aa_entry.copy()
-                # Merge the nucleotide and amino acid entries. 
-                entry['nt_seq'] = nt_entry['nt_seq']
-                entry['start_codon'] = nt_entry['start_codon']
-                entry['stop_codon'] = nt_entry['stop_codon']
-                entries.append(entry)
+        for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
+            assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
+            entry = aa_entry.copy()
+            # Merge the nucleotide and amino acid entries. 
+            # entry['nt_seq'] = nt_entry['nt_seq']
+            entry['start_codon'] = nt_entry['start_codon']
+            entry['stop_codon'] = nt_entry['stop_codon']
+            database.upload('proteins', entry)
+            
 
-            pbar.update(1)
+    # if chunk_size is None:
+    #     chunks = [file_names]
+    # else:
+    #     chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+    #     assert sum([len(chunk) for chunk in chunks]) == len(file_names), 'upload_proteins_files: Chunking files dropped some file names.' 
+    
+    # pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to  proteins.')
+    # for chunk in chunks:
+    #     entries = []
+    #     for aa_file_name, nt_file_name in chunk:
+    #         aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
+    #         nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
+    #         entries = []
+    #         # print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
+    #         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
+    #         for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
+    #             assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
+    #             entry = aa_entry.copy()
+    #             # Merge the nucleotide and amino acid entries. 
+    #             entry['nt_seq'] = nt_entry['nt_seq']
+    #             entry['start_codon'] = nt_entry['start_codon']
+    #             entry['stop_codon'] = nt_entry['stop_codon']
+    #             entries.append(entry)
 
-        database.bulk_upload('proteins', entries) 
+        #     pbar.update(1)
+
+        # database.bulk_upload('proteins', entries) 
 
 
 
