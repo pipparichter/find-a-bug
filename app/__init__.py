@@ -54,7 +54,8 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
         database.close()
 
         data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
-        return data.to_csv(), 200, {'Content-Type':'text/plain'}
+        data = '' if len(data) == 0 else data.to_csv() # Just return an empty string if there are no results. 
+        return data, 200, {'Content-Type':'text/plain'}
 
     except Exception as err:
 

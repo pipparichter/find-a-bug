@@ -6,7 +6,8 @@ from utils.files import *
 import os
 from tqdm import tqdm
 
-
+# GCA_000169355.1
+# AAXX01000001.1_880
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
@@ -23,7 +24,7 @@ def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, ta
             file = file_class(os.path.join(data_dir, file_name), gtdb_version=gtdb_version)
             entries += file.entries()
             pbar.update(1)
-            
+
         database.bulk_upload(table_name, entries)
 
 
@@ -34,6 +35,8 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
     # NOTE: Can we assume that the ordering of protein sequences is the same within each file? I suspect yes. 
     aa_file_names = sorted(os.listdir(aa_data_dir))
     nt_file_names = sorted(os.listdir(nt_data_dir))
+    print(f'Total amino acid files:', len(aa_file_names))
+    print(f'Total nucleotide files:', len(nt_file_names))
     assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
@@ -42,6 +45,7 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
         chunks = [file_names]
     else:
         chunks = [file_names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(file_names) // chunk_size) + 1)]
+        assert sum([len(chunk) for chunk in chunks]) == len(file_names), 'upload_proteins_files: Chunking files dropped some file names.' 
     
     pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to  proteins.')
     for chunk in chunks:
@@ -50,6 +54,7 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
             nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
             entries = []
+            print(f'Loading data for files {aa_file.file_name} and {nt_file.file_name}.')
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
