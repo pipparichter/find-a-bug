@@ -173,6 +173,7 @@ class MetadataFile(File):
         'l50_contigs':float, 
         'l50_scaffolds':float, 
         'longest_contig':int, 
+        'gtdb_representative':str, # This is either 't' or 'f'
         'longest_scaffold':int, 
         'ncbi_genome_representation':str, 
         'mean_contig_length':float, 
@@ -198,11 +199,16 @@ class MetadataFile(File):
         return parsed
 
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, gtdb_version:int=None, reps_only:bool=True):
         
         super().__init__(path, gtdb_version=gtdb_version)
 
         data = pd.read_csv(path, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
+        
+        if reps_only: # Remove all genomes which are not GTDB representatives. 
+            data = data[data.gtdb_representative.str.match('t')]
+        data = data.drop(columns='gtdb_representative') # Don't need this column after filtering. 
+
         data = data.rename(columns={'gc_percentage':'gc_content', 'accession':'genome_id', 'trna_selenocysteine_count':'sec_trna_count'}) # Fix some of the column names for consistency. 
 
         taxonomy_data = []

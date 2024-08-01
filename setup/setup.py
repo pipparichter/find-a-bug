@@ -6,8 +6,7 @@ from utils.files import *
 import os
 from tqdm import tqdm
 
-# GCA_000169355.1
-# AAXX01000001.1_880
+
 def upload_files(database:Database, gtdb_version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
@@ -35,25 +34,11 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
     # NOTE: Can we assume that the ordering of protein sequences is the same within each file? I suspect yes. 
     aa_file_names = sorted(os.listdir(aa_data_dir))
     nt_file_names = sorted(os.listdir(nt_data_dir))
-    print(f'Total amino acid files:', len(aa_file_names))
-    print(f'Total nucleotide files:', len(nt_file_names))
+    # print(f'Total amino acid files:', len(aa_file_names))
+    # print(f'Total nucleotide files:', len(nt_file_names))
     assert len(aa_file_names) == len(nt_file_names), 'upload_proteins_files: The number of nucleotide and amino acid files should match.' 
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
-    
-    # for aa_file_name, nt_file_name in tqdm(file_names):    
-    #     aa_file = ProteinsFile(os.path.join(aa_data_dir, aa_file_name), gtdb_version=gtdb_version)
-    #     nt_file = ProteinsFile(os.path.join(nt_data_dir, nt_file_name), gtdb_version=gtdb_version)
-    
-    #     for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
-    #         assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
-    #         entry = aa_entry.copy()
-    #         # Merge the nucleotide and amino acid entries. 
-    #         # entry['nt_seq'] = nt_entry['nt_seq']
-    #         entry['start_codon'] = nt_entry['start_codon']
-    #         entry['stop_codon'] = nt_entry['stop_codon']
-    #         database.upload('proteins', entry)
-            
 
     if chunk_size is None:
         chunks = [file_names]
@@ -71,10 +56,8 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
-                entry = aa_entry.copy()
-                # Merge the nucleotide and amino acid entries. 
-                entry['start_codon'] = nt_entry['start_codon']
-                entry['stop_codon'] = nt_entry['stop_codon']
+                entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
+                entry.update(nt_entry)
                 entries.append(entry)
 
             pbar.update(1)
@@ -122,7 +105,7 @@ if __name__ == '__main__':
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')
         data_dir = os.path.join(gtdb_version_dir, 'annotations', 'pfam')
-        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=100)
+        upload_files(database, gtdb_version=args.gtdb_version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
     
     if 'annotations_kegg' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
