@@ -36,7 +36,8 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     
     if '[page]' in url: # Removes the page from the URL string. 
         page = re.search('\[page\](\d+)', url).group(1)
-        url = url.replace(f'[page]{page}]', '')
+        url = url.replace(f'[page]{page}', '')
+    return f'{page} {url}'
 
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
 
