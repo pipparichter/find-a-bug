@@ -168,7 +168,7 @@ class Filter():
                 stmt = self.in_range(stmt, col, value)
         
         # Add all relevant columns to the return statement.
-        for field in self.include + list(self.filters.keys()):
+        for field in set(self.include + list(self.filters.keys())):
             stmt = stmt.add_columns(self.get_column(field))
 
         query.stmt = stmt # Modify the query that was passed in to the filter. 
