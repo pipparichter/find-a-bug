@@ -33,10 +33,11 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     '''Handles a data retrieval request to the server.'''
     url = request.url # Get the URL that was sent to the app. How does this work, I wonder?
     page = 0
-    if '#' in request.url: # Removes the page from the URL string. 
-        url, page = url.split('#')
-    return request.url
-
+    
+    if re.search('\[page=\d+\]', url) is not None: # Removes the page from the URL string. 
+        page = re.search('\[page=(\d+)\]', url).group(1)
+        url = url.replace(f'[page={page}]', '')
+        
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
 
     database = Database(reflect=True)
