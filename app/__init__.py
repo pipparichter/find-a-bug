@@ -51,6 +51,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
             filter_(query)
             
         result = query.submit(database)
+        return result
         database.close()
 
         data = pd.DataFrame.from_records([row._asdict() for row in result]) #, columns=result._fields)
