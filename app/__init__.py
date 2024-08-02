@@ -35,7 +35,7 @@ def get(table_name:str=None) -> Tuple[requests.Response, int, Dict[str, str]]:
     page = 0
     if '#' in request.url: # Removes the page from the URL string. 
         url, page = url.split('#')
-    return str(page)
+    return request.url
 
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
 
