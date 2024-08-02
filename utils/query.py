@@ -103,6 +103,8 @@ class Filter():
         for rel, _ in self.table.__mapper__.relationships.items():
             rel_table = database.get_table(rel)
             self.field_to_table_map.update({col.name:rel_table for col in rel_table.__table__.c})
+        # Make sure to add the columns in the table itself, to which filters can also be applied. 
+        self.field_to_table_map.update({col.name:self.table for col in self.table.__table__.c})
 
         self.tables_to_join = [self.field_to_table_map.get(field) for field in list(self.filters.keys()) + self.include]
 
