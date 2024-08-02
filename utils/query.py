@@ -168,8 +168,10 @@ class Filter():
                 stmt = self.in_range(stmt, col, value)
         
         # Add all relevant columns to the return statement.
-        for field in [f for f in self.include if f not in self.filters]:
-            stmt = stmt.add_columns(self.get_column(field))
+        for field in self.include + list(self.filters.keys()):
+            col = self.get_column(field)
+            if col not in stmt.selected_columns:
+                stmt = stmt.add_columns(col)
 
         query.stmt = stmt # Modify the query that was passed in to the filter. 
         return query # Return the query so that methods can be chained. 
