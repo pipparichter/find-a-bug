@@ -25,7 +25,7 @@ class Query():
 
         self.table = database.get_table(table_name)
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
-        self.page = page if page is None else 0
+        self.page = page
         self.page_size = 500
 
         # Handling pagination if a page is specified. Does it matter when I add the limit statement?
