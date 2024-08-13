@@ -57,7 +57,7 @@ def upload_proteins_files(database:Database, gtdb_version:int=None, aa_data_dir:
             for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
                 assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
                 entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
-                entry.update(nt_entry)
+                entry.update({f:v for f, v in nt_entry.items() if f != 'nt_seq'}) # Nucleotide sequences don't fit in table.
                 entries.append(entry)
 
             pbar.update(1)
