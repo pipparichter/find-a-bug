@@ -4,6 +4,7 @@ import sqlalchemy
 import pandas as pd 
 import numpy as np
 import sqlalchemy.orm
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float, ForeignKeyConstraint, Text, CHAR
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
@@ -42,7 +43,7 @@ class ProteinsBase(Base):
     
     # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
     aa_seq = mapped_column(Text, comment='The amino acid sequence.')
-    nt_seq = mapped_column(Text, comment='The nucleotide acid sequence.')
+    nt_seq = mapped_column(LONGTEXT, comment='The nucleotide acid sequence.')
     start = mapped_column(Integer, comment='The start location of the gene in the genome.')
     stop = mapped_column(Integer, comment='The stop location of the gene in the genome.')
     start_codon = mapped_column(String(3), comment='The start codon of the sequence.')
