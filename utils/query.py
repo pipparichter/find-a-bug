@@ -140,7 +140,7 @@ class Query():
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
         self.page_size = page_size
-        self.filter_ = Filter(database, table_name, filter_string)
+        self.filter_ = None if (filter_string is None) else Filter(database, table_name, filter_string)
 
         # Handling pagination if a page is specified. Does it matter when I add the limit statement?
 
