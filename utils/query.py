@@ -49,7 +49,7 @@ class Query():
         return database.session.execute(self.stmt) # .all()
 
     def count(self, database, debug:bool=False):
-        self.stmt = self.stmt.statement.with_only_columns([func.count()]) # .order_by(None)
+        self.stmt = self.stmt.with_only_columns([func.count()]) # .order_by(None)
         if debug:
             return str(self)
         return database.session.execute(self.stmt).scalar()
