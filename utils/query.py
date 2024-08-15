@@ -140,9 +140,9 @@ class Query():
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
         self.page_size = page_size
-        self.filter_ = None if (filter_string is None) else Filter(database, table_name, filter_string)
-
-        # Handling pagination if a page is specified. Does it matter when I add the limit statement?
+        # self.filter_ = None if (filter_string is None) else Filter(database, table_name, filter_string)
+        if filter_string is not None:
+            self.stmt = Filter(database, table_name, filter_string)(self.stmt)
 
     def __str__(self):
         '''Return a string representation of the query, which is the statement sent to the SQL database.
@@ -153,8 +153,6 @@ class Query():
     def get(self, database, debug:bool=False, filter:Filter=None):
         # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
         self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
-        if self.filter_ is not None:
-            self.stmt = self.filter_(self.stmt)
 
         if self.page_size is not None:
             self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
@@ -168,9 +166,8 @@ class Query():
     def count(self, database, debug:bool=False, filter_:Filter=None):
         # Modified from https://gist.github.com/hest/8798884
         # NOTE: Why are subqueries so bad?
-        self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
-        if self.filter_ is not None: # I think filter needs to be applied after the with_only_columns.
-            self.stmt = self.filter_(self.stmt)
+        # self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
+        self.stmt = self.stmt.count() # .order_by(None)
 
         if debug:
             return str(self)
