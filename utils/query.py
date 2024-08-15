@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import Select
 from typing import Set, List, Dict, NoReturn, Tuple
 from utils.tables import Metadata
 import sqlalchemy
+from sqlalchemy import func
 
 # Allowed operators... [eq], [gt], [gte], [lt], [lte], [to], [and]
 
@@ -21,12 +22,12 @@ import sqlalchemy
 
 class Query():
     
-    def __init__(self, database, table_name:str, page:int=None):
+    def __init__(self, database, table_name:str, page:int=None, page_size:int=500):
 
         self.table = database.get_table(table_name)
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
-        self.page_size = 500
+        self.page_size = page_size
 
         # Handling pagination if a page is specified. Does it matter when I add the limit statement?
 
@@ -36,13 +37,23 @@ class Query():
         # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
         return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
 
-    def submit(self, database):
+    def get(self, database, debug:bool=False):
         # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
         self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
-        self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
+        if self.page_size is not None:
+            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
 
         # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
+        if debug:
+            return str(self)
         return database.session.execute(self.stmt) # .all()
+
+    def count(self, database, debug:bool=False):
+        self.stmt = self.stmt.statement.with_only_columns([func.count()]) # .order_by(None)
+        if debug:
+            return str(self)
+        return database.session.execute(self.stmt).scalar()
+
 
     def get_outer_table(self, database):
         '''The database engine picks a table for the "outer" part of the query, i.e. the table on the left side of the join (this table is not always the first one
@@ -54,6 +65,7 @@ class Query():
         result = database.explain(self)  
         outer_table_name = result['table'].values[0] # Get the first row from the result of EXPLAIN.
         return database.get_table(outer_table_name)
+
 
     
 
