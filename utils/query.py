@@ -18,64 +18,6 @@ from sqlalchemy import func
 # Might make sense to put the onus of doing this on the user. 
 
 
-
-
-class Query():
-    
-    def __init__(self, database, table_name:str, page:int=None, page_size:int=500):
-
-        self.table = database.get_table(table_name)
-        self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
-        self.page = page
-        self.page_size = page_size
-
-        # Handling pagination if a page is specified. Does it matter when I add the limit statement?
-
-    def __str__(self):
-        '''Return a string representation of the query, which is the statement sent to the SQL database.
-        Mostly for debugging purposes.'''
-        # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
-        return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
-
-    def get(self, database, debug:bool=False):
-        # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
-        self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
-        if self.page_size is not None:
-            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
-
-        # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
-        if debug:
-            return str(self)
-        return database.session.execute(self.stmt) # .all()
-
-    def count(self, database, debug:bool=False):
-        # Modified from https://gist.github.com/hest/8798884
-        # NOTE: Why are subqueries so bad?
-        self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
-        if debug:
-            return str(self)
-        return database.session.execute(self.stmt).scalar()
-
-
-    def get_outer_table(self, database):
-        '''The database engine picks a table for the "outer" part of the query, i.e. the table on the left side of the join (this table is not always the first one
-        added to the select statement). If the ORDER BY does not use this outer table, then it creates a temporary table with the outer table's values sorted according to the 
-        inner table's values (I think), which is very slow and uses a lot of memory. this function figures out what the outer table is, and ensures that the ORDER BY is 
-        called on that table.'''
-
-        sql = self.__str__()
-        result = database.explain(self)  
-        outer_table_name = result['table'].values[0] # Get the first row from the result of EXPLAIN.
-        return database.get_table(outer_table_name)
-
-
-    
-
-class HistoryQuery(Query):
-    pass
-
-
-
 class Filter():
 
     operators = ['[eq]', '[gt]', '[gte]', '[lt]', '[lte]', '[in]']
@@ -152,9 +94,7 @@ class Filter():
         return stmt.filter(col.between(float(low), float(high)))
 
 
-    def __call__(self, query:Query):
-
-        stmt = query.stmt
+    def __call__(self, stmt):
         
         for relationship in self.tables_to_join:
             # TODO: Should probably have a failure condition here if a relationship is not found. 
@@ -188,8 +128,74 @@ class Filter():
             if col.name not in selected_columns:
                 stmt = stmt.add_columns(col)
 
-        query.stmt = stmt # Modify the query that was passed in to the filter. 
-        return query # Return the query so that methods can be chained. 
+        return stmt 
+
+
+
+class Query():
+    
+    def __init__(self, database, table_name:str, page:int=None, page_size:int=500, filter_string:str=None):
+
+        self.table = database.get_table(table_name)
+        self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
+        self.page = page
+        self.page_size = page_size
+        self.filter_ = Filter(database, table_name, filter_string)
+
+        # Handling pagination if a page is specified. Does it matter when I add the limit statement?
+
+    def __str__(self):
+        '''Return a string representation of the query, which is the statement sent to the SQL database.
+        Mostly for debugging purposes.'''
+        # This is a potential security risk. See https://feyyazbalci.medium.com/parameter-binding-f0b8df2cf058. 
+        return str(self.stmt.compile(compile_kwargs={'literal_binds':True}))
+
+    def get(self, database, debug:bool=False, filter:Filter=None):
+        # Use orderby to enforce consistent behavior. All tables have a genome ID, so this is probably the simplest way to go about this. 
+        self.stmt = self.stmt.order_by(getattr(self.get_outer_table(database), 'genome_id'))
+        if self.filter_ is not None:
+            self.stmt = self.filter_(self.stmt)
+
+        if self.page_size is not None:
+            self.stmt = self.stmt.offset(self.page * self.page_size).limit(self.page_size)
+
+        # return database.session.execute(self.stmt.where(Metadata.genome_id == 'GCA_000248235.2'))
+        if debug:
+            return str(self)
+
+        return database.session.execute(self.stmt) # .all()
+
+    def count(self, database, debug:bool=False, filter_:Filter=None):
+        # Modified from https://gist.github.com/hest/8798884
+        # NOTE: Why are subqueries so bad?
+        self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
+        if self.filter_ is not None: # I think filter needs to be applied after the with_only_columns.
+            self.stmt = self.filter_(self.stmt)
+
+        if debug:
+            return str(self)
+
+        return database.session.execute(self.stmt).scalar()
+
+
+    def get_outer_table(self, database):
+        '''The database engine picks a table for the "outer" part of the query, i.e. the table on the left side of the join (this table is not always the first one
+        added to the select statement). If the ORDER BY does not use this outer table, then it creates a temporary table with the outer table's values sorted according to the 
+        inner table's values (I think), which is very slow and uses a lot of memory. this function figures out what the outer table is, and ensures that the ORDER BY is 
+        called on that table.'''
+
+        sql = self.__str__()
+        result = database.explain(self)  
+        outer_table_name = result['table'].values[0] # Get the first row from the result of EXPLAIN.
+        return database.get_table(outer_table_name)
+
+
+    
+
+class HistoryQuery(Query):
+    pass
+
+
 
 
 

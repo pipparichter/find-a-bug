@@ -20,12 +20,6 @@ from typing import List, Generator, Dict, Tuple
 # Tells Flask the name of the current module. 
 app = Flask(__name__)
 
-def make_query(database, table_name:str, filter_string:str=None, page:int=None):
-    query = Query(database, table_name, page=page, page_size=1000)
-    if filter_string is not None:
-        filter_ = Filter(database, table_name, filter_string)
-        filter_(query)
-    return query
 
 
 @app.route('/')
@@ -68,7 +62,7 @@ def get(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int, 
     database = Database(reflect=True)
 
     try:
-        query = make_query(database, table_name, filter_string=filter_string, page=page)            
+        query = Query(database, table_name, page=page, page_size=100, filter_string=filter_string)
         result = query.get(database, debug=debug)
         database.close()
 
