@@ -31,7 +31,7 @@ def welcome():
 def count(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int, Dict[str, str]]:
     url = request.url # Get the URL that was sent to the app. How does this work, I wonder?
 
-    if page in url: # Make sure page is not included in the count URL. 
+    if '[page]' in url: # Make sure page is not included in the count URL. 
         url = re.sub('\[page\](\d+)', '', url)
 
     url = url.replace('https://microbes.gps.caltech.edu/count/', '') # Remove the front part from the URL. 
