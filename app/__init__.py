@@ -44,7 +44,7 @@ def count(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int
 
     try:
         query = make_query(database, table_name, filter_string=filter_string)
-        result = query.count(database)
+        result = query.count(database, debug=debug)
         database.close()
         return str(result), 200, {'Content-Type':'text/plain'}
 
