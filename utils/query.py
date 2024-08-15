@@ -49,7 +49,9 @@ class Query():
         return database.session.execute(self.stmt) # .all()
 
     def count(self, database, debug:bool=False):
-        self.stmt = self.stmt.with_only_columns([func.count()]) # .order_by(None)
+        # Modified from https://gist.github.com/hest/8798884
+        # NOTE: Why are subqueries so bad?
+        self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
         if debug:
             return str(self)
         return database.session.execute(self.stmt).scalar()
