@@ -57,7 +57,7 @@ def get(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int, 
     url = request.url # Get the URL that was sent to the app. How does this work, I wonder?
     page = 0
     if '[page]' in url: # Removes the page from the URL string. 
-        page = re.search('\[page\](\d+)', url).group(1)
+        page = int(re.search('\[page\](\d+)', url).group(1))
         url = url.replace(f'[page]{page}', '')
 
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
