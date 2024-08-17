@@ -7,6 +7,7 @@ from sqlalchemy.sql.expression import Select
 from typing import Set, List, Dict, NoReturn, Tuple
 from utils.tables import Metadata
 import sqlalchemy
+from sqlalchemy.inspection import inspect
 from sqlalchemy import func
 
 # Allowed operators... [eq], [gt], [gte], [lt], [lte], [to], [and]
@@ -137,6 +138,7 @@ class Query():
     def __init__(self, database, table_name:str, page:int=None, page_size:int=500, filter_string:str=None):
 
         self.table = database.get_table(table_name)
+        self.table_primary_key = inspect(self.table).primary_key[0].name
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
         self.page_size = page_size
@@ -168,7 +170,8 @@ class Query():
         # Modified from https://gist.github.com/hest/8798884
         # NOTE: Why are subqueries so bad?
         # return str(self       
-        self.stmt = select(func.count(self.table.__table__)) # I don't know why I need to add the columns manually...)
+        # self.stmt = select(func.count(self.table.__table__)) # I don't know why I need to add the columns manually...)
+        self.stmt = select(func.count(getattr(self.table.c, self.primary_key_name))) # I don't know why I need to add the columns manually...)
         # self.stmt = self.stmt.with_only_columns(func.count()).order_by(None)
         if self.filter_string is not None:
             self.stmt = Filter(database, table_name, filter_string)(self.stmt)
