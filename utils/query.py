@@ -166,8 +166,8 @@ class Query():
     def count(self, database, debug:bool=False, filter_:Filter=None):
         # Modified from https://gist.github.com/hest/8798884
         # NOTE: Why are subqueries so bad?
-        # self.stmt = self.stmt.with_only_columns(func.count()) # .order_by(None)
-        self.stmt = self.stmt.count() # .order_by(None)
+        return str(self)
+        self.stmt = self.stmt.with_only_columns(func.count()).order_by(None)
 
         if debug:
             return str(self)
