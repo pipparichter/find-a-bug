@@ -168,7 +168,7 @@ class Query():
         # Modified from https://gist.github.com/hest/8798884
         # NOTE: Why are subqueries so bad?
         # return str(self       
-        self.stmt = select(func.count()) # I don't know why I need to add the columns manually...)
+        self.stmt = select(func.count(self.table.__table__)) # I don't know why I need to add the columns manually...)
         # self.stmt = self.stmt.with_only_columns(func.count()).order_by(None)
         if self.filter_string is not None:
             self.stmt = Filter(database, table_name, filter_string)(self.stmt)
