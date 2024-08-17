@@ -140,6 +140,7 @@ class Query():
         self.stmt = select(*self.table.__table__.c) # I don't know why I need to add the columns manually...
         self.page = page
         self.page_size = page_size
+        self.filter_string = filter_string
         # self.filter_ = None if (filter_string is None) else Filter(database, table_name, filter_string)
         if filter_string is not None:
             self.stmt = Filter(database, table_name, filter_string)(self.stmt)
@@ -166,8 +167,11 @@ class Query():
     def count(self, database, debug:bool=False, filter_:Filter=None):
         # Modified from https://gist.github.com/hest/8798884
         # NOTE: Why are subqueries so bad?
-        # return str(self)
-        self.stmt = self.stmt.with_only_columns(func.count()).order_by(None)
+        # return str(self       
+        self.stmt = select(func.count()) # I don't know why I need to add the columns manually...)
+        # self.stmt = self.stmt.with_only_columns(func.count()).order_by(None)
+        if self.filter_string is not None:
+            self.stmt = Filter(database, table_name, filter_string)(self.stmt)
 
         if debug:
             return str(self)
