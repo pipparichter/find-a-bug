@@ -65,7 +65,7 @@ def get(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int, 
     database = Database(reflect=True)
 
     try:
-        query = Query(database, table_name, page=page, page_size=1000, filter_string=filter_string)
+        query = Query(database, table_name, page=page, page_size=500, filter_string=filter_string)
         result = query.get(database, debug=debug)
         database.close()
 
