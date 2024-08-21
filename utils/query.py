@@ -137,7 +137,7 @@ class Filter():
 
 class Query():
     
-    def __init__(self, database, table_name:str, page:int=0, page_size:int=500, filter_string:str=None):
+    def __init__(self, database, table_name:str, page:int=0, page_size:int=None, filter_string:str=None):
 
         self.table = database.get_table(table_name)
         self.table_primary_key = inspect(self.table).primary_key[0].name
