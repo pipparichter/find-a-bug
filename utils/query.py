@@ -64,14 +64,7 @@ class Filter():
         self.field_to_table_map.update({col.name:self.table for col in self.table.__table__.c})
 
         tables_to_join = [self.field_to_table_map.get(field) for field in list(self.filters.keys()) + self.include]
-        # raise Exception(str(tables_to_join))
-        x, y = [], []
-        for field in list(self.filters.keys()) + self.include:
-            if self.field_to_table_map.get(field) is None:
-                x.append(field) 
-            else:
-                y.append(field)
-        raise Exception(f'has {y}, missing {x}')
+        tables_to_join = [table for table in tables_to_join if table is not None] # Should I be worried about this?
 
         # Make sure the table itself is not included in this list. 
         self.tables_to_join = set([table for table in tables_to_join if table.__table__.name != self.table_name])
