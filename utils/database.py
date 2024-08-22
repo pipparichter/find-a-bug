@@ -77,6 +77,7 @@ class Database():
     def bulk_upload(self, table_name:str, entries:List[Dict]) -> NoReturn:
         # Sometimes the list of entries is empty, which can cause some errors with SQLAlchemy. 
         if len(entries) > 0:
+            print(entries)
             table = self.get_table(table_name)
             self.session.execute(insert(table), entries) 
             self.session.commit()
