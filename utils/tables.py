@@ -116,6 +116,7 @@ class MetadataBase(Base):
     mean_contig_length = mapped_column(Float)
     sec_trna_count = mapped_column(Integer)
     mean_scaffold_length = mapped_column(Float)
+    protein_count = mapped_column(Integer)
     ncbi_genome_representation = mapped_column(String(DEFAULT_STRING_LENGTH))
 
 
