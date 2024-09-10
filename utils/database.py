@@ -17,7 +17,7 @@ class Database():
 
     def __init__(self, reflect:bool=True):
 
-        self.engine = sqlalchemy.create_engine(Database.url)
+        self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
         if reflect:
             Reflected.prepare(self.engine)
 
