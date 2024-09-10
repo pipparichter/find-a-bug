@@ -91,6 +91,8 @@ class Database():
 
     def close(self):
         self.session.close()
+        # See https://stackoverflow.com/questions/8645250/how-to-close-sqlalchemy-connection-in-mysql. 
+        self.engine.dispose()
 
     def explain(self, query):
         sql = str(query)
