@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # Make the directory to store the new version of GTDB. 
     data_dir = os.path.join(args.data_dir, f'r{args.version}')
-    os.mkdirs(data_dir, exist_ok=True)
+    os.makedirs(data_dir, exist_ok=True)
 
     # URL for the GTDB FTP site. 
     url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/'
@@ -55,9 +55,9 @@ if __name__ == '__main__':
         shutil.rmtree(src_path) # Remove the src_path directory, which should be empty now. 
 
     # First, make all necessary directories... 
-    os.mkdirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
-    os.mkdirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
-    os.mkdirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
+    os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
+    os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
+    os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
     
     extract(os.path.join(data_dir, files[0]), os.path.join(data_dir, 'proteins', 'nucleotides'))
     extract(os.path.join(data_dir, files[1]), os.path.join(data_dir, 'proteins', 'amino_acids'))
