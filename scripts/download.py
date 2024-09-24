@@ -29,7 +29,7 @@ if __name__ == '__main__':
     os.makedirs(data_dir, exist_ok=True)
 
     # URL for the GTDB FTP site. 
-    url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/'
+    url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/{args.version}.0/'
 
     # The files we need from GTDB for this are:
     #   'gtdb_proteins_nt_reps_r{version}.tar.gz'
