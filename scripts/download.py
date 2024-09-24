@@ -25,21 +25,21 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Make the directory to store the new version of GTDB. 
-    data_dir = os.path.join(args.data_dir, f'r{version}')
+    data_dir = os.path.join(args.data_dir, f'r{args.version}')
     os.mkdir(data_dir)
 
     # URL for the GTDB FTP site. 
-    url = f'https://data.gtdb.ecogenomic.org/releases/release{version}/'
+    url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/'
 
     # The files we need from GTDB for this are:
     #   'gtdb_proteins_nt_reps_r{version}.tar.gz'
     #   'gtdb_proteins_aa_reps_r{version}.tar.gz'
     #   'ar53_metadata_r{version}.tsv.gz
     #   'bac120_metadata_r{version}.tsv.gz
-    files = [f'genomic_files_reps/gtdb_proteins_nt_reps_r{version}.tar.gz']
-    files += [f'genomic_files_reps/gtdb_proteins_aa_reps_r{version}.tar.gz']
-    files += [f'ar53_metadata_r{version}.tsv.gz']
-    files += [f'bac120_metadata_r{version}.tsv.gz']
+    files = [f'genomic_files_reps/gtdb_proteins_nt_reps_r{args.version}.tar.gz']
+    files += [f'genomic_files_reps/gtdb_proteins_aa_reps_r{args.version}.tar.gz']
+    files += [f'ar53_metadata_r{args.version}.tsv.gz']
+    files += [f'bac120_metadata_r{args.version}.tsv.gz']
 
     for file in files:
         wget.download(url + file, data_dir)
