@@ -147,7 +147,7 @@ def create_annotations_kegg_table(version:int):
     parents = (AnnotationsKeggBase, Reflected)
 
     attrs = dict()
-    attrs['__tablename__'] = f'proteins_r{version}'
+    attrs['__tablename__'] = f'annotations_kegg_r{version}'
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
     attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
     attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), # , ondelete='cascade'),
@@ -161,7 +161,7 @@ def create_annotations_pfam_table(version:int):
     parents = (AnnotationsPfamBase, Reflected)
 
     attrs = dict()
-    attrs['__tablename__'] = f'proteins_r{version}'
+    attrs['__tablename__'] = f'annotations_pfam_r{version}'
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
     attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
     attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), # , ondelete='cascade'),
