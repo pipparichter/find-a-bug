@@ -42,6 +42,7 @@ if __name__ == '__main__':
     files += [f'bac120_metadata_r{args.version}.tsv.gz']
 
     for file in files:
+        print(f'Downloading file from {url + file}')
         wget.download(url + file, data_dir)
     
     def extract(tar_path:str, dst_path:str): 
