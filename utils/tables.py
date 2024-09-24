@@ -120,75 +120,85 @@ class MetadataBase(Base):
     ncbi_genome_representation = mapped_column(String(DEFAULT_STRING_LENGTH))
 
 
+def create_metadata_table(version:int):
+    name = f'Metadata_r{version}'
+    parents = (MetadataBase, Reflected)
 
-class MetadataHistory(MetadataBase, Reflected):
-    __tablename__ = 'metadata_history'
-    __table_args__ = (PrimaryKeyConstraint('genome_id', 'gtdb_version', name=__tablename__),)
-
-
-    # proteins_history = relationship('ProteinsHistory', viewonly=True) # , passive_deletes=True)
-    # annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
-    # annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
-
-
-
-class ProteinsHistory(ProteinsBase, Reflected):
-    __tablename__ = 'proteins_history'
-    __table_args__ = (PrimaryKeyConstraint('gene_id', 'gtdb_version', name=__tablename__),
-                        ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version'])) # , ondelete='cascade'))
-
+    attrs = dict()
+    attrs['__tablename__'] = f'metadata_r{version}'
     
-    # annotations_kegg_history = relationship('AnnotationsKeggHistory', viewonly=True) # , passive_deletes=True)
-    # annotations_pfam_history = relationship('AnnotationsPfamHistory', viewonly=True) # , passive_deletes=True)
-    metadata_history = relationship('MetadataHistory', viewonly=True)
+    return type(name, parents, attrs)
 
 
-class AnnotationsKeggHistory(AnnotationsKeggBase, Reflected):
-    __tablename__ = 'annotations_kegg_history'
-    __table_args__ = (PrimaryKeyConstraint('annotation_id', 'gtdb_version', name=__tablename__),
-                        ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version']), # , ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'])) # , ondelete='cascade'))
+def create_proteins_table(version:int):
+    name = f'Proteins_r{version}'
+    parents = (ProteinsBase, Reflected)
 
-    proteins_history = relationship('ProteinsHistory', viewonly=True)
-    metadata_history = relationship('MetadataHistory', viewonly=True)
-
-class AnnotationsPfamHistory(AnnotationsPfamBase, Reflected):
-    __tablename__ = 'annotations_pfam_history'
-    __table_args__ = (PrimaryKeyConstraint('annotation_id', 'gtdb_version', name=__tablename__),
-                        ForeignKeyConstraint(['genome_id', 'gtdb_version'], ['metadata_history.genome_id', 'metadata_history.gtdb_version']), # , ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id', 'gtdb_version'], ['proteins_history.gene_id', 'proteins_history.gtdb_version'])) # , ondelete='cascade')) 
-
-    proteins_history = relationship('ProteinsHistory', viewonly=True)
-    metadata_history = relationship('MetadataHistory', viewonly=True)
-
-class Metadata(MetadataBase, Reflected):
-    __tablename__ = 'metadata'
+    attrs = dict()
+    attrs['__tablename__'] = f'proteins_r{version}'
+    attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
+    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']),) # , ondelete='cascade'),) 
     
-    # proteins_history = relationship('Proteins', viewonly=True) # , passive_deletes=True) 
-    # annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True) 
-    # annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True) 
+    return type(name, parents, attrs)
 
 
-class Proteins(ProteinsBase, Reflected):
-    __tablename__ = 'proteins'
-    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']),) # , ondelete='cascade'),)
+def create_annotations_kegg_table(version:int):
+    name = f'AnnotationsKegg_r{version}'
+    parents = (AnnotationsKeggBase, Reflected)
 
-    metadata_ = relationship('Metadata', viewonly=True)
+    attrs = dict()
+    attrs['__tablename__'] = f'proteins_r{version}'
+    attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
+    attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
+    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), # , ondelete='cascade'),
+                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id'])) # , ondelete='cascade')) 
 
-
-class AnnotationsKegg(AnnotationsKeggBase, Reflected):
-    __tablename__ = 'annotations_kegg'
-    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
-
-    metadata_ = relationship('Metadata', viewonly=True)
-    proteins = relationship('Proteins', viewonly=True)
+    return type(name, parents, attrs)
 
 
-class AnnotationsPfam(AnnotationsPfamBase, Reflected):
-    __tablename__ = 'annotations_pfam'
-    __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
-                        ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
+def create_annotations_pfam_table(version:int):
+    name = f'AnnotationsPfam_r{version}'
+    parents = (AnnotationsPfamBase, Reflected)
 
-    metadata_ = relationship('Metadata', viewonly=True)
-    proteins = relationship('Proteins', viewonly=True)
+    attrs = dict()
+    attrs['__tablename__'] = f'proteins_r{version}'
+    attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
+    attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
+    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), # , ondelete='cascade'),
+                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id'])) # , ondelete='cascade')) 
+
+    return type(name, parents, attrs) 
+
+
+
+# class Metadata(MetadataBase, Reflected):
+#     __tablename__ = 'metadata'
+    
+#     # proteins_history = relationship('Proteins', viewonly=True) # , passive_deletes=True) 
+#     # annotations_kegg_history = relationship('AnnotationsKegg', viewonly=True) # , passive_deletes=True) 
+#     # annotations_pfam_history = relationship('AnnotationsPfam', viewonly=True) # , passive_deletes=True) 
+
+
+# class Proteins(ProteinsBase, Reflected):
+#     __tablename__ = 'proteins'
+#     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']),) # , ondelete='cascade'),)
+
+#     metadata_ = relationship('Metadata', viewonly=True)
+
+
+# class AnnotationsKegg(AnnotationsKeggBase, Reflected):
+#     __tablename__ = 'annotations_kegg'
+#     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
+#                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
+
+#     metadata_ = relationship('Metadata', viewonly=True)
+#     proteins = relationship('Proteins', viewonly=True)
+
+
+# class AnnotationsPfam(AnnotationsPfamBase, Reflected):
+#     __tablename__ = 'annotations_pfam'
+#     __table_args__ = (ForeignKeyConstraint(['genome_id'], ['metadata.genome_id']), # , ondelete='cascade'),
+#                         ForeignKeyConstraint(['gene_id'], ['proteins.gene_id'])) # , ondelete='cascade')) 
+
+#     metadata_ = relationship('Metadata', viewonly=True)
+#     proteins = relationship('Proteins', viewonly=True)

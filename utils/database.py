@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import insert, text
-from utils.tables import Proteins, ProteinsHistory, Metadata, MetadataHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam, Reflected
+from utils.tables import *
 from typing import List, Dict, NoReturn
 import pandas as pd
 
@@ -15,14 +15,20 @@ class Database():
     name = 'findabug'
     url = f'{dialect}+{driver}://{user}:{password}@{host}/{name}'
 
-    def __init__(self, reflect:bool=True):
+    def __init__(self, reflect:bool=True, versions:List[int]=[207]):
 
         self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
-        if reflect:
-            Reflected.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)
-        self.tables = [Metadata, MetadataHistory, Proteins, ProteinsHistory, AnnotationsKegg, AnnotationsKeggHistory, AnnotationsPfamHistory, AnnotationsPfam]
+
+        self.tables = [create_metadata_table(version) for version in versions]
+        self.tables += [create_proteins_table(version) for version in versions]
+        self.tables += [create_annotations_kegg_table(version) for version in versions]
+        self.tables += [create_annotations_pfam_table(version) for version in versions]
+
+        if reflect:
+            Reflected.prepare(self.engine)
+            
         self.table_names = [table.__tablename__ for table in self.tables]
 
     def has_table(self, table_name:str) -> bool:
@@ -80,11 +86,6 @@ class Database():
             table = self.get_table(table_name)
             self.session.execute(insert(table), entries) 
             self.session.commit()
-
-    def move_to_history(self, table_name:str):
-        '''Move a current table to history.'''
-        assert 'history' not in table_name
-        history_table_name = table_name + '_history'
 
     def reflect(self):
         Reflected.prepare(self.engine)
