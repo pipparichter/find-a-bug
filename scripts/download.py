@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # Make the directory to store the new version of GTDB. 
     data_dir = os.path.join(args.data_dir, f'r{args.version}')
-    os.mkdir(data_dir, exist_ok=True)
+    os.mkdirs(data_dir, exist_ok=True)
 
     # URL for the GTDB FTP site. 
     url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/'
