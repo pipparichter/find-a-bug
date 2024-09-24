@@ -25,7 +25,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Make the directory to store the new version of GTDB. 
-    data_dir = os.path.join(data_dir, f'r{version}')
+    data_dir = os.path.join(args.data_dir, f'r{version}')
     os.mkdir(data_dir)
 
     # URL for the GTDB FTP site. 
