@@ -90,6 +90,3 @@ def debug(cmd:str=None, table_name:str=None):
         return count(table_name=table_name, debug=True)
     elif cmd == 'get':
         return get(table_name=table_name, debug=True)
-
-
-

@@ -9,8 +9,11 @@ from sqlalchemy import String, Integer, ForeignKey, PrimaryKeyConstraint, Float,
 from sqlalchemy.orm import DeclarativeBase, relationship, mapped_column
 from sqlalchemy.ext.declarative import DeferredReflection
 from typing import List, Dict, Set
-from utils import MAX_SEQ_LENGTH, GENOME_ID_LENGTH, GENE_ID_LENGTH, DEFAULT_STRING_LENGTH
 
+MAX_SEQ_LENGTH = 50000 # The maximum number of amino acids allowed for a protein sequence. 
+GENOME_ID_LENGTH = 20 # Length of the GTDB genome accessions. 
+GENE_ID_LENGTH = 50 # Approximate length of GTDB gene accessions. 
+DEFAULT_STRING_LENGTH = 50
 
 # TODO: Read https://www.geeksforgeeks.org/sqlalchemy-orm-declaring-mapping/
 

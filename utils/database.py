@@ -16,20 +16,19 @@ class Database():
     url = f'{dialect}+{driver}://{user}:{password}@{host}/{name}'
 
     def __init__(self, reflect:bool=True, versions:List[int]=[207]):
-
-        self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
-
-        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)
-
+        
         self.tables = [create_metadata_table(version) for version in versions]
         self.tables += [create_proteins_table(version) for version in versions]
         self.tables += [create_annotations_kegg_table(version) for version in versions]
         self.tables += [create_annotations_pfam_table(version) for version in versions]
+        self.table_names = [table.__tablename__ for table in self.tables]
+
+        self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
 
         if reflect:
             Reflected.prepare(self.engine)
-            
-        self.table_names = [table.__tablename__ for table in self.tables]
+
+        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)            
 
     def has_table(self, table_name:str) -> bool:
         '''Checks for the existence of a table in the database.'''
