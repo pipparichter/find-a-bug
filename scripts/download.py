@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     local_files = []
     for remote_file in remote_files:
-        print(f'Downloading file from {url + file}')
+        print(f'Downloading file from {url + remote_file}')
         local_files.append(wget.download(url + remote_file, out=data_dir))
     
     # First, make all necessary directories... 
