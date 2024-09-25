@@ -4,7 +4,7 @@ import wget
 import gzip 
 import tarfile 
 import shutil
-import urrlib.request 
+import urllib.request 
 
 # Structure of the GTDB version directories is as follows:
 # /var/lib/pgsql/data/gtdb/r{version}/
