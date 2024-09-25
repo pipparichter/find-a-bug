@@ -54,9 +54,9 @@ if __name__ == '__main__':
     remote_files += [f'bac120_metadata_r{args.version}.tsv.gz']
 
     local_files = []
-    for file in files:
+    for remote_file in remote_files:
         print(f'Downloading file from {url + file}')
-        local_files.append(wget.download(url + file, out=data_dir))
+        local_files.append(wget.download(url + remote_file, out=data_dir))
     
     # First, make all necessary directories... 
     os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
