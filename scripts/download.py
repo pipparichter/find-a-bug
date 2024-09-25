@@ -59,7 +59,7 @@ if __name__ == '__main__':
         print(f'Downloading file from {url + remote_file}')
         # local_files.append(wget.download(url + remote_file, out=data_dir))
         local_file = remote_file.split('/')[-1]
-        urllib.request.retrieve(url + remote_file, os.path.join(data_dir, local_file))
+        urllib.request.urlretrieve(url + remote_file, os.path.join(data_dir, local_file))
         local_files.append(local_file)
     
     # First, make all necessary directories... 
