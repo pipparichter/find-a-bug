@@ -18,15 +18,34 @@ import urllib.request
 #       ./archaea
 #   ./metadata/
 
-def extract(tar_path:str, dst_path:str): 
-    print(f'extract: Extracting file {tar_path}')
+def extract_tar(tar_path:str=None, dst_path:str=None, src_path:str=None): 
+    '''
+    :param tar_path: The path to the tar archive to extract. 
+    :param dst_path: The path where all the contents of the tar archive will be written. 
+    :param src_path: The name of the directory where the extracted tar archive is stored. I needed to set
+        this manually. 
+    '''
+    print(f'extract_tar: Extracting tar archive {tar_path}')
+
     with tarfile.open(tar_path, 'r') as tar:
-        tar.extractall(path=data_dir)
-    # src_path is the path to the newly-extracted directory. 
-    src_path = os.path.join(data_dir, tar_path.replace('.tar.gz', ''))
-    for item in os.listdir(new_path):
-        shutil.move(os.path.join(src_path, item), os.path.join(dst_path, item))
-    shutil.rmtree(src_path) # Remove the src_path directory, which should be empty now. 
+        tar.extractall(path=os.path.dirname(tar_path))
+    # src_path is the path to the newly-extracted directory. I can't come up with a good way to automatically
+    # detect what it's name is, so just set it manually. 
+    print(f'extract_tar: Moving files from {src_path} to {dst_path}.')
+    for root, dirs, files in os.walk(src_filepath):   
+        for file in files:     
+            shutil.move(os.path.join(root, file), os.path.join(dst_path, file))
+
+    shutil.rmtree(src_path) # Remove the src_path directory, which should be empty now.
+
+
+def extract_gz(gz_path:str=None, dst_path:str=None): 
+    print(f'extract_gz: Extracting gz file {gz_path}')
+    with gzip.open(gz_path, 'rb') as f:
+        contents = f.read()
+    with open(dst_path, 'w') as f:
+        f.write(contents)
+ 
 
 
 if __name__ == '__main__':
@@ -70,9 +89,10 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
     os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
     
-    extract(os.path.join(data_dir, local_files[0]), os.path.join(data_dir, 'proteins', 'nucleotides'))
-    extract(os.path.join(data_dir, local_files[1]), os.path.join(data_dir, 'proteins', 'amino_acids'))
-    extract(os.path.join(data_dir, local_files[2]), os.path.join(data_dir, 'metadata'))
+    extract_tar(tar_path=os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'), src_path=os.path.join(data_dir, 'proteins_fna_reps'))
+    extract_tar(tar_path=os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'), src_path=os.path.join(data_dir, 'proteins_faa_reps'))
+    extract_gz(gz_path=os.path.join(data_dir, local_files[2]), dst_path=os.path.join(data_dir, 'metadata', local_files[2].replace('.gz', '')))
+    extract_gz(gz_path=os.path.join(data_dir, local_files[3]), dst_path=os.path.join(data_dir, 'metadata', local_files[3].replace('.gz', '')))
 
 
 
