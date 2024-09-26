@@ -43,10 +43,9 @@ def extract_tar(tar_path:str=None, dst_path:str=None, src_path:str=None):
 
 def extract_gz(gz_path:str=None, dst_path:str=None): 
     print(f'extract_gz: Extracting gz file {gz_path}')
-    with gzip.open(gz_path, 'rb') as f:
-        contents = f.read()
-    with open(dst_path, 'w') as f:
-        f.write(contents)
+    with gzip.open(gz_path, 'rb') as src:
+        with open(dst_path, 'wb') as dst:
+            shutil.copyfileobj(src, dst)
  
 
 
