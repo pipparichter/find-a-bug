@@ -56,11 +56,14 @@ if __name__ == '__main__':
 
     local_files = []
     for remote_file in remote_files:
-        print(f'Downloading file from {url + remote_file}')
-        # local_files.append(wget.download(url + remote_file, out=data_dir))
         local_file = remote_file.split('/')[-1]
-        urllib.request.urlretrieve(url + remote_file, os.path.join(data_dir, local_file))
         local_files.append(local_file)
+        # Download the file if it does not already exist. 
+        if not os.path.exists(os.path.join(data_dir, local_file)):
+            print(f'Downloading file from {url + remote_file}')
+            urllib.request.urlretrieve(rl + remote_file, os.path.join(data_dir, local_file))
+            # local_files.append(wget.download(url + remote_file, out=data_dir))
+            urllib.request.urlretrieve(rl + remote_file, os.path.join(data_dir, local_file))
     
     # First, make all necessary directories... 
     os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
