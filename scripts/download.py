@@ -5,6 +5,8 @@ import gzip
 import tarfile 
 import shutil
 import urllib.request 
+import warnings 
+warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 
 # Structure of the GTDB version directories is as follows:
 # /var/lib/pgsql/data/gtdb/r{version}/
@@ -32,7 +34,7 @@ def extract_tar(tar_path:str=None, dst_path:str=None, src_path:str=None):
     # src_path is the path to the newly-extracted directory. I can't come up with a good way to automatically
     # detect what it's name is, so just set it manually. 
     print(f'extract_tar: Moving files from {src_path} to {dst_path}.')
-    for root, dirs, files in os.walk(src_filepath):   
+    for root, dirs, files in os.walk(src_path):   
         for file in files:     
             shutil.move(os.path.join(root, file), os.path.join(dst_path, file))
 
