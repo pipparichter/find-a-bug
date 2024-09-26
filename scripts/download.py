@@ -20,7 +20,7 @@ import urllib.request
 
 def extract(tar_path:str, dst_path:str): 
     print(f'extract: Extracting file {tar_path}')
-    with tarfile.open(tar_path, 'rb') as tar:
+    with tarfile.open(tar_path, 'r') as tar:
         tar.extractall(path=data_dir)
     # src_path is the path to the newly-extracted directory. 
     src_path = os.path.join(data_dir, tar_path.replace('.tar.gz', ''))
