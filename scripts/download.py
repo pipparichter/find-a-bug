@@ -89,8 +89,8 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
     os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
     
-    extract_tar(tar_path=os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'), src_path=os.path.join(data_dir, 'proteins_fna_reps'))
-    extract_tar(tar_path=os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'), src_path=os.path.join(data_dir, 'proteins_faa_reps'))
+    extract_tar(tar_path=os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'), src_path=os.path.join(data_dir, 'protein_fna_reps'))
+    extract_tar(tar_path=os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'), src_path=os.path.join(data_dir, 'protein_faa_reps'))
     extract_gz(gz_path=os.path.join(data_dir, local_files[2]), dst_path=os.path.join(data_dir, 'metadata', local_files[2].replace('.gz', '')))
     extract_gz(gz_path=os.path.join(data_dir, local_files[3]), dst_path=os.path.join(data_dir, 'metadata', local_files[3].replace('.gz', '')))
 
