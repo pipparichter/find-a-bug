@@ -96,11 +96,10 @@ if __name__ == '__main__':
 
     if 'proteins' in args.table_names:
         print('Uploading initial data to the proteins table.')
-        for domain in ['bacteria', 'archaea']:
-            # Need to upload amino acid and nucleotide data simultaneously.
-            aa_data_dir = os.path.join(version_dir, 'proteins', 'amino_acids', domain)
-            nt_data_dir = os.path.join(version_dir, 'proteins', 'nucleotides', domain)
-            upload_proteins_files(database, version=args.version, aa_data_dir=aa_data_dir, nt_data_dir=nt_data_dir, chunk_size=args.chunk_size) 
+        # Need to upload amino acid and nucleotide data simultaneously.
+        aa_data_dir = os.path.join(version_dir, 'proteins', 'amino_acids')
+        nt_data_dir = os.path.join(version_dir, 'proteins', 'nucleotides')
+        upload_proteins_files(database, version=args.version, aa_data_dir=aa_data_dir, nt_data_dir=nt_data_dir, chunk_size=args.chunk_size) 
 
     if 'annotations_pfam' in args.table_names:
         print('Uploading initial data to the annotations_pfam table.')

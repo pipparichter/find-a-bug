@@ -41,14 +41,21 @@ def extract_tar(tar_path:str=None, dst_path:str=None, src_path:str=None):
             shutil.move(os.path.join(root, file), os.path.join(dst_path, file))
             # All the files in the tar archive are gzipped. 
             if file.split('.')[-1] == 'gz':
-                extract_gz(os.path.join(dst_path, file), dst_path=dst_path, rm=True)
-
+                extract_gz(os.path.join(dst_path, file), dst_path=dst_path, rm=True, verbose=False)
 
     shutil.rmtree(src_path) # Remove the src_path directory, which should be empty now.
 
 
-def extract_gz(gz_path:str=None, dst_path:bool=None, rm:bool=True): 
-    print(f'extract_gz: Extracting gz file {gz_path}')
+def extract_gz(gz_path:str=None, dst_path:bool=None, rm:bool=True, verbose:bool=True): 
+    '''Extract a zipped file to the specified directory.
+    
+    :param gz_path: The path to the zipped file. 
+    :param dst_path: The path where to which file will be extracted. 
+    :param rm: Whether or not to remove the original file. 
+    :param verbose: Whether or not to print a little update. 
+    '''
+    if verbose: print(f'extract_gz: Extracting gz file {gz_path}')
+
     assert os.path.isdir(dst_path), 'extract_gz: dst_path must be a directory.'
     # Use the filename without the gz extension as the destination file. 
     dst_path = os.path.join(dst_path, gz_path.replace('.gz', '')) 
@@ -70,7 +77,7 @@ if __name__ == '__main__':
 
     # Make the directory to store the new version of GTDB. 
     data_dir = os.path.join(args.data_dir, f'r{args.version}')
-    os.makedirs(data_dir, exist_ok=True)
+    os.makedirs(data_dir, exist_ok=True) # This should not delete anything!
     print(f'Created directory for storing the GTDB data at {data_dir}')
 
     # URL for the GTDB FTP site. 
@@ -93,9 +100,9 @@ if __name__ == '__main__':
         # Download the file if it does not already exist. 
         if not os.path.exists(os.path.join(data_dir, local_file)):
             print(f'Downloading file from {url + remote_file}')
-            urllib.request.urlretrieve(rl + remote_file, os.path.join(data_dir, local_file))
+            urllib.request.urlretrieve(url + remote_file, os.path.join(data_dir, local_file))
             # local_files.append(wget.download(url + remote_file, out=data_dir))
-            urllib.request.urlretrieve(rl + remote_file, os.path.join(data_dir, local_file))
+            urllib.request.urlretrieve(url + remote_file, os.path.join(data_dir, local_file))
     
     # First, make all necessary directories... 
     os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
