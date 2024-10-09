@@ -20,14 +20,14 @@ KOFAMSCAN = '/home/prichter/kofamscan/kofam_scan-1.3.0/exec_annotation'
 def annotate_pfam(input_path:str, output_dir:str):
     '''Runs InterProScan on the FASTA file specified by the input path. This file should contain amino acid sequences.'''
     # Documentation is here: https://interproscan-docs.readthedocs.io/en/latest/HowToRun.html 
-    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam')
+    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam', shell=True, check=True)
 
 
 def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prihter/kofamscan/config.yml'):
 
     output_path = input_path + '.ko'
     # Instructions here: https://taylorreiter.github.io/2019-05-11-kofamscan/
-    subprocess.run(f'.{KOFAMSCAN} {input_path} -o {output_path} --config {config} --format detail-tsv')
+    subprocess.run(f'.{KOFAMSCAN} {input_path} -o {output_path} --config {config} --format detail-tsv', shell=True, check=True)
 
 
 
