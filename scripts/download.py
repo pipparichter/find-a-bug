@@ -35,9 +35,9 @@ def extract_tar(tar_path:str=None, dst_path:str=None): # , src_path:str=None):
     '''
     print(f'extract_tar: Extracting tar archive {tar_path}')
 
-    # with tarfile.open(tar_path, 'r') as tar:
-    #     # Extract the tar archive into the same directory. 
-    #     tar.extractall(path=os.path.dirname(tar_path))
+    with tarfile.open(tar_path, 'r') as tar:
+        # Extract the tar archive into the same directory. 
+        tar.extractall(path=os.path.dirname(tar_path))
 
     # src_path is the path to the newly-extracted file or directory. This should be the most-recently created item in the directory. 
     src_path = get_latest(os.path.dirname(tar_path))
@@ -49,7 +49,7 @@ def extract_tar(tar_path:str=None, dst_path:str=None): # , src_path:str=None):
                 shutil.move(os.path.join(root, file), os.path.join(dst_path, file))
                 # All the files in the tar archive are gzipped. Need to extract these as well.  
                 if file.split('.')[-1] == 'gz':
-                    extract_gz(os.path.join(dst_path, file), dst_path=dst_path, rm=True, verbose=False)
+                    extract_gz(os.path.join(dst_path, file), dst_path=dst_path, verbose=False)
         shutil.rmtree(src_path) # Remove the src_path directory, which should be empty now.
 
     else: # If the extracted item is not a directory, just move it to the destination path. 
@@ -140,8 +140,8 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
     os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
     
-    extract(os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'))
-    extract(os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'))
+    # extract(os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'))
+    # extract(os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'))
     extract(os.path.join(data_dir, local_files[2]), dst_path=os.path.join(data_dir, 'metadata'))
     extract(os.path.join(data_dir, local_files[3]), dst_path=os.path.join(data_dir, 'metadata'))
 
