@@ -5,7 +5,7 @@ import os
 import argparse 
 
 # Paths to the InterProScan and Kofamscan programs. 
-INTERPROSCAN = '/home/prichter/interproscan/interproscan-5.69-101.0/interproscan.sh'
+INTERPROSCAN = '/home/prichter/interproscan/interproscan-5.70-102.0/interproscan.sh'
 KOFAMSCAN = '/home/prichter/kofamscan/kofam_scan-1.3.0/exec_annotation'
 
 # Structure of the GTDB version directories is as follows:
