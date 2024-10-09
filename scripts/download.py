@@ -140,8 +140,8 @@ if __name__ == '__main__':
     os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
     os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
     
-    # extract(os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'))
-    # extract(os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'))
+    extract(os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'))
+    extract(os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'))
     extract(os.path.join(data_dir, local_files[2]), dst_path=os.path.join(data_dir, 'metadata'))
     extract(os.path.join(data_dir, local_files[3]), dst_path=os.path.join(data_dir, 'metadata'))
 
