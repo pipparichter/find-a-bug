@@ -32,7 +32,7 @@ def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prihter/kofa
 
 
 if __name__ == '__main__':
-    parser = parser.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--type', choices=['pfam', 'kegg'], type=str, default='kegg')
     parser.add_argument('--data-dir', type=str, default='/var/lib/pgsql/data/gtdb/')
     parser.add_argument('--version', default=220, type=int)
