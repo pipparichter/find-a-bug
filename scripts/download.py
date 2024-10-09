@@ -40,7 +40,7 @@ def extract_tar(tar_path:str=None, dst_path:str=None): # , src_path:str=None):
         tar.extractall(path=os.path.dirname(tar_path))
 
     # src_path is the path to the newly-extracted file or directory. This should be the most-recently created item in the directory. 
-    src_path = get_latest(os.path.dirname(tar_path, is_directory=True))
+    src_path = get_latest(os.path.dirname(tar_path))
 
     if os.path.isdir(src_path):
         print(f'extract_tar: Moving files from {src_path} to {dst_path}.')
@@ -55,7 +55,6 @@ def extract_tar(tar_path:str=None, dst_path:str=None): # , src_path:str=None):
     else: # If the extracted item is not a directory, just move it to the destination path. 
         print(f'extract_tar: Moving file from {src_path} to {dst_path}.')
         shutil.move(src_path, os.path.join(dst_path, os.path.basename(src_path)))
-
 
 
 def extract_gz(gz_path:str=None, dst_path:str=None, verbose:bool=True): # , rm:bool=True, 
@@ -104,6 +103,10 @@ if __name__ == '__main__':
     url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/{args.version}.0/'
 
     # The files we need from GTDB for this are:
+    #   'gtdb_proteins_nt_reps_r{version}.tar.gz'
+    #   'gtdb_proteins_aa_reps_r{version}.tar.gz'
+    #   'ar53_metadata_r{version}.tsv.gz
+    #   'bac120_metadata_r{version}.tsv.gz
     remote_files = [f'genomic_files_reps/gtdb_proteins_nt_reps_r{args.version}.tar.gz']
     remote_files += [f'genomic_files_reps/gtdb_proteins_aa_reps_r{args.version}.tar.gz']
     # NOTE: In earlier releases, these files are tar archives! Store as tar.gz. So need to try downloading both.
@@ -114,6 +117,7 @@ if __name__ == '__main__':
 
     local_files = []
     for remote_file in remote_files:
+        
         local_file = remote_file.split('/')[-1]
         local_files.append(local_file)
         
