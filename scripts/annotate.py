@@ -22,7 +22,8 @@ def annotate_pfam(input_path:str, output_dir:str):
     subprocess.run(f"sed -i 's/\*//g' {input_path}", shell=True, check=True) # Remove all asterisks from the file, as these will throw an error.
     # Documentation is here: https://interproscan-docs.readthedocs.io/en/latest/HowToRun.html 
     # The -dra option should speed things up by disabling residue-level calculations. 
-    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam -dra', shell=True, check=True)
+    # I disabled precalc because it didn't seem to be working (though speeds things up in theory).
+    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam -dra --format TSV --disable-precalc', shell=True, check=True)
 
 
 def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prihter/kofamscan/config.yml'):
