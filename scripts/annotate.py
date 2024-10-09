@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # Make a directory to store the annotations...
     annotations_dir = os.path.join(args.data_dir, f'r{int(args.version)}', 'annotations', args.type)
-    os.makedirs(annotations_dir)
+    os.makedirs(annotations_dir, exist_ok=True)
 
     if args.type == 'pfam':
         for file in tqdm(os.listdir(proteins_dir), desc='Annotating amino acid sequences with Pfam.'):
