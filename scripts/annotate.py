@@ -6,7 +6,7 @@ import argparse
 
 # Paths to the InterProScan and Kofamscan programs. 
 INTERPROSCAN = '/home/prichter/interproscan/interproscan-5.69-101.0/interproscan.sh'
-KOFAMSCAN = ''
+KOFAMSCAN = '/home/prichter/kofamscan/kofam_scan-1.3.0/exec_annotation'
 
 # Structure of the GTDB version directories is as follows:
 # /var/lib/pgsql/data/gtdb/r{version}/
@@ -23,8 +23,12 @@ def annotate_pfam(input_path:str, output_dir:str):
     subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam')
 
 
-def annotate_kegg():
-    pass 
+def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prihter/kofamscan/config.yml'):
+
+    output_path = input_path + '.ko'
+    # Instructions here: https://taylorreiter.github.io/2019-05-11-kofamscan/
+    subprocess.run(f'.{KOFAMSCAN} {input_path} -o {output_path} --config {config} --format detail-tsv')
+
 
 
 if __name__ == '__main__':

@@ -35,9 +35,9 @@ def extract_tar(tar_path:str=None, dst_path:str=None): # , src_path:str=None):
     '''
     print(f'extract_tar: Extracting tar archive {tar_path}')
 
-    with tarfile.open(tar_path, 'r') as tar:
-        # Extract the tar archive into the same directory. 
-        tar.extractall(path=os.path.dirname(tar_path))
+    # with tarfile.open(tar_path, 'r') as tar:
+    #     # Extract the tar archive into the same directory. 
+    #     tar.extractall(path=os.path.dirname(tar_path))
 
     # src_path is the path to the newly-extracted file or directory. This should be the most-recently created item in the directory. 
     src_path = get_latest(os.path.dirname(tar_path))
@@ -80,7 +80,7 @@ def extract(path:str, dst_path:str=None):
     # tar takes precedence over gz. This is because for the non-directories with the .tar.gz file extension, 
     # the tar utility fully decompresses the file, while gunzip does not.
     if '.tar' in path:
-        extract_tar(tar_path=path, dst_path=path)
+        extract_tar(tar_path=path, dst_path=dst_path)
     elif '.gz' in path:
         extract_gz(gz_path=path, dst_path=dst_path)
     else:
