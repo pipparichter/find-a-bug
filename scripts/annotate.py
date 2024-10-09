@@ -21,7 +21,8 @@ def annotate_pfam(input_path:str, output_dir:str):
     '''Runs InterProScan on the FASTA file specified by the input path. This file should contain amino acid sequences.'''
     subprocess.run(f"sed -i 's/\*//g' {input_path}", shell=True, check=True) # Remove all asterisks from the file, as these will throw an error.
     # Documentation is here: https://interproscan-docs.readthedocs.io/en/latest/HowToRun.html 
-    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam', shell=True, check=True)
+    # The -dra option should speed things up by disabling residue-level calculations. 
+    subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam -dra', shell=True, check=True)
 
 
 def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prihter/kofamscan/config.yml'):
