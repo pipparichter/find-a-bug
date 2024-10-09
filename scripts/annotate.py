@@ -19,6 +19,7 @@ KOFAMSCAN = '/home/prichter/kofamscan/kofam_scan-1.3.0/exec_annotation'
 
 def annotate_pfam(input_path:str, output_dir:str):
     '''Runs InterProScan on the FASTA file specified by the input path. This file should contain amino acid sequences.'''
+    subprocess.run(f"sed -i 's/\*//g' {input_path}", shell=True, check=True) # Remove all asterisks from the file, as these will throw an error.
     # Documentation is here: https://interproscan-docs.readthedocs.io/en/latest/HowToRun.html 
     subprocess.run(f'sh {INTERPROSCAN} -i {input_path} -d {output_dir} -appl Pfam', shell=True, check=True)
 
