@@ -39,10 +39,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    proteins_dir = os.path.join(args.data_dir, f'r{int(version)}', 'proteins', 'amino_acids')
+    proteins_dir = os.path.join(args.data_dir, f'r{int(args.version)}', 'proteins', 'amino_acids')
 
     # Make a directory to store the annotations...
-    annotations_dir = os.path.join(args.data_dir, f'r{int(version)}', 'annotations', args.type)
+    annotations_dir = os.path.join(args.data_dir, f'r{int(args.version)}', 'annotations', args.type)
     os.makedirs(annotations_dir)
 
     if args.type == 'pfam':
