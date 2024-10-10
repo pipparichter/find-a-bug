@@ -50,7 +50,10 @@ if __name__ == '__main__':
 
     if args.type == 'pfam':
         for file in tqdm(os.listdir(proteins_dir), desc='Annotating amino acid sequences with Pfam.'):
-            annotate_pfam(input_path=os.path.join(proteins_dir, file), output_dir=annotations_dir)
+            # Only proceed with the annotation if the file does not already exist. 
+            output_file = os.path.join(annotations_dir, file + '.tsv')
+            if not os.path.exists(output_path):
+                annotate_pfam(input_path=os.path.join(proteins_dir, file), output_dir=annotations_dir)
     
     elif args.type == 'kegg':
         for file in tqdm(os.listdir(proteins_dir), desc='Annotating amino acid sequences with KEGG ortho groups.'):
