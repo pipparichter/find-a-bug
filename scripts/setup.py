@@ -11,8 +11,7 @@ DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 def upload_files(database:Database, version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
-    print(file_names)
-    print(data_dir)
+
     if chunk_size is None:
         chunks = [file_names]
     else:
@@ -91,12 +90,12 @@ if __name__ == '__main__':
 
     database.reflect()
 
-    if 'metadata' in args.table_names:
+    if f'metadata_{args.version}' in args.table_names:
         print('Uploading initial data to the metadata table.')
         data_dir = os.path.join(version_dir, 'metadata')
         upload_files(database, version=args.version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=None)
 
-    if 'proteins' in args.table_names:
+    if f'proteins_{args.version}' in args.table_names:
         print('Uploading initial data to the proteins table.')
         # Need to upload amino acid and nucleotide data simultaneously.
         aa_data_dir = os.path.join(version_dir, 'proteins', 'amino_acids')
@@ -108,7 +107,7 @@ if __name__ == '__main__':
     #     data_dir = os.path.join(version_dir, 'annotations', 'pfam')
     #     upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
     
-    if 'annotations_kegg' in args.table_names:
+    if f'annotations_kegg_{args.version}' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
         data_dir = os.path.join(version_dir, 'annotations', 'kegg')
         upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_kegg', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
