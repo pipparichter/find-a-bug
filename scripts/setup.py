@@ -101,10 +101,10 @@ if __name__ == '__main__':
         nt_data_dir = os.path.join(version_dir, 'proteins', 'nucleotides')
         upload_proteins_files(database, version=args.version, aa_data_dir=aa_data_dir, nt_data_dir=nt_data_dir, chunk_size=args.chunk_size) 
 
-    if 'annotations_pfam' in args.table_names:
-        print('Uploading initial data to the annotations_pfam table.')
-        data_dir = os.path.join(version_dir, 'annotations', 'pfam')
-        upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
+    # if 'annotations_pfam' in args.table_names:
+    #     print('Uploading initial data to the annotations_pfam table.')
+    #     data_dir = os.path.join(version_dir, 'annotations', 'pfam')
+    #     upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
     
     if 'annotations_kegg' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
