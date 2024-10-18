@@ -3,10 +3,10 @@ import os
 os.sys.path.append('../utils/')
 import argparse
 from utils.database import Database
-from utils import DATA_DIR
 from utils.files import * 
 from tqdm import tqdm
 
+DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 
 def upload_files(database:Database, version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
