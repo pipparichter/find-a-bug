@@ -62,13 +62,13 @@ def upload_proteins_files(database:Database, version:int=None, aa_data_dir:str=N
                 entries.append(entry)
 
             pbar.update(1)
-        database.bulk_upload('proteins', entries) 
+        database.bulk_upload(f'proteins_r{args.version}', entries) 
 
 
 
 if __name__ == '__main__':
     database = Database(reflect=False)
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database. Initial version used was r207')
     parser.add_argument('--table-names', default=database.table_names, nargs='+', help='The names of the tables to initialize.')
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     if f'metadata_r{args.version}' in args.table_names:
         print('Uploading initial data to the metadata table.')
         data_dir = os.path.join(version_dir, 'metadata')
-        upload_files(database, version=args.version, data_dir=data_dir, table_name='metadata', file_class=MetadataFile, chunk_size=None)
+        upload_files(database, version=args.version, data_dir=data_dir, table_name=f'metadata_r{args.version}', file_class=MetadataFile, chunk_size=None)
 
     if f'proteins_r{args.version}' in args.table_names:
         print('Uploading initial data to the proteins table.')
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     if f'annotations_kegg_r{args.version}' in args.table_names:
         print('Uploading initial data to the annotations_kegg table.')
         data_dir = os.path.join(version_dir, 'annotations', 'kegg')
-        upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_kegg', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
+        upload_files(database, version=args.version, data_dir=data_dir, table_name=f'annotations_kegg_r{args.version}', file_class=KeggAnnotationsFile, chunk_size=args.chunk_size)
 
     database.close()
     
