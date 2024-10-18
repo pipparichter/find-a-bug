@@ -70,7 +70,7 @@ if __name__ == '__main__':
     database = Database(reflect=False)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', default='r207', type=int, help='The GTDB version to upload to the SQL database. Initial version used was r207')
+    parser.add_argument('--version', default='r207', type=str, help='The GTDB version to upload to the SQL database. Initial version used was r207')
     parser.add_argument('--table-names', default=database.table_names, nargs='+', help='The names of the tables to initialize.')
     parser.add_argument('--drop-existing', type=bool, default=True)
     parser.add_argument('--chunk-size', type=int, default=100, help='The number of files to upload to the database at a time. ')
