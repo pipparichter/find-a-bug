@@ -37,6 +37,9 @@ def upload_proteins_files(database:Database, version:int=None, aa_data_dir:str=N
     nt_file_names = sorted(os.listdir(nt_data_dir))
     # print(f'Total amino acid files:', len(aa_file_names))
     # print(f'Total nucleotide files:', len(nt_file_names))
+    for file in aa_file_names:
+        if file not in nt_file_names:
+            print(file)
     assert len(aa_file_names) == len(nt_file_names), f'upload_proteins_files: The number of nucleotide and amino acid files should match. Found {len(aa_file_names)} amino acid files and {len(nt_file_names)} nucleotide files.' 
 
     file_names = list(zip(aa_file_names, nt_file_names)) # Combine the different file names into a single list. 
