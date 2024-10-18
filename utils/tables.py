@@ -41,7 +41,7 @@ class ProteinsBase(Base):
     __abstract__ = True
 
     gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
-    gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
+    version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
     genome_id = mapped_column(String(GENOME_ID_LENGTH), comment='The GTDB genome ID.')
     
     # seq = mapped_column(String(MAX_SEQ_LENGTH), comment='The amino acid sequence.')
@@ -63,7 +63,7 @@ class AnnotationsKeggBase(Base):
     __abstract__ = True
  
     annotation_id = mapped_column(Integer, primary_key=True)
-    gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
+    version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
     gene_id = mapped_column(String(GENE_ID_LENGTH))
     genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
@@ -77,7 +77,7 @@ class AnnotationsPfamBase(Base):
     __abstract__ = True
 
     annotation_id = mapped_column(Integer, primary_key=True)
-    gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
+    version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
     gene_id = mapped_column(String(GENE_ID_LENGTH))
     genome_id = mapped_column(String(GENOME_ID_LENGTH))
 
@@ -94,7 +94,7 @@ class MetadataBase(Base):
     __abstract__ = True 
 
     genome_id = mapped_column(String(GENOME_ID_LENGTH), primary_key=True)
-    gtdb_version = mapped_column(Integer, comment='The GTDB gtdb_version from which the data was obtained.')
+    version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
 
     gtdb_order = mapped_column(String(DEFAULT_STRING_LENGTH))
     gtdb_domain = mapped_column(String(DEFAULT_STRING_LENGTH))

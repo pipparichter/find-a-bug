@@ -28,10 +28,10 @@ def get_converter(dtype):
 
 class File():
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, version:int=None):
 
         self.path = path 
-        self.gtdb_version = gtdb_version
+        self.version = version
         self.dir_name, self.file_name = os.path.split(path) 
         self.data = None # This will be populated with a DataFrame in child classes. 
         self.genome_id = None # This will be populated with the genome ID extracted from the filename for everything but the MetadataFile class.
@@ -46,15 +46,15 @@ class File():
             # Add the genome ID to the entries as another field if it is present as a File attribute.
             if self.genome_id is not None:
                 entry['genome_id'] = self.genome_id
-            entry['gtdb_version'] = self.gtdb_version
+            entry['version'] = self.version
         return entries
 
 
 class FastaFile(File):
 
-    def __init__(self, path:str, gtdb_version:int=None, type_:str='nucleotide'):
+    def __init__(self, path:str, version:int=None, type_:str='nucleotide'):
 
-        super().__init__(path, gtdb_version=gtdb_version) 
+        super().__init__(path, version=version) 
 
         self.n_entries = None
         with open(path, 'r') as f:
@@ -106,15 +106,15 @@ class ProteinsFile(FastaFile):
 
     fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'scaffold_id']
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, version:int=None):
         '''Initialize a FastaFile object.
         
         :param path: The path to the FASTA file. 
-        :param gtdb_version: The version of GTDB associated with the file. 
+        :param version: The version of GTDB associated with the file. 
         :param type_: One of 'nucleotide' or 'amino_acid', indicating the type of sequence contained in the FASTA file. 
         '''
 
-        super().__init__(path, gtdb_version=gtdb_version)
+        super().__init__(path, version=version)
 
 
     def parse_header(self, header:str) -> Dict[str, object]:
@@ -200,9 +200,9 @@ class MetadataFile(File):
         return parsed
 
 
-    def __init__(self, path:str, gtdb_version:int=None, reps_only:bool=True):
+    def __init__(self, path:str, version:int=None, reps_only:bool=True):
         
-        super().__init__(path, gtdb_version=gtdb_version)
+        super().__init__(path, version=version)
 
         data = pd.read_csv(path, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
         
@@ -231,9 +231,9 @@ class KeggAnnotationsFile(File):
 
     fields = ['gene_id', 'ko', 'threshold', 'score', 'e_value'] # Define the new column headers. 
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, version:int=None):
 
-        super().__init__(path, gtdb_version=gtdb_version)
+        super().__init__(path, version=version)
         
         # Replace the existing headers in the CSV file with new headers. 
         self.data = pd.read_csv(path, header=0, names=KeggAnnotationsFile.fields) # Read in the CSV file. 
@@ -259,9 +259,9 @@ class PfamAnnotationsFile(File):
         'interpro_accession', 
         'interpro_description']
 
-    def __init__(self, path:str, gtdb_version:int=None):
+    def __init__(self, path:str, version:int=None):
 
-        super().__init__(path, gtdb_version=gtdb_version)
+        super().__init__(path, version=version)
         
         # The Pfam annotation files do not contain headers, so need to define them. 
         data = pd.read_csv(path, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
