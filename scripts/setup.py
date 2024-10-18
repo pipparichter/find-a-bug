@@ -11,7 +11,8 @@ DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 def upload_files(database:Database, version:int=None, data_dir:str=None, table_name:str=None, chunk_size:int=100, file_class:File=None):
 
     file_names = os.listdir(data_dir)
-    
+    print(file_names)
+    print(data_dir)
     if chunk_size is None:
         chunks = [file_names]
     else:
