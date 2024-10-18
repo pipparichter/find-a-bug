@@ -4,7 +4,7 @@ from sqlalchemy import Float, String, Integer
 from typing import Dict, List, NoReturn
 import pandas as pd 
 import numpy as np
-from utils import MAX_SEQ_LENGTH 
+from utils.tables import MAX_SEQ_LENGTH 
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
