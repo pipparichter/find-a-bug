@@ -24,7 +24,7 @@ def extract(archive:tarfile.TarFile, name:str, output_dir:str='.') -> str:
     '''
 
     member = archive.getmember(name)
-    if not member.is_dir():
+    if member.isfile():
         content = archive.extractfile(member).read()
 
         output_file_path = os.path.join(output_dir, os.path.basename(name))
@@ -104,7 +104,7 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
             nt_path, aa_path = extract(nt_archive, nt_name, output_dir=data_dir), extract(aa_archive, aa_name, output_dir=data_dir)
             if (aa_path is None) and (nt_path is None):
                 continue 
-            
+
             nt_file, aa_file = ProteinsFile(nt_path, version=version), ProteinsFile(aa_path, version=version)
             assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
             
