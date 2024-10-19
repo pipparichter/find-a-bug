@@ -6,6 +6,7 @@ from utils.database import Database
 from utils.files import * 
 from tqdm import tqdm
 import zipfile 
+import glob
 import tarfile
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
