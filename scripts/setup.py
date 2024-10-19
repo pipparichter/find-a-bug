@@ -147,7 +147,7 @@ if __name__ == '__main__':
     print('Uploading initial data to the proteins table.')
     # Need to upload amino acid and nucleotide data simultaneously.
     aa_archive_path, nt_archive_path = os.path.join(data_dir, 'proteins_aa.tar.gz'), os.path.join(data_dir, 'proteins_nt.tar.gz')
-    with tarfile.open(aa_archive_path, 'r:gz'), tarfile.open(nt_archive_path, 'r:gz') as aa_archive, nt_archive:   
+    with tarfile.open(aa_archive_path, 'r:gz') as aa_archive, tarfile.open(nt_archive_path, 'r:gz') as nt_archive:   
         upload_proteins_files(aa_archive, nt_archive, database, version=args.version, data_dir=data_dir) 
 
     #     print('Uploading initial data to the annotations_pfam table.')
