@@ -88,7 +88,7 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     # Sort the file name lists, so that the ordering of genome IDs is the same. 
     # NOTE: Can we assume that the ordering of protein sequences is the same within each file? I suspect yes. 
     aa_names, nt_names = sorted(aa_archive.getnames()), sorted(nt_archive.getnames())
-    aa_names = [name for name in aa_names if '.log' not in names] # There's a random extra file in with the amino acids.
+    aa_names = [name for name in aa_names if '.log' not in name] # There's a random extra file in with the amino acids.
     assert len(aa_names) == len(nt_names), f'upload_proteins_files: The number of nucleotide and amino acid files should match. Found {len(aa_names)} amino acid files and {len(nt_names)} nucleotide files.' 
 
     names = list(zip(aa_names, nt_names)) # Combine the different file names into a single list. 
