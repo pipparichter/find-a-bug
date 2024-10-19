@@ -55,7 +55,7 @@ def upload_files(archive:tarfile.TarFile, database:Database,
     names = archive.getnames()
     chunks = [names] if (chunk_size is None) else [names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(names) // chunk_size) + 1)]
     
-    pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to {table_name}.')
+    pbar = tqdm(total=len(names), desc=f'upload_files: Uploading files to {table_name}.')
     for chunk in chunks:
         entries = []
         for name in chunk:
@@ -93,7 +93,7 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     names = list(zip(aa_names, nt_names)) # Combine the different file names into a single list. 
     chunks = [names] if (chunk_size is None) else [names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(names) // chunk_size) + 1)]
     
-    pbar = tqdm(total=len(file_names), desc=f'upload_files: Uploading files to proteins_r{version}.')
+    pbar = tqdm(total=len(names), desc=f'upload_files: Uploading files to proteins_r{version}.')
     for chunk in chunks:
         entries = []
         for aa_file_name, nt_file_name in chunk:
