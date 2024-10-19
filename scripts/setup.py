@@ -88,6 +88,7 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     # Sort the file name lists, so that the ordering of genome IDs is the same. 
     # NOTE: Can we assume that the ordering of protein sequences is the same within each file? I suspect yes. 
     aa_names, nt_names = sorted(aa_archive.getnames()), sorted(nt_archive.getnames())
+    aa_names = [name for name in aa_names if '.log' not in names] # There's a random extra file in with the amino acids.
     assert len(aa_names) == len(nt_names), f'upload_proteins_files: The number of nucleotide and amino acid files should match. Found {len(aa_names)} amino acid files and {len(nt_names)} nucleotide files.' 
 
     names = list(zip(aa_names, nt_names)) # Combine the different file names into a single list. 
@@ -138,13 +139,13 @@ if __name__ == '__main__':
 
     database.reflect()
 
-    print(f'Uploading initial data to the metadata_r{args.version} table.')
+    print(f'Uploading data to the metadata_r{args.version} table.')
     metadata_archive_paths = glob.glob(os.path.join(data_dir, '*metadata*')) # This should output the full paths. 
     for path in metadata_archive_paths:
         with tarfile.open(path, 'r:gz') as archive:
             upload_files(archive, database, version=args.version, data_dir=data_dir, table_name=f'metadata_r{args.version}', file_class=MetadataFile, chunk_size=None)
 
-    print('Uploading initial data to the proteins table.')
+    print(f'Uploading data to the proteins_r{args.version} table.')
     # Need to upload amino acid and nucleotide data simultaneously.
     aa_archive_path, nt_archive_path = os.path.join(data_dir, 'proteins_aa.tar.gz'), os.path.join(data_dir, 'proteins_nt.tar.gz')
     with tarfile.open(aa_archive_path, 'r:gz') as aa_archive, tarfile.open(nt_archive_path, 'r:gz') as nt_archive:   
@@ -154,8 +155,8 @@ if __name__ == '__main__':
     #     data_dir = os.path.join(data_dir, 'annotations', 'pfam')
     #     upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
 
-    kegg_annotation_archive_path = os.path.join(data_dir, 'annotations_kegg.tar.gz')
     print(f'Uploading data to the annotations_kegg_r{args.version} table.')
+    kegg_annotation_archive_path = os.path.join(data_dir, 'annotations_kegg.tar.gz')
     with tarfile.open(kegg_annotation_archive_path, 'r:gz') as archive:
         upload_files(archive, database, version=args.version, data_dir=data_dir, table_name=f'annotations_kegg_r{args.version}', file_class=KeggAnnotationsFile, chunk_size=100)
 
