@@ -24,7 +24,7 @@ def extract(archive:tarfile.TarFile, name:str, output_dir:str='.') -> str:
     '''
 
     member = archive.getmember(name)
-    content = f.extractfile(member).read()
+    content = archive.extractfile(member).read()
 
     output_file_path = os.path.join(output_dir, os.path.basename(name))
     with open(output_file_path, 'wb') as f:
