@@ -4,3 +4,4 @@
 *.pkl
 *.out
 find-a-bug.log
+/sandbox

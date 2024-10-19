@@ -52,7 +52,7 @@ class File():
 
 class FastaFile(File):
 
-    def __init__(self, path:str, version:int=None, type_:str='nucleotide'):
+    def __init__(self, path:str, version:int=None):
 
         super().__init__(path, version=version) 
 
