@@ -139,22 +139,22 @@ if __name__ == '__main__':
     database.reflect()
 
     print(f'Uploading initial data to the metadata_r{args.version} table.')
-    metadata_archive_paths = glob.glob(os.path.join(version_dir, '*metadata*')) # This should output the full paths. 
+    metadata_archive_paths = glob.glob(os.path.join(data_dir, '*metadata*')) # This should output the full paths. 
     for path in metadata_archive_paths:
         with tarfile.open(path, 'r:gz') as archive:
-            upload_files(archive, database, version=args.version, data_dir=version_dir, table_name=f'metadata_r{args.version}', file_class=MetadataFile, chunk_size=None)
+            upload_files(archive, database, version=args.version, data_dir=data_dir, table_name=f'metadata_r{args.version}', file_class=MetadataFile, chunk_size=None)
 
     print('Uploading initial data to the proteins table.')
     # Need to upload amino acid and nucleotide data simultaneously.
-    aa_archive_path, nt_archive_path = os.path.join(version_dir, 'proteins_aa.tar.gz'), os.path.join(version_dir, 'proteins_nt.tar.gz')
+    aa_archive_path, nt_archive_path = os.path.join(data_dir, 'proteins_aa.tar.gz'), os.path.join(data_dir, 'proteins_nt.tar.gz')
     with tarfile.open(aa_archive_path, 'r:gz'), tarfile.open(nt_archive_path, 'r:gz') as aa_archive, nt_archive:   
-        upload_proteins_files(aa_archive, nt_archive, database, version=args.version, data_dir=version_dir) 
+        upload_proteins_files(aa_archive, nt_archive, database, version=args.version, data_dir=data_dir) 
 
     #     print('Uploading initial data to the annotations_pfam table.')
-    #     data_dir = os.path.join(version_dir, 'annotations', 'pfam')
+    #     data_dir = os.path.join(data_dir, 'annotations', 'pfam')
     #     upload_files(database, version=args.version, data_dir=data_dir, table_name='annotations_pfam', file_class=PfamAnnotationsFile, chunk_size=args.chunk_size)
 
-    kegg_annotation_archive_path = os.path.join(version_dir, 'annotations_kegg.tar.gz')
+    kegg_annotation_archive_path = os.path.join(data_dir, 'annotations_kegg.tar.gz')
     print(f'Uploading data to the annotations_kegg_r{args.version} table.')
     with tarfile.open(kegg_annotation_archive_path, 'r:gz') as archive:
         upload_files(archive, database, version=args.version, data_dir=data_dir, table_name=f'annotations_kegg_r{args.version}', file_class=KeggAnnotationsFile, chunk_size=100)
