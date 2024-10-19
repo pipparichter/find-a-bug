@@ -127,11 +127,11 @@ if __name__ == '__main__':
     data_dir = os.path.join(DATA_DIR, f'r{args.version}')
 
     if args.drop_existing:
-        for table_name in args.table_names[::-1]:
+        for table_name in database.table_names[::-1]:
             print(f'Dropping existing table {table_name}.')
             database.drop(table_name)
 
-    for table_name in args.table_names:
+    for table_name in database.table_names:
         print(f'Initializing table {table_name}.')
         database.create(table_name)
 
