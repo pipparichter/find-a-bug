@@ -83,11 +83,11 @@ if __name__ == '__main__':
             print(f'Failed to download file {remote_file}')
 
     # Only keep the files in the list which have been succesfully dowloaded. 
-    local_files = [file for file in local_files if os.path.exists(os.path.join(data_dir, file))]
-    assert len(local_files) == 4, f'There should only be 4 files in the local_files list. Found {len(local_files)}.'
+    archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if os.isfile(os.path.join(data_dir, file_name))]
+    assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
 
-    for local_file in local_files:
-        unpack(os.path.join(data_dir, local_file), remove=False)
+    for archive_path in archive_paths:
+        unpack(archive_path, remove=False)
         
     # # First, make all necessary directories... 
     # os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
