@@ -8,9 +8,10 @@ from tqdm import tqdm
 import zipfile 
 import glob
 import tarfile
+from typing import List, Tuple
+from multiprocessing import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
-
 
 def extract(archive:tarfile.TarFile, name:str, output_dir:str='.') -> str:
     '''Read the file specified by member from the compressed archive specified at path, and write the
@@ -98,7 +99,8 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     chunks = [names] if (chunk_size is None) else [names[i * chunk_size: (i + 1) * chunk_size] for i in range((len(names) // chunk_size) + 1)]
     
     pbar = tqdm(total=len(names), desc=f'upload_files: Uploading files to proteins_r{version}.')
-    for chunk in chunks:
+
+    def main(chunk:List[Tuple[str, str]]):
         entries = []
         for aa_name, nt_name in chunk:
             nt_path, aa_path = extract(nt_archive, nt_name, output_dir=data_dir), extract(aa_archive, aa_name, output_dir=data_dir)
@@ -120,6 +122,12 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
             pbar.update(1)
 
         database.bulk_upload(f'proteins_r{args.version}', entries) 
+    
+    # TODO: Read more about how this works. 
+    # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
+    pool = Pool(os.process_cpu_count())
+    pool.map(main, chunks, chunksize=len(chunks) // os.process_cpu_count())
+    pool.close()
 
 
 
