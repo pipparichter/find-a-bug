@@ -7,6 +7,7 @@ import urllib
 import glob
 import gzip
 import warnings 
+from tqdm import tqdm
 import tarfile
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 
@@ -55,17 +56,22 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
         with open(path, 'wb') as f:
             f.write(contents)
 
-    # Metadata files can be stored as tar objects or as regular zipped TSV files. 
-    if tarfile.is_tarfile(metadata_file_path):
-        with tarfile.open(archive_path, 'r:gz') as archive: 
-            members = archive.getmembers()
-            assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
-            write(archive.extractfile(member).read(), output_path)
-    else:
-        with gzip.open(metadata_file_path, 'rb') as f_in:
-            with open(output_path, 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
-    print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
+    if not os.path.exists(output_path): # Only proceed if the file has not already been created. 
+        # Metadata files can be stored as tar objects or as regular zipped TSV files. 
+        # if tarfile.is_tarfile(metadata_file_path):
+        if ('.tar' in metadata_file_path):
+            with tarfile.open(archive_path, 'r:gz') as archive: 
+                members = archive.getmembers()
+                assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
+                write(archive.extractfile(member).read(), output_path)
+        elif ('.gz' in metadata_file_path):
+            with gzip.open(metadata_file_path, 'rb') as f_in:
+                with open(output_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+        print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
+    
+    if remove: # Remove original file if specified. 
+        os.remove(metadata_file_path)
 
 
 if __name__ == '__main__':
