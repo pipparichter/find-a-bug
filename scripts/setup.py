@@ -9,7 +9,7 @@ import zipfile
 import glob
 import tarfile
 from typing import List, Tuple
-from multiprocessing import Pool
+from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 
