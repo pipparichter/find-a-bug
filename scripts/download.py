@@ -42,6 +42,31 @@ def unpack(archive_path:str, remove:bool=False):
         os.remove(archive_path)
 
 
+def unpack_metadata(metadata_file_path:str, remove:bool=False):
+
+    dir_path = os.path.dirname(metadata_file_path)
+    # Get the name of the output file... 
+    output_file_name = os.path.basename(metadata_file_path).split('.')[0] + '.tsv'
+    output_path = os.path.join(dir_path, output_file_name)
+
+    def write(contents:str, path:str):
+        '''Write the contents to a zipped file at the specified path. contents should be a binary string.'''
+        with open(path, 'wb') as f:
+            f.write(contents)
+
+    # Metadata files can be stored as tar objects or as regular zipped TSV files. 
+    if tarfile.is_tarfile(metadata_file_path):
+        with tarfile.open(archive_path, 'r:gz') as archive: 
+            members = archive.getmembers()
+            assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
+            write(archive.extractfile(member).read(), output_path)
+    else:
+        with gzip.open(metadata_file_path, 'rb') as f_in:
+            with open(output_path, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+    print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -84,10 +109,13 @@ if __name__ == '__main__':
         except urllib.error.HTTPError:
             print(f'Failed to download file {remote_file}')
 
-    # Only keep the files in the list which have been succesfully dowloaded. 
-    archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if os.path.isfile(os.path.join(data_dir, file_name))]
-    assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
+    # Need to handle the metadata files differently... 
+    metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if 'metadata' in file_name]
+    for metadata_file_path in metadata_file_paths:
+        unpack_metadata(metadata_file_path)
 
+    archive_paths = [path for path in local_file_paths if (tarfile.is_tarfile(path))]
+    # assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
     for archive_path in archive_paths:
         unpack(archive_path, remove=False)
         
