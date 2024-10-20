@@ -5,6 +5,7 @@ import shutil
 import urllib.request 
 import urllib 
 import glob
+import gzip
 import warnings 
 import tarfile
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
