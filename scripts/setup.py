@@ -13,6 +13,7 @@ from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 
+
 def extract(archive:tarfile.TarFile, name:str, output_dir:str='.') -> str:
     '''Read the file specified by member from the compressed archive specified at path, and write the
     output to a file at path. 
@@ -100,6 +101,8 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     
     pbar = tqdm(total=len(names), desc=f'upload_files: Uploading files to proteins_r{version}.')
 
+    # I think multiprocess is having a hard time dealing with the open archives. 
+
     def main(chunk:List[Tuple[str, str]]):
         entries = []
         for aa_name, nt_name in chunk:
@@ -163,7 +166,9 @@ if __name__ == '__main__':
     # Need to upload amino acid and nucleotide data simultaneously.
     aa_archive_path, nt_archive_path = os.path.join(data_dir, 'proteins_aa.tar.gz'), os.path.join(data_dir, 'proteins_nt.tar.gz')
     with tarfile.open(aa_archive_path, 'r:gz') as aa_archive, tarfile.open(nt_archive_path, 'r:gz') as nt_archive:   
-        upload_proteins_files(aa_archive, nt_archive, database, version=args.version, data_dir=data_dir) 
+    
+    
+    upload_proteins_files(aa_archive, nt_archive, database, version=args.version, data_dir=data_dir) 
 
     #     print('Uploading initial data to the annotations_pfam table.')
     #     data_dir = os.path.join(data_dir, 'annotations', 'pfam')

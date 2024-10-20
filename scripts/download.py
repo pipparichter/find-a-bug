@@ -12,6 +12,34 @@ warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 # dumping them all into a tar archive. 
 
 
+# Unfortunately, in order to unpack single member of .tar.gz archive you have to process whole archive, and not much you can do to fix it.
+# https://superuser.com/questions/655739/extract-single-file-from-huge-tgz-file 
+# Seems like it might make more sense to store as a Zipfile, or multiple zipped files in an unzipped directory. 
+# (this does not seem to take more memory, see https://superuser.com/questions/908193/is-it-better-to-compress-all-data-or-compressed-directories)
+
+def unpack(archive_path:str, remove:bool=False):
+    '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
+    more memory than zipping the entire tar archive (which I confirmed by testing locally).'''
+    dir_path = os.path.dirname(archive_path)
+    dir_path = os.path.join(dir_path, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
+    os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
+
+    def write(contents:str, path:str):
+        '''Write the contents to a zipped file at the specified path. contents should be a binary string.'''
+        with gzip.open(path, 'wb') as f:
+            f.write(contents)
+    
+    with tarfile.open(archive_path, 'r:gz') as archive:
+        for member in tqdm(archive.getmembers(), desc=f'unpack: Unpacking archive {archive_path}...'):
+            if member.isfile():
+                contents = archive.extractfile(member).read()
+                file_name = os.path.basename(member.name) + '.gz'
+                write(contents, os.path.join(dir_path, file_name))
+    
+    if remove: # Remove the original archive if specified. 
+        os.remove(archive_path)
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -57,6 +85,9 @@ if __name__ == '__main__':
     # Only keep the files in the list which have been succesfully dowloaded. 
     local_files = [file for file in local_files if os.path.exists(os.path.join(data_dir, file))]
     assert len(local_files) == 4, f'There should only be 4 files in the local_files list. Found {len(local_files)}.'
+
+    for local_file in local_files:
+        unpack(os.path.join(data_dir, local_file), remove=False)
         
     # # First, make all necessary directories... 
     # os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
