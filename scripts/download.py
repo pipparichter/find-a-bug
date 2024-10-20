@@ -21,6 +21,7 @@ warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 def unpack(archive_path:str, remove:bool=False):
     '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
     more memory than zipping the entire tar archive (which I confirmed by testing locally).'''
+    print(f'unpack: Unpacking tar archive at {archive_path}')
     dir_path = os.path.dirname(archive_path)
     dir_path = os.path.join(dir_path, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
     os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
