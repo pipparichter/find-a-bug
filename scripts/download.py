@@ -97,7 +97,6 @@ if __name__ == '__main__':
     file_name_map[f'bac120_metadata_r{args.version}.tsv.gz'] = f'bacteria_metadata.tsv.gz'
     file_name_map[f'bac120_metadata_r{args.version}.tar.gz'] = f'bacteria_metadata.tar.gz'
 
-    local_files = []
     for remote_file, local_file in file_name_map.items():
 
         # Skip downloading the file if it does not already exist. 
@@ -111,11 +110,11 @@ if __name__ == '__main__':
             print(f'Failed to download file {remote_file}')
 
     # Need to handle the metadata files differently... 
-    metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if 'metadata' in file_name]
+    metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if ('metadata' in file_name)]
     for metadata_file_path in metadata_file_paths:
         unpack_metadata(metadata_file_path)
 
-    archive_paths = [path for path in local_file_paths if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
+    archive_paths = [path for path in os.listdir(data_dir) if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
     # assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
     for archive_path in archive_paths:
         unpack(archive_path, remove=False)
