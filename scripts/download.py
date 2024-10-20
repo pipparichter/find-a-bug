@@ -83,7 +83,7 @@ if __name__ == '__main__':
             print(f'Failed to download file {remote_file}')
 
     # Only keep the files in the list which have been succesfully dowloaded. 
-    archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if os.isfile(os.path.join(data_dir, file_name))]
+    archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if os.path.isfile(os.path.join(data_dir, file_name))]
     assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
 
     for archive_path in archive_paths:
