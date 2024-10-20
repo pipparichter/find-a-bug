@@ -115,7 +115,7 @@ if __name__ == '__main__':
     for metadata_file_path in metadata_file_paths:
         unpack_metadata(metadata_file_path)
 
-    archive_paths = [path for path in local_file_paths if (tarfile.is_tarfile(path))]
+    archive_paths = [path for path in local_file_paths if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
     # assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
     for archive_path in archive_paths:
         unpack(archive_path, remove=False)
