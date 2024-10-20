@@ -125,8 +125,8 @@ def upload_proteins_files(aa_archive:tarfile.TarFile, nt_archive:tarfile.TarFile
     
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
-    pool = Pool(os.process.cpu_count())
-    pool.map(main, chunks, chunksize=len(chunks) // os.process.cpu_count())
+    pool = Pool(os.cpu_count())
+    pool.map(main, chunks, chunksize=len(chunks) // os.cpu_count())
     pool.close()
 
 
