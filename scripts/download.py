@@ -6,6 +6,7 @@ import urllib.request
 import urllib 
 import glob
 import warnings 
+import tarfile
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 
 # I think the best way to store these big datasets is by zipping individual files and then 
