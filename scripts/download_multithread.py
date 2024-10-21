@@ -64,25 +64,27 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
 
-    with tarfile.open(archive_path, 'r:gz') as archive:
-        existing_names = os.listdir(dir_path)
-        members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+    archinve = tarfile.open(archive_path, 'r:gz') as archive:
+    existing_names = os.listdir(dir_path)
+    members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
 
-        pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
-        threads = []
+    pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
+    threads = []
 
-        for member in members:
-            file_name = add_gz(os.path.basename(member.name)) # + '.gz'
-            output_path = os.path.join(dir_path, file_name)
-            # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
-            thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar, 'gzip':True})
-            thread.start()
-            threads.append(thread)
+    for member in members:
+        file_name = add_gz(os.path.basename(member.name)) # + '.gz'
+        output_path = os.path.join(dir_path, file_name)
+        # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
+        thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar, 'gzip':True})
+        thread.start()
+        threads.append(thread)
 
-        # Wait until all threads have completed before joining. 
-        for thread in threads:
-            thread.join()
-    
+    # Wait until all threads have completed before joining. 
+    for thread in threads:
+        thread.join()
+        
+    archive.close()
+
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
 
