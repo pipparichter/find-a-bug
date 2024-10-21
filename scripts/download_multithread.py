@@ -13,7 +13,9 @@ import numpy as np
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 from time import perf_counter
 import threading  
+from queue import Queue
 
+N_WORKERS = 10 
 
 def time(func, args):
     t1 = perf_counter()
@@ -41,7 +43,7 @@ def is_compressed(file_name:str) -> str:
     '''Check if a file is compressed, i.e. if it has the .gz file extension.'''
     return '.gz' in file_name
 
-def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pbar=None):
+def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pbar):
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
     if is_compressed(member.name):
@@ -71,25 +73,39 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
 
+
+
     archive = tarfile.open(archive_path, 'r:gz')
     existing_names = os.listdir(dir_path)
     members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
 
     pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
-    threads = []
 
+    def task():
+        '''Function for the threads to run.'''
+        while True:
+            extract(*q.get())
+            q.task_done()
+
+    # Add all the tasks to the queue. 
+    q = Queue()
     for member in members:
         file_name = add_gz(os.path.basename(member.name)) # + '.gz'
         output_path = os.path.join(dir_path, file_name)
+        q.put((archive, member, output_path, pbar))
         # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
-        thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar})
+        # thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar})
+
+    # Start all the threads.  
+    threads = []
+    for _ in range(N_WORKERS):
+        thread = threading.Thread(target=task, daemon=True)
         thread.start()
         threads.append(thread)
 
-    # Wait until all threads have completed before joining. 
+    # Wait until all threads have completed before closing the archive. 
     for thread in threads:
         thread.join()
-
     archive.close()
 
     if remove: # Remove the original archive if specified. 
