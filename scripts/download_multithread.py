@@ -37,13 +37,20 @@ def add_gz(file_name:str) -> str:
     file_name + '.gz' if ('.gz' not in file_name) else file_name
     return file_name
 
+def is_compressed(file_name:str) -> str:
+    '''Check if a file is compressed, i.e. if it has the .gz file extension.'''
+    return '.gz' in file_name
 
-def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, gzip:bool=True, pbar=None):
-    '''Write the contents to a zipped file at the specified path. contents should be a binary string.'''
-    contents = archive.extractfile(member).read()
-    opener = gzip.open if gzip else open
-    with opener(path, 'wb') as f:
-        f.write(contents)
+def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pbar=None):
+    '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
+    in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
+    if is_compressed(member.name):
+        archive.extract(member, output_path)
+    else:
+        contents = archive.extractfile(member).read() # Get the file contents in binary. 
+        with gzip.open(path, 'wb') as f:
+            f.write(contents)
+
     if pbar is not None:
         pbar.update(1)
 
@@ -75,7 +82,7 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(os.path.basename(member.name)) # + '.gz'
         output_path = os.path.join(dir_path, file_name)
         # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
-        thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar, 'gzip':True})
+        thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar})
         thread.start()
         threads.append(thread)
 
