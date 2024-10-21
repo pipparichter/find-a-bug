@@ -66,7 +66,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
             with tarfile.open(metadata_file_path, 'r:gz') as archive: 
                 members = archive.getmembers()
                 assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
-                write(archive.extractfile(member).read(), output_path)
+                write(archive.extractfile(members[0]).read(), output_path)
         elif ('.gz' in metadata_file_path):
             with gzip.open(metadata_file_path, 'rb') as f_in:
                 with open(output_path, 'wb') as f_out:
