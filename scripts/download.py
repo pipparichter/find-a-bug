@@ -29,7 +29,9 @@ def unpack(archive_path:str, remove:bool=False):
     os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
 
     def write(contents:str, path:str):
-        '''Write the contents to a zipped file at the specified path. contents should be a binary string.'''
+        '''Write the contents to a zipped file at the specified path. contents should be a binary string.
+        If the path is already'''
+
         with gzip.open(path, 'wb') as f:
             f.write(contents)
     
@@ -37,7 +39,8 @@ def unpack(archive_path:str, remove:bool=False):
         for member in tqdm(archive.getmembers(), desc=f'unpack: Unpacking archive {archive_path}...'):
             if member.isfile():
                 contents = archive.extractfile(member).read()
-                file_name = os.path.basename(member.name) + '.gz'
+                file_name = os.path.basename(member.name) # + '.gz'
+                assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
                 write(contents, os.path.join(dir_path, file_name))
     
     if remove: # Remove the original archive if specified. 
@@ -57,7 +60,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
             f.write(contents)
 
     if not os.path.exists(output_path): # Only proceed if the file has not already been created. 
-        # Metadata files can be stored as tar objects or as regular zipped TSV files. 
+        # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
             with tarfile.open(archive_path, 'r:gz') as archive: 
