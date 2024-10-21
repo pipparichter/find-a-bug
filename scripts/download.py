@@ -40,7 +40,8 @@ def unpack(archive_path:str, remove:bool=False):
             if member.isfile():
                 contents = archive.extractfile(member).read()
                 file_name = os.path.basename(member.name) # + '.gz'
-                assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
+                file_name = file_name + '.gz' if ('.gz' not in file_name) else file_name
+                # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
                 write(contents, os.path.join(dir_path, file_name))
     
     if remove: # Remove the original archive if specified. 
