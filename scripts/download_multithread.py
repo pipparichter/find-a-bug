@@ -48,7 +48,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
         archive.extract(member, output_path)
     else:
         contents = archive.extractfile(member).read() # Get the file contents in binary. 
-        with gzip.open(path, 'wb') as f:
+        with gzip.open(output_path, 'wb') as f:
             f.write(contents)
 
     if pbar is not None:
