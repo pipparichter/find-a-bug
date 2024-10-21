@@ -170,7 +170,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-dir', type=str, default='/var/lib/pgsql/data/gtdb/')
     parser.add_argument('--version', default=207, type=int)
-    parser.add_argument('--multithread', action='store_true', type=bool)
+    parser.add_argument('--multithread', action='store_true')
     args = parser.parse_args()
 
     # Make the directory to store the new version of GTDB. 
