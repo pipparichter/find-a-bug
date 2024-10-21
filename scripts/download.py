@@ -63,7 +63,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
         # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
-            with tarfile.open(archive_path, 'r:gz') as archive: 
+            with tarfile.open(metadata_file_path, 'r:gz') as archive: 
                 members = archive.getmembers()
                 assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
                 write(archive.extractfile(member).read(), output_path)
