@@ -64,7 +64,7 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
 
-    archinve = tarfile.open(archive_path, 'r:gz') as archive:
+    archive = tarfile.open(archive_path, 'r:gz')
     existing_names = os.listdir(dir_path)
     members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
 
@@ -82,7 +82,7 @@ def unpack(archive_path:str, remove:bool=False):
     # Wait until all threads have completed before joining. 
     for thread in threads:
         thread.join()
-        
+
     archive.close()
 
     if remove: # Remove the original archive if specified. 
