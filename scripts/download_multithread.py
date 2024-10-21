@@ -31,16 +31,22 @@ def time(func, args):
 # Seems like it might make more sense to store as a Zipfile, or multiple zipped files in an unzipped directory. 
 # (this does not seem to take more memory, see https://superuser.com/questions/908193/is-it-better-to-compress-all-data-or-compressed-directories)
 
+
 def add_gz(file_name:str) -> str:
     '''Add the gz extension to the file name if it is not already there.'''
     file_name + '.gz' if ('.gz' not in file_name) else file_name
     return file_name
 
-def write(contents:str, path:str, gzip:bool=True):
+
+def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, gzip:bool=True, pbar=None):
     '''Write the contents to a zipped file at the specified path. contents should be a binary string.'''
+    contents = archive.extractfile(member).read()
     opener = gzip.open if gzip else open
     with opener(path, 'wb') as f:
         f.write(contents)
+    if pbar is not None:
+        pbar.update(1)
+
 
 def unpack(archive_path:str, remove:bool=False):
     '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
@@ -58,16 +64,24 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
 
-    
-    existing_names = os.listdir(dir_path)
-    members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
-    
     with tarfile.open(archive_path, 'r:gz') as archive:
-        for member in tqdm(members, desc=f'unpack: Unpacking archive {archive_path}...'):
-            contents = archive.extractfile(member).read()
+        existing_names = os.listdir(dir_path)
+        members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+
+        pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
+        threads = []
+
+        for member in members:
             file_name = add_gz(os.path.basename(member.name)) # + '.gz'
+            output_path = os.path.join(dir_path, file_name)
             # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
-            write(contents, os.path.join(dir_path, file_name))
+            thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar, 'gzip':True})
+            thread.start()
+            threads.append(thread)
+
+        # Wait until all threads have completed before joining. 
+        for thread in threads:
+            thread.join()
     
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
@@ -87,7 +101,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
             with tarfile.open(metadata_file_path, 'r:gz') as archive: 
                 members = archive.getmembers()
                 assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
-                write(archive.extractfile(members[0]).read(), output_path)
+                extract(archive.extractfile(members[0]).read(), output_path)
         elif ('.gz' in metadata_file_path):
             with gzip.open(metadata_file_path, 'rb') as f_in:
                 with open(output_path, 'wb') as f_out:
@@ -113,12 +127,6 @@ if __name__ == '__main__':
     # URL for the GTDB FTP site. 
     url = f'https://data.gtdb.ecogenomic.org/releases/release{args.version}/{args.version}.0/'
 
-    # The files we need from GTDB for this are:
-    #   'gtdb_proteins_nt_reps_r{version}.tar.gz'
-    #   'gtdb_proteins_aa_reps_r{version}.tar.gz'
-    #   'ar53_metadata_r{version}.tsv.gz
-    #   'bac120_metadata_r{version}.tsv.gz
-
     file_name_map = dict()
     file_name_map[f'genomic_files_reps/gtdb_proteins_nt_reps_r{args.version}.tar.gz'] = f'proteins_nt.tar.gz'
     file_name_map[f'genomic_files_reps/gtdb_proteins_aa_reps_r{args.version}.tar.gz'] = f'proteins_aa.tar.gz'
@@ -132,7 +140,6 @@ if __name__ == '__main__':
         # Skip downloading the file if it does not already exist. 
         if os.path.exists(os.path.join(data_dir, local_file)):
             continue
-
         try:
             print(f'Downloading file from {url + remote_file}')
             urllib.request.urlretrieve(url + remote_file, os.path.join(data_dir, local_file))
@@ -142,23 +149,15 @@ if __name__ == '__main__':
     # Need to handle the metadata files differently... 
     metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if ('metadata' in file_name)]
     for metadata_file_path in metadata_file_paths:
-        unpack_metadata(metadata_file_path)
+        unpack_metadata(metadata_file_path, remove=False)
 
     # archive_paths = [os.path.join(data_dir, path) for path in os.listdir(data_dir) if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
     archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if (('.tar' in file_name) and ('metadata' not in file_name))]
     # assert len(archive_paths) == 4, f'There should only be 4 tar archives in the data directory. Found {len(archive_paths)}.'
-    for archive_path in archive_paths:
+    # for archive_path in archive_paths:
+    for archive_path in ['/var/lib/pgsql/data/gtdb/r207/proteins_nt.tar.gz']:
         unpack(archive_path, remove=False)
         
-    # # First, make all necessary directories... 
-    # os.makedirs(os.path.join(data_dir, 'proteins', 'nucleotides'), exist_ok=True)
-    # os.makedirs(os.path.join(data_dir, 'proteins', 'amino_acids'), exist_ok=True)
-    # os.makedirs(os.path.join(data_dir, 'metadata'), exist_ok=True)
-    
-    # extract(os.path.join(data_dir, local_files[0]), dst_path=os.path.join(data_dir, 'proteins', 'nucleotides'))
-    # extract(os.path.join(data_dir, local_files[1]), dst_path=os.path.join(data_dir, 'proteins', 'amino_acids'))
-    # extract(os.path.join(data_dir, local_files[2]), dst_path=os.path.join(data_dir, 'metadata'))
-    # extract(os.path.join(data_dir, local_files[3]), dst_path=os.path.join(data_dir, 'metadata'))
 
 # def get_latest(dir_path:str) -> str:
 #     '''Get the most recently-created file in the specified directory. Returns a complete path, 
