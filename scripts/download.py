@@ -17,7 +17,7 @@ from queue import Queue
 
 N_WORKERS = 10 
 
-def time(func, args):
+def time(func, *args):
     t1 = perf_counter()
     output = func(*args)
     t2 = perf_counter()
@@ -120,7 +120,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         while (not q.empty()):
             extract(*q.get())
             q.task_done()
-            
+
     # Add all the tasks to the queue. 
     q = Queue()
     for member in members:
@@ -217,9 +217,9 @@ if __name__ == '__main__':
 
     test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
     if args.multithread:
-        time(unpack_multithread(test_archive_path))
+        time(unpack_multithread, test_archive_path)
     else:
-        time(unpack(test_archive_path))
+        time(unpack, test_archive_path)
         
 
 # def get_latest(dir_path:str) -> str:
