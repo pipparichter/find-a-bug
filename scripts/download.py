@@ -162,7 +162,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
             with tarfile.open(metadata_file_path, 'r:gz') as archive: 
                 members = archive.getmembers()
                 assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
-                extract(archive.extractfile(members[0]).read(), output_path)
+                extract(archive, member, output_path, pbar)
 
         print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
     
