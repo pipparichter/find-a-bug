@@ -75,11 +75,12 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = os.path.basename(member.name) # Remove the relative path from the member name. 
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
-    
-    existing_names = os.listdir(dir_path)
-    members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
-    
+
     with tarfile.open(archive_path, 'r:gz') as archive:
+        
+        existing_names = os.listdir(dir_path)
+        members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+        
         for member in tqdm(members, desc=f'unpack: Unpacking archive {archive_path}...'):
             contents = archive.extractfile(member).read()
             file_name = add_gz(os.path.basename(member.name)) 
