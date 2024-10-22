@@ -48,7 +48,8 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
     if is_compressed(member.name):
-        archive.extract(member, os.path.dirname(output_path), arcname='')
+        member.name = os.path.basename(member.name) # Trying to get rid of directory structure. 
+        archive.extract(member, path=os.path.dirname(output_path))
     else:
         contents = archive.extractfile(member).read() # Get the file contents in binary. 
         with gzip.open(output_path, 'wb') as f:
