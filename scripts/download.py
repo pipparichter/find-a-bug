@@ -112,7 +112,6 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     archive = tarfile.open(archive_path, 'r:gz')
     existing_names = os.listdir(dir_path)
     members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
-    print([m.name for m in members])
 
     pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
 
@@ -206,21 +205,21 @@ if __name__ == '__main__':
         except urllib.error.HTTPError:
             print(f'Failed to download file {remote_file}')
 
-    # # Need to handle the metadata files differently... 
-    # metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if ('metadata' in file_name)]
-    # for metadata_file_path in metadata_file_paths:
-    #     unpack_metadata(metadata_file_path, remove=False)
+    # Need to handle the metadata files differently... 
+    metadata_file_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if ('metadata' in file_name)]
+    for metadata_file_path in metadata_file_paths:
+        unpack_metadata(metadata_file_path, remove=False)
 
-    # # archive_paths = [os.path.join(data_dir, path) for path in os.listdir(data_dir) if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
-    # archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if (('.tar' in file_name) and ('metadata' not in file_name))]
-    # for archive_path in archive_paths:
-    #     unpack(archive_path, remove=False)
+    # archive_paths = [os.path.join(data_dir, path) for path in os.listdir(data_dir) if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
+    archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if (('.tar' in file_name) and ('metadata' not in file_name))]
+    for archive_path in archive_paths:
+        unpack(archive_path, remove=False)
 
-    test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
-    if args.multithread:
-        time(unpack_multithread, test_archive_path)
-    else:
-        time(unpack, test_archive_path)
+    # test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
+    # if args.multithread:
+    #     time(unpack_multithread, test_archive_path)
+    # else:
+    #     time(unpack, test_archive_path)
         
 
 # def get_latest(dir_path:str) -> str:
