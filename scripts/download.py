@@ -117,11 +117,10 @@ def unpack_multithread(archive_path:str, remove:bool=False):
 
     def task():
         '''Function for the threads to run.'''
-        while True:
+        while (not q.empty()):
             extract(*q.get())
             q.task_done()
-            sleep(3)
-
+            
     # Add all the tasks to the queue. 
     q = Queue()
     for member in members:
