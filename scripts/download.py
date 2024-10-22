@@ -47,7 +47,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
     if is_compressed(member.name):
-        archive.extract(member, output_path)
+        archive.extract(member, os.path.dirname(output_path))
     else:
         contents = archive.extractfile(member).read() # Get the file contents in binary. 
         with gzip.open(output_path, 'wb') as f:
@@ -64,6 +64,7 @@ def unpack(archive_path:str, remove:bool=False):
     dir_path = os.path.dirname(archive_path)
     dir_path = os.path.join(dir_path, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
     os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
+    print(f'unpack: Created directory at {dir_path}')
     existing = os.listdir(dir_path) # Get a list of the files which are currently in the directory. 
 
     def exists(member:tarfile.TarInfo) -> bool:
@@ -95,6 +96,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     dir_path = os.path.dirname(archive_path)
     dir_path = os.path.join(dir_path, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
     os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
+    print(f'unpack: Created directory at {dir_path}')
     existing = os.listdir(dir_path) # Get a list of the files which are currently in the directory. 
 
     def exists(member:tarfile.TarInfo) -> bool:
@@ -107,6 +109,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     archive = tarfile.open(archive_path, 'r:gz')
     existing_names = os.listdir(dir_path)
     members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+    print([m.name for m in members])
 
     pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
 
