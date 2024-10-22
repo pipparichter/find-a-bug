@@ -11,7 +11,7 @@ from tqdm import tqdm
 import tarfile
 import numpy as np 
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
-from time import perf_counter
+from time import perf_counter, sleep
 import threading  
 from queue import Queue
 
@@ -43,11 +43,12 @@ def is_compressed(file_name:str) -> str:
     '''Check if a file is compressed, i.e. if it has the .gz file extension.'''
     return '.gz' in file_name
 
+
 def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pbar):
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
     if is_compressed(member.name):
-        archive.extract(member, os.path.dirname(output_path))
+        archive.extract(member, os.path.dirname(output_path), arcname='')
     else:
         contents = archive.extractfile(member).read() # Get the file contents in binary. 
         with gzip.open(output_path, 'wb') as f:
@@ -118,6 +119,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         while True:
             extract(*q.get())
             q.task_done()
+            sleep(0.5)
 
     # Add all the tasks to the queue. 
     q = Queue()
