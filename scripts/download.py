@@ -109,7 +109,7 @@ def unpack(archive_path:str, remove:bool=False):
         os.remove(archive_path)
 
 
-def unpack_multithread(archive_path:str, remove:bool=False):
+def unpack_multithread(archive_path:str, remove:bool=False, n_workers:int=None):
     '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
     more memory than zipping the entire tar archive (which I confirmed by testing locally).'''
     print(f'unpack: Unpacking tar archive at {archive_path}')
@@ -155,7 +155,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
 
     # Start all the threads.  
     threads = []
-    for _ in range(N_WORKERS):
+    for _ in range(n_workers):
         thread = threading.Thread(target=task, daemon=True)
         thread.start()
         threads.append(thread)
@@ -206,11 +206,12 @@ if __name__ == '__main__':
     parser.add_argument('--data-dir', type=str, default='/var/lib/pgsql/data/gtdb/')
     parser.add_argument('--version', default=207, type=int)
     parser.add_argument('--multithread', action='store_true')
+    parser.add_argument('--n-workers', type=int, default=4)
     args = parser.parse_args()
 
     test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
     if args.multithread:
-        time(unpack_multithread, test_archive_path)
+        time(unpack_multithread, test_archive_path, n_workers=args.n_workers)
     else:
         time(unpack, test_archive_path)
     shutil.rmtree('/var/lib/pgsql/data/gtdb/r207/test')
