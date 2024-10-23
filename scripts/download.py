@@ -146,7 +146,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     for member in members:
         file_name = add_gz(os.path.basename(member.name)) # + '.gz'
         output_path = os.path.join(dir_path, file_name)
-        output_paths.append(output_paths)
+        output_paths.append(output_path)
         q.put((archive, member, output_path, pbar))
         # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
         # thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar})
