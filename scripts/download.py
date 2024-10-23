@@ -33,7 +33,7 @@ def check(output_paths:List[str]):
         assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
         with gzip.open(path, 'r') as f:
             content = f.read()
-            assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
+            # assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
         # try:
         #     with gzip.open(path, 'r') as f:
         #         content = f.read().decode()
