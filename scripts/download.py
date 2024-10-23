@@ -28,11 +28,11 @@ def time(func, *args):
 def check(output_paths:List[str]):
     for path in output_paths:
         try:
-            with gzip.open(output_paths, 'r') as f:
+            with gzip.open(path, 'r') as f:
                 content = f.read().decode()
-                assert len(content) > 0, f'check: It seems as though the gzip-compressed file {output_path} is empty.'
+                assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
         except:
-            raise Exception(f'check: There was a problem reading the gzip-compressed file {output_path}.')
+            raise Exception(f'check: There was a problem reading the gzip-compressed file {path}.')
 
 
 # I think the best way to store these big datasets is by zipping individual files and then 
@@ -162,6 +162,8 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     for thread in threads:
         thread.join()
     archive.close()
+    
+    print(f'unpack: Extracted {len(os.listdir(dir_path))} files to {dir_path}')
 
     check(output_paths)
 
