@@ -120,7 +120,7 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         while (not q.empty()):
             item = q.get()
             print(item)
-            extract(item)
+            extract(*item)
             q.task_done()
 
     # Add all the tasks to the queue. 
