@@ -72,6 +72,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
             archive.extract(member, path=os.path.dirname(output_path))
         else:
             contents = archive.extractfile(member).read() # Get the file contents in binary. 
+            print(contents.decode())
             assert len(contents) > 0, f'extract: The file {member.name} seems to be empty.'
             with gzip.open(output_path, 'wb') as f:
                 f.write(contents)
