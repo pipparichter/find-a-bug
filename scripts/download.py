@@ -146,6 +146,11 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         os.remove(archive_path)
 
 
+def unpack_multiprocess(archive_path:str, remove:bool=False):
+    pass 
+
+
+
 def unpack_metadata(metadata_file_path:str, remove:bool=False):
     '''Metadata files can either be tar archives or simple zipped TSV files, depending on the 
     version of GTDB. This function just gets the thing out of the tar archive cormat, if that's 
@@ -177,6 +182,12 @@ if __name__ == '__main__':
     parser.add_argument('--version', default=207, type=int)
     parser.add_argument('--multithread', action='store_true')
     args = parser.parse_args()
+
+    test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
+    if args.multithread:
+        time(unpack_multithread, test_archive_path)
+    else:
+        time(unpack, test_archive_path)
 
     # Make the directory to store the new version of GTDB. 
     data_dir = os.path.join(args.data_dir, f'r{args.version}')
@@ -215,11 +226,7 @@ if __name__ == '__main__':
     for archive_path in archive_paths:
         unpack(archive_path, remove=False)
 
-    # test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
-    # if args.multithread:
-    #     time(unpack_multithread, test_archive_path)
-    # else:
-    #     time(unpack, test_archive_path)
+
         
 
 # def get_latest(dir_path:str) -> str:
