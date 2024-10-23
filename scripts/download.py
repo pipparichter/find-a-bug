@@ -69,7 +69,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
                 f.write(contents)
     except:
         print(f'extract: Error writing tar member {member.name} to output path {output_path}.')
-        print(f'extract: There are currently {len(os.listdir(os.path.basename(output_path)))} files in the output directory.')
+        print(f'extract: There are currently {len(os.listdir(os.path.dirname(output_path)))} files in the output directory.')
         # print(archive.getnames())
 
     if pbar is not None:
