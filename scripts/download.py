@@ -190,7 +190,7 @@ if __name__ == '__main__':
         time(unpack_multithread, test_archive_path)
     else:
         time(unpack, test_archive_path)
-    os.rmdir('/var/lib/pgsql/data/gtdb/r207/test')
+    shutil.rmtree('/var/lib/pgsql/data/gtdb/r207/test')
     exit(1)
 
     # Make the directory to store the new version of GTDB. 
