@@ -26,10 +26,12 @@ def time(func, *args):
     return output
 
 def check(output_paths:List[str]):
-    for path in output_paths:
+    pbar = tqdm(output_paths, desc=f'check: Checking extracted files...')
+    for path in pbar:
+        pbar.update(1)
+        pbar.set_description(f'check: Checking extracted files... {path}')
         assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
         with gzip.open(path, 'r') as f:
-            print(f.read())
             content = f.read().decode()
             assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
         # try:
