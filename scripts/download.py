@@ -68,7 +68,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
                 f.write(contents)
     except:
         print(f'extract: Error writing tar member {member.name} to output path {output_path}.')
-        print(archive.getnames())
+        # print(archive.getnames())
 
     if pbar is not None:
         pbar.update(1)
@@ -162,9 +162,8 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     for thread in threads:
         thread.join()
     archive.close()
-    
     print(f'unpack: Extracted {len(os.listdir(dir_path))} files to {dir_path}')
-
+    print(output_paths)
     check(output_paths)
 
     if remove: # Remove the original archive if specified. 
