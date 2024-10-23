@@ -118,7 +118,9 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     def task():
         '''Function for the threads to run.'''
         while (not q.empty()):
-            extract(*q.get())
+            item = q.get()
+            print(item)
+            extract(item)
             q.task_done()
 
     # Add all the tasks to the queue. 
@@ -188,6 +190,7 @@ if __name__ == '__main__':
         time(unpack_multithread, test_archive_path)
     else:
         time(unpack, test_archive_path)
+    os.rmdir('/var/lib/pgsql/data/gtdb/r207/test')
     exit(1)
 
     # Make the directory to store the new version of GTDB. 
