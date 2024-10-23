@@ -28,13 +28,16 @@ def time(func, *args):
 def check(output_paths:List[str]):
     for path in output_paths:
         assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
-        try:
-            with gzip.open(path, 'r') as f:
-                content = f.read().decode()
-                assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
-        except:
-            # raise Exception(f'check: There was a problem reading the gzip-compressed file {path}.')
-            print(f'check: There was a problem reading the gzip-compressed file {path}.')
+        with gzip.open(path, 'r') as f:
+            content = f.read().decode()
+            assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
+        # try:
+        #     with gzip.open(path, 'r') as f:
+        #         content = f.read().decode()
+        #         assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
+        # except:
+        #     # raise Exception(f'check: There was a problem reading the gzip-compressed file {path}.')
+        #     print(f'check: There was a problem reading the gzip-compressed file {path}.')
 
 
 # I think the best way to store these big datasets is by zipping individual files and then 
