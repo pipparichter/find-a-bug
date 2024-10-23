@@ -13,6 +13,7 @@ import numpy as np
 warnings.simplefilter('ignore') # Turn off annoying tarfile warnings
 from time import perf_counter, sleep
 import threading  
+from typing import List
 from queue import Queue
 
 N_WORKERS = 10 
