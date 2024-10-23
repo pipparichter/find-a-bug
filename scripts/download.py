@@ -97,6 +97,7 @@ def unpack(archive_path:str, remove:bool=False):
         file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
         return file_name in existing
 
+    output_paths = []
     with tarfile.open(archive_path, 'r:gz') as archive:
         
         existing_names = os.listdir(dir_path)
@@ -106,12 +107,14 @@ def unpack(archive_path:str, remove:bool=False):
             contents = archive.extractfile(member).read()
             file_name = add_gz(os.path.basename(member.name)) 
             output_path = os.path.join(dir_path, file_name)
+            output_paths.append(output_path)
             # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
             extract(archive, member, output_path, None)
-    
+
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
 
+    return output_paths
 
 def unpack_multithread(archive_path:str, n_workers:int, remove:bool=False):
     '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
@@ -169,10 +172,11 @@ def unpack_multithread(archive_path:str, n_workers:int, remove:bool=False):
         thread.join()
     archive.close()
     print(f'unpack: Extracted {len(os.listdir(dir_path))} files to {dir_path}')
-    check(output_paths)
 
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
+
+    return output_paths
 
 
 def unpack_multiprocess(archive_path:str, remove:bool=False):
@@ -215,9 +219,10 @@ if __name__ == '__main__':
 
     test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
     if args.multithread:
-        time(unpack_multithread, test_archive_path, args.n_workers)
+        output_paths = time(unpack_multithread, test_archive_path, args.n_workers)
     else:
-        time(unpack, test_archive_path)
+        output_paths = time(unpack, test_archive_path)
+    check(output_paths)
     shutil.rmtree('/var/lib/pgsql/data/gtdb/r207/test')
     exit(1)
 
