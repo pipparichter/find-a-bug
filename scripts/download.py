@@ -16,7 +16,7 @@ import threading
 from typing import List
 from queue import Queue
 
-N_WORKERS = 10 
+# N_WORKERS = 10 
 
 def time(func, *args):
     t1 = perf_counter()
@@ -27,6 +27,7 @@ def time(func, *args):
 
 def check(output_paths:List[str]):
     for path in output_paths:
+        assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
         try:
             with gzip.open(path, 'r') as f:
                 content = f.read().decode()
@@ -68,6 +69,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
                 f.write(contents)
     except:
         print(f'extract: Error writing tar member {member.name} to output path {output_path}.')
+        print(f'extract: There are currently {len(os.listdir(os.path.basename(output_path)))} files in the output directory.')
         # print(archive.getnames())
 
     if pbar is not None:
@@ -163,7 +165,6 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         thread.join()
     archive.close()
     print(f'unpack: Extracted {len(os.listdir(dir_path))} files to {dir_path}')
-    print(output_paths)
     check(output_paths)
 
     if remove: # Remove the original archive if specified. 
