@@ -29,6 +29,7 @@ def check(output_paths:List[str]):
     for path in output_paths:
         assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
         with gzip.open(path, 'r') as f:
+            print(f.read())
             content = f.read().decode()
             assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
         # try:
@@ -69,6 +70,7 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
             archive.extract(member, path=os.path.dirname(output_path))
         else:
             contents = archive.extractfile(member).read() # Get the file contents in binary. 
+            assert len(contents) > 0, f'extract: The file {member.name} seems to be empty.'
             with gzip.open(output_path, 'wb') as f:
                 f.write(contents)
     except:
