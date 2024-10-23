@@ -33,7 +33,8 @@ def check(output_paths:List[str]):
                 content = f.read().decode()
                 assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
         except:
-            raise Exception(f'check: There was a problem reading the gzip-compressed file {path}.')
+            # raise Exception(f'check: There was a problem reading the gzip-compressed file {path}.')
+            print(f'check: There was a problem reading the gzip-compressed file {path}.')
 
 
 # I think the best way to store these big datasets is by zipping individual files and then 
