@@ -24,6 +24,16 @@ def time(func, *args):
     print(f'time: Function {func.__name__} completed in {np.round(t2 - t1, 2)} seconds.')
     return output
 
+def check(output_paths:List[str]):
+    for path in output_paths:
+        try:
+            with gzip.open(output_paths, 'r') as f:
+                content = f.read().decode()
+                assert len(content) > 0, f'check: It seems as though the gzip-compressed file {output_path} is empty.'
+        except:
+            raise Exception(f'check: There was a problem reading the gzip-compressed file {output_path}.')
+
+
 # I think the best way to store these big datasets is by zipping individual files and then 
 # dumping them all into a tar archive. 
 
@@ -47,13 +57,17 @@ def is_compressed(file_name:str) -> str:
 def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pbar):
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
-    if is_compressed(member.name):
-        member.name = os.path.basename(member.name) # Trying to get rid of directory structure. 
-        archive.extract(member, path=os.path.dirname(output_path))
-    else:
-        contents = archive.extractfile(member).read() # Get the file contents in binary. 
-        with gzip.open(output_path, 'wb') as f:
-            f.write(contents)
+    try:
+        if is_compressed(member.name):
+            member.name = os.path.basename(member.name) # Trying to get rid of directory structure. 
+            archive.extract(member, path=os.path.dirname(output_path))
+        else:
+            contents = archive.extractfile(member).read() # Get the file contents in binary. 
+            with gzip.open(output_path, 'wb') as f:
+                f.write(contents)
+    except:
+        print(f'extract: Error writing tar member {member.name} to output path {output_path}.')
+        print(archive.getnames())
 
     if pbar is not None:
         pbar.update(1)
@@ -112,6 +126,9 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     archive = tarfile.open(archive_path, 'r:gz')
     existing_names = os.listdir(dir_path)
     members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+    zipped_members = np.array([is_compressed(member.name for member in members)])
+    if (not np.all(zipped_members)): print(f'unpack: Found {len(members)} files in the tar archive.')
+    else: print(f'unpack: Found {len(members)} files in the tar archive. Files are already zipped.') 
 
     pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
 
@@ -119,15 +136,16 @@ def unpack_multithread(archive_path:str, remove:bool=False):
         '''Function for the threads to run.'''
         while (not q.empty()):
             item = q.get()
-            print(item)
             extract(*item)
             q.task_done()
 
     # Add all the tasks to the queue. 
     q = Queue()
+    output_paths = []
     for member in members:
         file_name = add_gz(os.path.basename(member.name)) # + '.gz'
         output_path = os.path.join(dir_path, file_name)
+        output_paths.append(output_paths)
         q.put((archive, member, output_path, pbar))
         # assert '.gz' in file_name, f'unpack: Expected a zipped file in the tar archive, but found {file_name}.'
         # thread = threading.Thread(target=extract, args=(archive, member, output_path), kwargs={'pbar':pbar})
@@ -143,6 +161,8 @@ def unpack_multithread(archive_path:str, remove:bool=False):
     for thread in threads:
         thread.join()
     archive.close()
+
+    check(output_paths)
 
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
