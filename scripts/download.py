@@ -93,6 +93,7 @@ def process(path:str, output_dir:str, pbar=None):
     if compressed(path): # If the file is already compressed, don't try to re-compress it. 
         shutil.move(path, output_path)
     else:
+        print(output_path)
         with open(path, 'rb') as f_in, gzip.open(output_path, 'wb') as f_out:
             f_out.write(f_in.read())
     return output_path
@@ -126,7 +127,6 @@ def unpack(archive_path:str, remove:bool=False):
         os.remove(extracted_archive_path)
 
     return output_paths
-
 
 
 def unpack_metadata(metadata_file_path:str, remove:bool=False):
