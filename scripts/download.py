@@ -63,7 +63,7 @@ def processed(path:str, output_dir:str) -> bool:
 
 def add_gz(file_name:str) -> str:
     '''Add the gz extension to the file name if it is not already there.'''
-    file_name + '.gz' if ('.gz' not in file_name) else file_name
+    file_name = file_name + '.gz' if ('.gz' not in file_name) else file_name
     return file_name
 
 def remove_gz(file_name:str) -> str:
