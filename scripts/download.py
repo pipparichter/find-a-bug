@@ -77,9 +77,9 @@ def compressed(file_name:str) -> str:
 
 
 # NOTE: Took about a half hour to extract... 
-def extract(archive_path:str, output_dir:str=None):
+def extract(archive_path:str):
     '''Extract the tar archive to a temporary directory.'''
-    output_dir = archive_path.replace('.tar.gz', '.tmp') if (output_dir is None) else output_dir
+    output_dir = archive_path.replace('.tar.gz', '.tmp')
     if not os.path.exists(output_dir): # Don't try to re-extract if it exists. 
         os.makedirs(output_dir, exist_ok=True)
         subprocess.run(f'tar -xf {archive_path} -C {output_dir} --strip=1', shell=True, check=True)
@@ -110,11 +110,14 @@ def unpack(archive_path:str, remove:bool=False):
     extracted_archive_path = extract(archive_path)
 
     output_paths = []
-    paths = [os.path.join(root, file) for file in files for root, dirs, files in os.walk(extracted_archive_path)] 
-    paths = [path for path in paths if (not processed(path, output_dir))] # Exclude files which have been processed. 
+    input_paths = []
+    for root, dirs, files in os.walk(extracted_archive_path):
+        input_path = os.path.join(root, file)
+        if not processed(input_path, output_dir):
+            input_paths.append(input_path)
 
-    for path in tqdm(path, f'unpack: Unpacking extracted tar archive {extracted_archive_path}'):
-        output_path = process(path, output_dir)
+    for input_path in tqdm(input_paths, f'unpack: Unpacking extracted tar archive {extracted_archive_path}'):
+        output_path = process(input_path, output_dir)
         output_paths.append(output_path)
 
     if remove: # Remove the original archive if specified. 
@@ -138,7 +141,11 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
         # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
-            extract(metadata_file_path, output_dir=output_dir)
+            archive = tarfile.open(metadata_file_path, 'r:gz')
+            member = [m.isfile() for m in archive.getmembers()][0]
+            member.name = output_file_name
+            archive.extract(member, output_dir)
+            archive.close()
 
         print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
     
