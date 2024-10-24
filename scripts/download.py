@@ -112,9 +112,10 @@ def unpack(archive_path:str, remove:bool=False):
     output_paths = []
     input_paths = []
     for root, dirs, files in os.walk(extracted_archive_path):
-        input_path = os.path.join(root, file)
-        if not processed(input_path, output_dir):
-            input_paths.append(input_path)
+        for file in files:
+            input_path = os.path.join(root, file)
+            if not processed(input_path, output_dir):
+                input_paths.append(input_path)
 
     for input_path in tqdm(input_paths, f'unpack: Unpacking extracted tar archive {extracted_archive_path}'):
         output_path = process(input_path, output_dir)
