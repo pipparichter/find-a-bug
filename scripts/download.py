@@ -132,14 +132,14 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
     output_dir = os.path.dirname(metadata_file_path)
     # Get the name of the output file... 
     output_file_name = os.path.basename(metadata_file_path).split('.')[0] + '.tsv'
-    output_path = os.path.join(dir_path, output_file_name)
+    output_path = os.path.join(output_dir, output_file_name)
 
     if not os.path.exists(output_path): # Only proceed if the file has not already been created. 
         # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
             extract(metadata_file_path, output_dir=output_dir)
-            
+
         print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
     
     if remove: # Remove original file if specified. 
