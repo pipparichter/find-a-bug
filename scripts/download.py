@@ -77,9 +77,9 @@ def compressed(file_name:str) -> str:
 
 
 # NOTE: Took about a half hour to extract... 
-def extract(archive_path:str):
+def extract(archive_path:str, output_dir:str=None):
     '''Extract the tar archive to a temporary directory.'''
-    output_dir = archive_path.replace('.tar.gz', '.tmp')
+    output_dir = archive_path.replace('.tar.gz', '.tmp') if (output_dir is None) else output_dir
     if not os.path.exists(output_dir): # Don't try to re-extract if it exists. 
         os.makedirs(output_dir, exist_ok=True)
         subprocess.run(f'tar -xf {archive_path} -C {output_dir} --strip=1', shell=True, check=True)
@@ -129,20 +129,17 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
     '''Metadata files can either be tar archives or simple zipped TSV files, depending on the 
     version of GTDB. This function just gets the thing out of the tar archive cormat, if that's 
     what it's in (I wonder why they did this?)'''
-    dir_path = os.path.dirname(metadata_file_path)
+    output_dir = os.path.dirname(metadata_file_path)
     # Get the name of the output file... 
     output_file_name = os.path.basename(metadata_file_path).split('.')[0] + '.tsv'
     output_path = os.path.join(dir_path, output_file_name)
 
-    if not os.path.extracted(output_path): # Only proceed if the file has not already been created. 
+    if not os.path.exists(output_path): # Only proceed if the file has not already been created. 
         # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
-            with tarfile.open(metadata_file_path, 'r:gz') as archive: 
-                members = archive.getmembers()
-                assert len(members) == 1, f'unpack_metadata: There should only be 1 item in the metadata archive. Found (len(members)).'
-                extract(archive, members[0], output_path, None)
-
+            extract(metadata_file_path, output_dir=output_dir)
+            
         print(f'unpack_metadata: Metadata unzipped and written to {output_path}')
     
     if remove: # Remove original file if specified. 
