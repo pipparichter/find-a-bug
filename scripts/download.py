@@ -89,11 +89,12 @@ def extract(archive_path:str):
 def process(path:str, output_dir:str, pbar=None):
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
-    output_path = os.path.join(output_dir, os.path.basename(add_gz(path)))
+    output_file_name = add_gz(os.path.basename(path))
+    print(output_file_name)
+    output_path = os.path.join(output_dir, output_file_name)
     if compressed(path): # If the file is already compressed, don't try to re-compress it. 
         shutil.move(path, output_path)
     else:
-        print(output_path)
         with open(path, 'rb') as f_in, gzip.open(output_path, 'wb') as f_out:
             f_out.write(f_in.read())
     return output_path
