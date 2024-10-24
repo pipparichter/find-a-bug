@@ -15,6 +15,7 @@ from time import perf_counter, sleep
 import threading  
 from typing import List
 from queue import Queue
+import subprocess
 
 # N_WORKERS = 10 
 
@@ -30,7 +31,7 @@ def check(output_paths:List[str]):
     for path in pbar:
         pbar.update(1)
         pbar.set_description(f'check: Checking extracted files... {path}')
-        assert os.path.exists(path), f'check: It seems as though the file {path} does not exist.'
+        assert os.path.extracted(path), f'check: It seems as though the file {path} does not exist.'
         with gzip.open(path, 'r') as f:
             content = f.read()
             # assert len(content) > 0, f'check: It seems as though the gzip-compressed file {path} is empty.'
@@ -43,9 +44,12 @@ def check(output_paths:List[str]):
         #     print(f'check: There was a problem reading the gzip-compressed file {path}.')
 
 
-# I think the best way to store these big datasets is by zipping individual files and then 
-# dumping them all into a tar archive. 
-
+def extracted(member:tarfile.TarInfo, dir_path:str) -> bool:
+    '''Takes a list of members from the tar archive and checks to see if they are already present in the
+    output directory.'''
+    file_name = os.path.basename(member.name) # Remove the relative path from the member name. 
+    file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
+    return file_name in os.listdir(dir_path)
 
 # Unfortunately, in order to unpack single member of .tar.gz archive you have to process whole archive, and not much you can do to fix it.
 # https://superuser.com/questions/655739/extract-single-file-from-huge-tgz-file 
@@ -58,7 +62,12 @@ def add_gz(file_name:str) -> str:
     file_name + '.gz' if ('.gz' not in file_name) else file_name
     return file_name
 
-def is_compressed(file_name:str) -> str:
+def remove_gz(file_name:str) -> str:
+    '''Remove the gz extension from the file name.'''
+    file_name = file_name.replace('.gz', '')
+    return file_name
+
+def compressed(file_name:str) -> str:
     '''Check if a file is compressed, i.e. if it has the .gz file extension.'''
     return '.gz' in file_name
 
@@ -67,12 +76,11 @@ def extract(archive:tarfile.TarFile, member:tarfile.TarInfo, output_path:str, pb
     '''Extract the a file from a tar archive and plop it at the specified path. There are several cases: (1) the file contained
     in the tar archive is already zipped and just needs to be moved and (2) the file is not zipped and needs to be compressed.'''
     try:
-        if is_compressed(member.name):
+        if compressed(member.name):
             member.name = os.path.basename(member.name) # Trying to get rid of directory structure. 
             archive.extract(member, path=os.path.dirname(output_path))
         else:
             contents = archive.extractfile(member).read() # Get the file contents in binary. 
-            print(contents.decode())
             assert len(contents) > 0, f'extract: The file {member.name} seems to be empty.'
             with gzip.open(output_path, 'wb') as f:
                 f.write(contents)
@@ -95,7 +103,7 @@ def unpack(archive_path:str, remove:bool=False):
     print(f'unpack: Created directory at {dir_path}')
     existing = os.listdir(dir_path) # Get a list of the files which are currently in the directory. 
 
-    def exists(member:tarfile.TarInfo) -> bool:
+    def extracted(member:tarfile.TarInfo) -> bool:
         '''Takes a list of members from the tar archive and checks to see if they are already present in the
         output directory.'''
         file_name = os.path.basename(member.name) # Remove the relative path from the member name. 
@@ -106,7 +114,7 @@ def unpack(archive_path:str, remove:bool=False):
     with tarfile.open(archive_path, 'r:gz') as archive:
         
         existing_names = os.listdir(dir_path)
-        members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
+        members = [member for member in archive.getmembers() if (member.isfile() and (not extracted(member)))]
         
         for member in tqdm(members, desc=f'unpack: Unpacking archive {archive_path}...'):
             contents = archive.extractfile(member).read()
@@ -121,6 +129,7 @@ def unpack(archive_path:str, remove:bool=False):
 
     return output_paths
 
+
 def unpack_multithread(archive_path:str, n_workers:int, remove:bool=False):
     '''Convert a tar.gz file into a direcroty of compressed files to make parallelizing upload easier. This should not take
     more memory than zipping the entire tar archive (which I confirmed by testing locally).'''
@@ -129,26 +138,23 @@ def unpack_multithread(archive_path:str, n_workers:int, remove:bool=False):
     dir_path = os.path.join(dir_path, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
     os.makedirs(dir_path, exist_ok=True) # Make the new directory. 
     print(f'unpack: Created directory at {dir_path}')
-    existing = os.listdir(dir_path) # Get a list of the files which are currently in the directory. 
 
-    def exists(member:tarfile.TarInfo) -> bool:
-        '''Takes a list of members from the tar archive and checks to see if they are already present in the
-        output directory.'''
-        file_name = os.path.basename(member.name) # Remove the relative path from the member name. 
-        file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
-        return file_name in existing
 
-    archive = tarfile.open(archive_path, 'r:gz')
-    existing_names = os.listdir(dir_path)
-    members = [member for member in archive.getmembers() if (member.isfile() and (not exists(member)))]
-    zipped_members = np.array([is_compressed(member.name for member in members)])
-    if (not np.all(zipped_members)): print(f'unpack: Found {len(members)} files in the tar archive.')
-    else: print(f'unpack: Found {len(members)} files in the tar archive. Files are already zipped.') 
+    # First, unzip the tgz file, which will hopefully mean I can process it in parallel... 
+    # pigz should be faster than the regular gzip utility.
+    # Nevermind "pigz does not utilize multiple cores for decompression." Might still be marginally faster. 
+    if not (os.path.extracted(os.path.join(dir_path, remove_gz(archive_path)))):
+        subprocess.run(f'pigz -dk {archive_path}')
+        print(f'unpack: Extracted compressed tar archive to {remove_gz(archive_path)}')
+    archive_path = remove_gz(archive_path) # Work with the decompressed archive. 
+
+    archive = tarfile.open(archive_path, 'r')
+    members = [member for member in archive.getmembers() if (member.isfile() and (not extracted(member, dir_path)))]
+    print(f'unpack: Found {len(members)} files in the tar archive.')
 
     pbar = tqdm(total=len(members), desc=f'unpack: Unpacking archive {archive_path}...')
 
     def task():
-        '''Function for the threads to run.'''
         while (not q.empty()):
             item = q.get()
             extract(*item)
@@ -180,13 +186,9 @@ def unpack_multithread(archive_path:str, n_workers:int, remove:bool=False):
 
     if remove: # Remove the original archive if specified. 
         os.remove(archive_path)
+        os.remove(add_gz(archive_path))
 
     return output_paths
-
-
-def unpack_multiprocess(archive_path:str, remove:bool=False):
-    pass 
-
 
 
 def unpack_metadata(metadata_file_path:str, remove:bool=False):
@@ -198,7 +200,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
     output_file_name = os.path.basename(metadata_file_path).split('.')[0] + '.tsv'
     output_path = os.path.join(dir_path, output_file_name)
 
-    if not os.path.exists(output_path): # Only proceed if the file has not already been created. 
+    if not os.path.extracted(output_path): # Only proceed if the file has not already been created. 
         # Metadata files can be stored as tar objects or as regular zipped TSV files, depending on the GTDB version.
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
@@ -267,9 +269,7 @@ if __name__ == '__main__':
     archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if (('.tar' in file_name) and ('metadata' not in file_name))]
     for archive_path in archive_paths:
         unpack(archive_path, remove=False)
-
-
-        
+       
 
 # def get_latest(dir_path:str) -> str:
 #     '''Get the most recently-created file in the specified directory. Returns a complete path, 
