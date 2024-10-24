@@ -56,7 +56,7 @@ def check(output_paths:List[str]):
 def processed(path:str, output_dir:str) -> bool:
     '''Takes a list of members from the tar archive and checks to see if they are already present in the
     output directory.'''
-    file_name = os.path.basename(member.name) # Remove the relative path from the member name. 
+    file_name = os.path.basename(path) # Remove the relative path from the member name. 
     file_name = add_gz(file_name) # File name will contain the zip extension in the output directory. 
     return os.path.exists(os.path.join(output_dir, file_name))
 
