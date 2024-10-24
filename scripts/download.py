@@ -142,7 +142,7 @@ def unpack_metadata(metadata_file_path:str, remove:bool=False):
         # if tarfile.is_tarfile(metadata_file_path):
         if ('.tar' in metadata_file_path):
             archive = tarfile.open(metadata_file_path, 'r:gz')
-            member = [m for m in archive.getmembers() if (m.isfile())][0]
+            member = [m for m in archive.getmembers() if m.isfile()][0]
             member.name = output_file_name
             archive.extract(member, output_dir)
             archive.close()
