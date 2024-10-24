@@ -105,7 +105,7 @@ def unpack(archive_path:str, remove:bool=False):
     output_dir = os.path.dirname(archive_path)
     output_dir = os.path.join(output_dir, os.path.basename(archive_path).split('.')[0]) # Get the archive name and remove extensions. 
     os.makedirs(output_dir, exist_ok=True) # Make the new directory. 
-    print(f'unpack: Created directory at {output_dir}')
+    print(f'unpack: Created output directory at {output_dir}')
 
     extracted_archive_path = extract(archive_path)
 
@@ -154,18 +154,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-dir', type=str, default='/var/lib/pgsql/data/gtdb/')
     parser.add_argument('--version', default=207, type=int)
-    parser.add_argument('--multithread', action='store_true')
-    parser.add_argument('--n-workers', type=int, default=4)
+    # parser.add_argument('--multithread', action='store_true')
+    # parser.add_argument('--n-workers', type=int, default=4)
     args = parser.parse_args()
 
-    test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
-    if args.multithread:
-        output_paths = time(unpack_multithread, test_archive_path, args.n_workers)
-    else:
-        output_paths = time(unpack, test_archive_path)
-    check(output_paths)
-    shutil.rmtree('/var/lib/pgsql/data/gtdb/r207/test')
-    exit(1)
+    # test_archive_path = '/var/lib/pgsql/data/gtdb/r207/test.tar.gz'
+    # if args.multithread:
+    #     output_paths = time(unpack_multithread, test_archive_path, args.n_workers)
+    # else:
+    #     output_paths = time(unpack, test_archive_path)
+    # check(output_paths)
+    # shutil.rmtree('/var/lib/pgsql/data/gtdb/r207/test')
+    # exit(1)
 
     # Make the directory to store the new version of GTDB. 
     data_dir = os.path.join(args.data_dir, f'r{args.version}')
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
     # archive_paths = [os.path.join(data_dir, path) for path in os.listdir(data_dir) if (tarfile.is_tarfile(path) and (path not in metadata_file_paths))]
     archive_paths = [os.path.join(data_dir, file_name) for file_name in os.listdir(data_dir) if (('.tar' in file_name) and ('metadata' not in file_name))]
-    for archive_path in archive_paths:
+    for archive_path in sorted(archive_paths):
         unpack(archive_path, remove=False)
        
 # def get_latest(dir_path:str) -> str:
