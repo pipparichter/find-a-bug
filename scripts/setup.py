@@ -85,15 +85,15 @@ if __name__ == '__main__':
     data_dir = os.path.join(DATA_DIR, f'r{VERSION}')
 
     if args.drop_existing:
-        for table_name in database.table_names[::-1]:
+        for table_name in DATABASE.table_names[::-1]:
             print(f'Dropping existing table {table_name}.')
-            database.drop(table_name)
+            DATABASE.drop(table_name)
 
-    for table_name in database.table_names:
+    for table_name in DATABASE.table_names:
         print(f'Initializing table {table_name}.')
-        database.create(table_name)
+        DATABASE.create(table_name)
 
-    database.reflect()
+    DATABASE.reflect()
 
     # NOTE: Table uploads must be done sequentially, i.e. the entire metadata table needs to be up before anything else. 
 
@@ -118,5 +118,5 @@ if __name__ == '__main__':
     # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
     parallelize(path, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
-    database.close()
+    DATABASE.close()
     
