@@ -60,6 +60,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
 def parallelize(paths:List[str], upload_func,table_name:str, file_class:File, chunk_size:int=500):
     
     args = [(path, table_name, file_class) for path in paths]
+    print(args[:10])
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
@@ -108,7 +109,6 @@ if __name__ == '__main__':
     proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
     proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
     paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
-    print(paths)
     # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
     parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
