@@ -106,7 +106,7 @@ class ProteinsFile(File):
             self.stop_codons = ProteinsFile.get_stop_codons(seqs)
             self.start_codons = ProteinsFile.get_start_codons(seqs)
             self.seqs = None
-        elif (self.type == 'aa'):
+        elif (self.type_ == 'aa'):
             self.seqs = ProteinsFile.get_seqs(content)
             self.start_codons = None
             self.stop_codons = None
