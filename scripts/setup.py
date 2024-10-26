@@ -114,7 +114,7 @@ if __name__ == '__main__':
     print(f'Uploading data to the metadata_r{VERSION} table.')
     metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
     # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
-    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile, None)
+    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
     # Need to upload amino acid and nucleotide data simultaneously.
     proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
