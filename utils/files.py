@@ -83,7 +83,7 @@ class ProteinsFile(File):
 
     # Pre-compiling the regex patterms might marginally speed things up. 
     header_pattern = re.compile(r'>([^#]+) # (\d+) # (\d+) # ([-1]+) # (.+)')  # Pattern matching the header.
-    new_entry_pattern = re.compile(r'^>.*')
+    new_entry_pattern = re.compile(r'^>.*', re.MULTILINE)
     fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'scaffold_id'] # Just the fields in the headers. 
 
 
@@ -142,12 +142,12 @@ class ProteinsFile(File):
     @staticmethod
     def get_headers(content:str) -> List[str]:
         '''Extract all sequence headers stored in a FASTA file.'''
-        return list(re.findall(ProteinsFile.new_entry_pattern, content, re.MULTILINE))
+        return list(re.findall(ProteinsFile.new_entry_pattern, content))
 
     @staticmethod
     def get_seqs(content:str) -> List[str]:
         '''Extract all  sequences stored in a FASTA file.'''
-        seqs = re.split(ProteinsFile.new_entry_pattern, content, flags=re.MULTILINE)[1:]
+        seqs = re.split(ProteinsFile.new_entry_pattern, content)[1:]
         # Strip all of the newline characters from the amino acid sequences. 
         seqs = [s.replace('\n', '') for s in seqs]
         return seqs
