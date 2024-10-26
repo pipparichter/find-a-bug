@@ -43,9 +43,6 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param paths
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
-    print(len(paths))
-    print(type(paths))
-    print(paths)
     entries = []
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
@@ -62,14 +59,15 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
     
-    args = [(path, table_name, file_class) for path in paths]
+    chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
+    args = [(chunk, table_name, file_class) for chunk in chunks]
 
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
     pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
-    pool.starmap(upload_func, args, chunksize=chunk_size)
+    pool.starmap(upload_func, args) # , chunksize=chunk_size)
     pool.close()
 
 
