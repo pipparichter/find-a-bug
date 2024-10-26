@@ -12,7 +12,6 @@ from typing import List, Tuple
 from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
-VERSION = None
 N_WORKERS = 10
 
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
