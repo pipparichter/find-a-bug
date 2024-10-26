@@ -44,6 +44,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     print(len(paths))
+    print(table_name)
     entries = []
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
@@ -61,7 +62,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
     
     args = [(path, table_name, file_class) for path in paths]
-    print(args[:10])
+
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
