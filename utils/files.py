@@ -164,10 +164,10 @@ class ProteinsFile(File):
     def size(self):
         # Avoid re-computing the number of entries each time. 
         return len(self.headers)
-        
+
     def dataframe(self) -> pd.DataFrame:
         '''Load the data conteined in the file as a pandas DataFrame.'''
-        df = pd.DataFrame([self.parse_header(header) for header in self.headers()])
+        df = pd.DataFrame([self.parse_header(header) for header in self.headers])
 
         if (self.type_ == 'aa'):
             df['seq'] = self.seqs
