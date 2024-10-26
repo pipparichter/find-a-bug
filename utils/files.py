@@ -1,10 +1,31 @@
 import os 
 import re
+import io
 from sqlalchemy import Float, String, Integer
 from typing import Dict, List, NoReturn
 import pandas as pd 
 import numpy as np
-from utils.tables import MAX_SEQ_LENGTH 
+from utils.tables import MAX_SEQ_LENGTH
+import gzip 
+
+# NOTE: Donnie mentioned that pre-compiling regex expressions might speed things up quite a bit. 
+
+def compressed(path:str):
+    file_name = os.path.basename(file_name)
+    ext = file_name.split('.')[-1]
+    return ext == 'gz'
+
+
+def read(path:str) -> str:
+    '''Reads in a compressed or uncompressed file (detected automatically) as a string of text.'''
+    if compressed(path):
+        f = gzip.open(path, 'rt')
+    else:
+        f = open(path, 'r')
+    content = f.read()
+    f.close()
+    return content
+
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
@@ -27,18 +48,26 @@ def get_converter(dtype):
 
 
 class File():
+    
+    genome_id_pattern = re.compile(r'GC[AF]_\d{9}\.\d{1}')
 
     def __init__(self, path:str, version:int=None):
 
+        self.data = None # This will be populated in most child classes.
         self.path = path 
         self.version = version
         self.dir_name, self.file_name = os.path.split(path) 
-        self.data = None # This will be populated with a DataFrame in child classes. 
-        self.genome_id = None # This will be populated with the genome ID extracted from the filename for everything but the MetadataFile class.
+        try:
+            # Extract the genome ID from the filename. This should take care of removing the prefix. 
+            self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0) 
+        except: # This will break for the MetadataFile objects. 
+            self.genome_id = None
 
-    def dataframe(self):
+    def dataframe(self) -> pd.DataFrame:
+        '''Represent the underlying data as a DataFrame.'''
         return self.data
 
+    # TODO: Should make a concerted effort to make sure that this is not a performance bottleneck. 
     def entries(self):
         '''Get the file entries in a format which can be easily added to a SQL table.'''
         entries = self.dataframe().to_dict(orient='records')
@@ -50,18 +79,17 @@ class File():
         return entries
 
 
-class FastaFile(File):
+class ProteinsFile(File):
+
+    # Pre-compiling the regex patterms might marginally speed things up. 
+    header_pattern = re.compile(r'>([^#]+) # (\d+) # (\d+) # ([-1]+) # (.+)')  # Pattern matching the header.
+    new_entry_pattern = re.compile(r'^>.*')
+    fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'scaffold_id'] # Just the fields in the headers. 
+
 
     def __init__(self, path:str, version:int=None):
 
         super().__init__(path, version=version) 
-
-        self.n_entries = None
-        with open(path, 'r') as f:
-            self.content = f.read()
-
-        # Extract the genome ID from the filename. This should take care of removing the prefix. 
-        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
         # Detect the file type, indicating it contains nucleotides or amino acids. 
         if 'fna' in self.file_name:
@@ -69,55 +97,22 @@ class FastaFile(File):
         elif 'faa' in self.file_name:
             self.type_ = 'aa'
 
-    def parse_header(self, header:str) -> Dict:
-        gene_id = header.split('#')[0]
-        return {'gene_id':gene_id}
+        # I think it is not a good idea to store all the content as an attribute for the sake of limiting memory consumption. 
+        content = read(path) # Handles compressed and non-compressed files. Expecting this to the bottleneck. 
 
-    def headers(self):
-        '''Extract all sequence headers stored in a FASTA file.'''
-        return list(re.findall(r'^>.*', self.content, re.MULTILINE))
+        self.headers = ProteinsFile.get_headers(content) # This stores the raw headers (not parsed).
+        if (self.type_ == 'nt'):
+            seqs = ProteinsFile.get_seqs(content)
+            self.stop_codons = ProteinsFile.get_stop_codons(seqs)
+            self.start_codons = ProteinsFile.get_start_codons(seqs)
+            self.seqs = None
+        elif (self.type == 'aa'):
+            self.seqs = ProteinsFile.get_seqs(content)
+            self.start_codons = None
+            self.stop_codons = None
 
-    def sequences(self):
-        '''Extract all  sequences stored in a FASTA file.'''
-        seqs = re.split(r'^>.*', self.content, flags=re.MULTILINE)[1:]
-        # Strip all of the newline characters from the amino acid sequences. 
-        seqs = [s.replace('\n', '') for s in seqs]
-
-        # for seq in seqs:
-        #     assert len(seq) < MAX_SEQ_LENGTH, f'ProteinFile.sequences: Sequence has length {len(seq)}, which exceeds the maximum allowed sequence length of {MAX_SEQ_LENGTH}.\n\n{seq}'
-        return seqs
-
-    def size(self):
-        # Avoid re-computing the number of entries each time. 
-        if self.n_entries is None:
-            self.n_entries = len(self.headers())
-        return self.n_entries
-
-    def dataframe(self) -> pd.DataFrame:
-        '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
-        add the genome ID as an additional column.'''
-        df = [self.parse_header(header) for header in self.headers()]
-        for row, seq in zip(df, self.sequences()):
-            row['seq'] = seq
-        return pd.DataFrame(df)
-
-
-class ProteinsFile(FastaFile):
-
-    fields = ['gene_id', 'start', 'stop', 'strand', 'gc_content', 'partial', 'rbs_motif', 'scaffold_id']
-
-    def __init__(self, path:str, version:int=None):
-        '''Initialize a FastaFile object.
-        
-        :param path: The path to the FASTA file. 
-        :param version: The version of GTDB associated with the file. 
-        :param type_: One of 'nucleotide' or 'amino_acid', indicating the type of sequence contained in the FASTA file. 
-        '''
-
-        super().__init__(path, version=version)
-
-
-    def parse_header(self, header:str) -> Dict[str, object]:
+    @staticmethod
+    def parse_header(header:str) -> Dict[str, object]:
         '''Parse the header string of an entry in a genome file. Headers are of the form:
         >{gene_id} # {start} # {stop} # {strand} # ID={prodigal_id};partial={partial};start_type={start_type};rbs_motif={rbs_motif};rbs_spacer={rbs_spacer};gc_cont={gc_cont}.
         Full descriptions of each field can be found here: https://github.com/hyattpd/Prodigal/wiki/understanding-the-prodigal-output
@@ -126,8 +121,7 @@ class ProteinsFile(FastaFile):
         :return: A dictionary mapping each field in the header to a value.
         ''' 
         entry = dict()
-        pattern = '>([^#]+) # (\d+) # (\d+) # ([-1]+) # (.+)' # Pattern matching the header.
-        match = re.match(pattern, header)
+        match = re.match(pattern, ProteinsFile.header_pattern)
 
         entry['gene_id'] = match.group(1)
         entry['start'] = int(match.group(2))
@@ -143,21 +137,49 @@ class ProteinsFile(FastaFile):
                 entry['scaffold_id'] = int(value.split('_')[0])
             elif field in ProteinsFile.fields:
                 entry[field] = value
-
         return entry
 
+    @staticmethod
+    def get_headers(content:str) -> List[str]:
+        '''Extract all sequence headers stored in a FASTA file.'''
+        return list(re.findall(ProteinsFile.new_entry_pattern, content, re.MULTILINE))
+
+    @staticmethod
+    def get_seqs(content:str) -> List[str]:
+        '''Extract all  sequences stored in a FASTA file.'''
+        seqs = re.split(ProteinsFile.new_entry_pattern, content, flags=re.MULTILINE)[1:]
+        # Strip all of the newline characters from the amino acid sequences. 
+        seqs = [s.replace('\n', '') for s in seqs]
+        return seqs
+
+    # TODO: I need to make sure I don't need to take the reverse compliments if the nucleotide sequence is on the reverse strand. 
+    @staticmethod
+    def get_start_codons(seqs:List[str]) -> List[str]:
+        return [seq[:3] for seq in seqs]
+    
+    @staticmethod
+    def get_stop_codons(seqs:List[str]) -> List[str]:
+        return [seq[-3:] for seq in seqs]
+
+    def size(self):
+        # Avoid re-computing the number of entries each time. 
+        if self.n_entries is None:
+            self.n_entries = len(self.headers())
+        return self.n_entries
+
     def dataframe(self) -> pd.DataFrame:
-        '''Load a FASTA file in as a pandas DataFrame. If the FASTA file is for a particular genome, then 
-        add the genome ID as an additional column.'''
-        df = [self.parse_header(header) for header in self.headers()]
-        for row, seq in zip(df, self.sequences()):
-            row[f'{self.type_}_seq'] = seq
-            # Add the start and stop codons, if the file contains nucleotides. 
-            if self.type_ == 'nt':
-                row['start_codon'] = seq[:3]
-                row['stop_codon'] = seq[-3:]
+        '''Load the data conteined in the file as a pandas DataFrame.'''
+        df = pd.DataFrame([self.parse_header(header) for header in self.headers()])
+
+        if (self.type_ == 'aa'):
+            df['seq'] = self.seqs
+        if (self.type_ == 'nt'):
+            df['stop_codon'] = self.stop_codons 
+            df['start_codon'] = self.start_codons
 
         return pd.DataFrame(df)
+
+
 
 class MetadataFile(File):
 
@@ -204,12 +226,12 @@ class MetadataFile(File):
         
         super().__init__(path, version=version)
 
-        data = pd.read_csv(path, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
+        content = io.StringIO(read(path)) # Read the file into a IO stream. 
+        data = pd.read_csv(content, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
         
         if reps_only: # Remove all genomes which are not GTDB representatives. 
             data = data[data.gtdb_representative.str.match('t')]
         data = data.drop(columns='gtdb_representative') # Don't need this column after filtering. 
-
         data = data.rename(columns={'gc_percentage':'gc_content', 'accession':'genome_id', 'trna_selenocysteine_count':'sec_trna_count'}) # Fix some of the column names for consistency. 
 
         taxonomy_data = []
@@ -236,12 +258,8 @@ class KeggAnnotationsFile(File):
         super().__init__(path, version=version)
         
         # Replace the existing headers in the CSV file with new headers. 
+        content = io.StringIO(read(path)) # Read the file into a IO stream. 
         self.data = pd.read_csv(path, header=0, names=KeggAnnotationsFile.fields) # Read in the CSV file. 
-
-        # Extract the genome ID from the filename. 
-        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
-
-
 
 class PfamAnnotationsFile(File):
 
@@ -264,13 +282,12 @@ class PfamAnnotationsFile(File):
         super().__init__(path, version=version)
         
         # The Pfam annotation files do not contain headers, so need to define them. 
-        data = pd.read_csv(path, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
+        content = io.StringIO(read(path)) # Read the file into a IO stream. 
+        data = pd.read_csv(content, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
         # Make sure the data columns match those needed for the table. 
         data = data.rename(columns={'signature_accession':'pfam'})
         self.data = data[['gene_id', 'pfam', 'e_value', 'interpro_accession', 'interpro_description', 'start', 'stop', 'length']]
 
-        # Extract the genome ID from the filename. 
-        self.genome_id = re.search('GC[AF]_\d{9}\.\d{1}', self.file_name).group(0)
 
 
 
