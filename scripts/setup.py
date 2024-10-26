@@ -21,7 +21,7 @@ N_WORKERS = 10
 # TODO: What is the maximum chunk I can read into RAM? Then I can avoid the overhead of writing the extracted ZIP files to separate files. 
 
 
-def upload(paths:List[str], table_name:str, file_class:File, pbar):
+def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
@@ -34,11 +34,11 @@ def upload(paths:List[str], table_name:str, file_class:File, pbar):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-    if pbar is not None:
-        pbar.update(len(entries))
+    if PBAR is not None:
+        PBAR.update(len(entries))
 
 
-def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile, pbar):
+def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
@@ -57,16 +57,17 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    if pbar is not None:
-        pbar.update(len(entries))
+    if PBAR is not None:
+        PBAR.update(len(entries))
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
 
-    pbar = tqdm(desc=f'parallelize: Uploading to table {table_name}...', total=len(paths)) 
+    global PBAR
+    PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...', total=len(paths)) 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
-    args = [(chunk, table_name, file_class, pbar) for chunk in chunks]
+    args = [(chunk, table_name, file_class) for chunk in chunks]
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
@@ -75,7 +76,6 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     for _ in tqdm(pool.starmap(upload_func, args), desc=f'parallelize: Uploading to table {table_name}.', total=len(args)):
         pass
     
-    pbar.close()
     pool.close()
 
 
@@ -84,6 +84,9 @@ if __name__ == '__main__':
     
     global DATABASE # Need to declare as global for multiprocessing to work. 
     DATABASE = Database(reflect=False)
+
+    global PBAR 
+    PBAR = None
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
@@ -128,4 +131,5 @@ if __name__ == '__main__':
     parallelize(path, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
     DATABASE.close()
+    PBAR.close()
     
