@@ -11,7 +11,7 @@ import gzip
 # NOTE: Donnie mentioned that pre-compiling regex expressions might speed things up quite a bit. 
 
 def compressed(path:str):
-    file_name = os.path.basename(file_name)
+    file_name = os.path.basename(path)
     ext = file_name.split('.')[-1]
     return ext == 'gz'
 
