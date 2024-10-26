@@ -43,6 +43,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param paths
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
+    print(paths[:10])
     entries = []
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
@@ -73,11 +74,11 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
 
 if __name__ == '__main__':
     
-    global DATABASE 
+    global DATABASE # Need to declare as global for multiprocessing to work. 
     DATABASE = Database(reflect=False)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database. Initial version used was r207')
+    parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
     parser.add_argument('--drop-existing', action='store_true')
     args = parser.parse_args()
 
