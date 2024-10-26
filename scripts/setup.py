@@ -44,7 +44,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     print(len(paths))
-    print(table_name)
+    print(type(paths))
+    print(paths)
     entries = []
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
