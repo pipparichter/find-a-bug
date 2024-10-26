@@ -121,7 +121,7 @@ class ProteinsFile(File):
         :return: A dictionary mapping each field in the header to a value.
         ''' 
         entry = dict()
-        match = re.match(pattern, ProteinsFile.header_pattern)
+        match = re.match(ProteinsFile.header_pattern, header)
 
         entry['gene_id'] = match.group(1)
         entry['start'] = int(match.group(2))
