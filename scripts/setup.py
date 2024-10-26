@@ -21,7 +21,7 @@ N_WORKERS = 10
 # TODO: What is the maximum chunk I can read into RAM? Then I can avoid the overhead of writing the extracted ZIP files to separate files. 
 
 
-def upload(paths:List[str], database:Database, table_name:str, file_class:File):
+def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
@@ -33,10 +33,10 @@ def upload(paths:List[str], database:Database, table_name:str, file_class:File):
     for path in paths:
         file = file_class(path, version=VERSION)
         entries += file.entries()
-    database.bulk_upload(table_name, entries)
+    DATABASE.bulk_upload(table_name, entries)
 
 
-def upload_proteins(paths:List[Tuple[str, str]], database:Database, table_name:str, file_class:ProteinsFile):
+def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
@@ -54,12 +54,12 @@ def upload_proteins(paths:List[Tuple[str, str]], database:Database, table_name:s
             entry.update({f:v for f, v in nt_entry.items()}) # Nucleotide sequences don't fit in table.
             entries.append(entry)
 
-    database.bulk_upload(table_name, entries) 
+    DATABASE.bulk_upload(table_name, entries) 
 
 
-def parallelize(paths:List[str], upload_func, database:Database, table_name:str, file_class:File, chunk_size:int=500):
+def parallelize(paths:List[str], upload_func,table_name:str, file_class:File, chunk_size:int=500):
     
-    args = [(path, database, table_name, file_class) for path in paths]
+    args = [(path, table_name, file_class) for path in paths]
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
@@ -70,7 +70,9 @@ def parallelize(paths:List[str], upload_func, database:Database, table_name:str,
 
 
 if __name__ == '__main__':
-    database = Database(reflect=False)
+    
+    global DATABASE 
+    DATABASE = Database(reflect=False)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database. Initial version used was r207')
@@ -97,7 +99,8 @@ if __name__ == '__main__':
 
     print(f'Uploading data to the metadata_r{VERSION} table.')
     metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
-    upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
+    # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
+    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
     print(f'Uploading data to the proteins_r{VERSION} table.')
     # Need to upload amino acid and nucleotide data simultaneously.
@@ -105,14 +108,15 @@ if __name__ == '__main__':
     proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
     proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
     paths = list(zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths)))
-    parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
+    # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
+    parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
     print(f'Uploading data to the annotations_kegg_r{VERSION} table.')
-    parallelize
     annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
     paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
-    parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
+    # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
+    parallelize(path, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
     database.close()
     
