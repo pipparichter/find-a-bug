@@ -21,7 +21,7 @@ N_WORKERS = 10
 # TODO: What is the maximum chunk I can read into RAM? Then I can avoid the overhead of writing the extracted ZIP files to separate files. 
 
 
-def upload(paths:List[str], table_name:str, file_class:File):
+def upload(paths:List[str], table_name:str, file_class:File, pbar):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
@@ -34,9 +34,10 @@ def upload(paths:List[str], table_name:str, file_class:File):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
+    pbar.update(len(entries))
 
 
-def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
+def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile, pbar):
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
@@ -55,12 +56,15 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
+    pbar.update(len(entries))
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
-    
+
+    pbar = tqdm(desc=f'parallelize: Uploading to table {table_name}...', total=len(paths)) 
+
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
-    args = [(chunk, table_name, file_class) for chunk in chunks]
+    args = [(chunk, table_name, file_class, pbar) for chunk in chunks]
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
@@ -68,6 +72,8 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
     for _ in tqdm(pool.starmap(upload_func, args), desc=f'parallelize: Uploading to table {table_name}.', total=len(args)):
         pass
+    
+    pbar.close()
     pool.close()
 
 
@@ -105,7 +111,6 @@ if __name__ == '__main__':
     # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
     upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
-    print(f'Uploading data to the proteins_r{VERSION} table.')
     # Need to upload amino acid and nucleotide data simultaneously.
     proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
     proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
@@ -115,7 +120,6 @@ if __name__ == '__main__':
     parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
-    print(f'Uploading data to the annotations_kegg_r{VERSION} table.')
     annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
     paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
     # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
