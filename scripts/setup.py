@@ -34,7 +34,8 @@ def upload(paths:List[str], table_name:str, file_class:File, pbar):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-    pbar.update(len(entries))
+    if pbar is not None:
+        pbar.update(len(entries))
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile, pbar):
@@ -56,7 +57,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    pbar.update(len(entries))
+    if pbar is not None:
+        pbar.update(len(entries))
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
@@ -109,7 +111,7 @@ if __name__ == '__main__':
     print(f'Uploading data to the metadata_r{VERSION} table.')
     metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
     # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
-    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
+    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile, None)
 
     # Need to upload amino acid and nucleotide data simultaneously.
     proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
