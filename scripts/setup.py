@@ -54,11 +54,11 @@ class Counter():
             if self.value() > 0:
                 sys.stdout.write('\r')
                 sys.stdout.flush()
-            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time)}')
+            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)}')
 
 
 def error_callback(error):
-    print(error)
+    print(repr(error))
 
 def show_progress(n:int, t:float=0):
     global COUNTER
