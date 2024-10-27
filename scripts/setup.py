@@ -13,6 +13,7 @@ from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 N_WORKERS = 10
+PBAR = None
 
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
 # I can either do this by parallizing the upload_files function, or chunk processing within the upload_files function. 
@@ -34,11 +35,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-
-    # global COUNT
-    # COUNT += len(entries)
-    if PBAR is not None:
-        PBAR.update(len(paths))
+    return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
@@ -60,17 +57,24 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
+    return len(paths)
 
-    # COUNT += len(entries)
 
-    if PBAR is not None:
-        PBAR.update(len(paths))
+def update_progress(n:int):
+    '''Update the progress bar.'''
+    global PBAR 
+    PBAR.update(n)
+
+
+def reset_progress(total:int, desc=''):
+    '''Reset the progress bar.''' 
+    global PBAR 
+    PBAR = tqdm(total=total, desc=desc)
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
 
-    global PBAR
-    PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...') 
+    reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
@@ -80,11 +84,12 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
+    # TODO: Read about what exactly chunksize is doing. 
     pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
     # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to the {table_name} table.', total=len(args)):
     #     pass
-    pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
-    
+    # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
+    pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress)
     pool.close()
 
 
