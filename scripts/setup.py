@@ -54,7 +54,7 @@ class Counter():
             if self.value() > 0:
                 sys.stdout.write('\r')
                 sys.stdout.flush()
-            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)}', end='\r')
+            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)} seconds.', end='\r')
 
 
 def error_callback(error):
@@ -63,7 +63,7 @@ def error_callback(error):
 def show_progress(n:int, t:float=0):
     global COUNTER
     if COUNTER is not None:
-        COUNTER.update(len(paths), t=t)
+        COUNTER.update(n, t=t)
         COUNTER.print()
 
 
@@ -98,7 +98,6 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     t_start = time.perf_counter()
-    print(len(paths))
     
     entries = []
     for aa_path, nt_path in paths:
