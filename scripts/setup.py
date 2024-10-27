@@ -27,8 +27,8 @@ CHUNK_SIZE = 100
 class Counter():
     '''A process-safe counter, as described here: https://superfastpython.com/process-safe-counter/'''
     def __init__(self, total:int=None):
-        self._counter = Value('n', 0)
-        self._time = Value('t', 0)
+        self._counter = Value('i', 0)
+        self._time = Value('d', 0)
         self._lock = Lock()
         self.total = total
         # NOTE: Read about locks here: https://superfastpython.com/multiprocessing-mutex-lock-in-python/
