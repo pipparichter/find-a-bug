@@ -70,8 +70,10 @@ def upload(paths:List[str], table_name:str, file_class:File, counter:Counter):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-    counter.update(len(paths))
-    counter.print()
+
+    if counter is not None:
+        counter.update(len(paths))
+        counter.print()
     
     # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
@@ -95,8 +97,9 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    counter.update(len(paths))
-    counter.print()
+    if counter is not None:
+        counter.update(len(paths))
+        counter.print()
     # return len(paths)
 
 
@@ -104,7 +107,6 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
     counter = Counter() # Intitialize a shared counter. 
-
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class, counter) for chunk in chunks]
     
@@ -157,7 +159,7 @@ if __name__ == '__main__':
     print(f'Uploading to the metadata_r{VERSION} table.')
     metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
     # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
-    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
+    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile, None)
 
     # Need to upload amino acid and nucleotide data simultaneously.
     print(f'Uploading to the proteins_r{VERSION} table.')
