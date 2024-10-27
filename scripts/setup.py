@@ -51,13 +51,12 @@ class Counter():
                 sys.stdout.flush()
             print(f'Counter.show: {str(self)} out of {self.total}.')
 
-        
 
 def error_callback(error):
     print(error)
 
 
-def upload(paths:List[str], table_name:str, file_class:File, counter:Counter):
+def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
@@ -71,14 +70,15 @@ def upload(paths:List[str], table_name:str, file_class:File, counter:Counter):
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
 
-    if counter is not None:
-        counter.update(len(paths))
-        counter.print()
+    global COUNTER
+    if COUNTER is not None:
+        COUNTER.update(len(paths))
+        COUNTER.print()
     
     # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
 
-def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile, counter:Counter):
+def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
@@ -97,20 +97,22 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    if counter is not None:
-        counter.update(len(paths))
-        counter.print()
-    # return len(paths)
+
+    global COUNTER
+    if COUNTER is not None:
+        COUNTER.update(len(paths))
+        COUNTER.print()
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=CHUNK_SIZE):
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
-    counter = Counter() # Intitialize a shared counter. 
-    chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
-    args = [(chunk, table_name, file_class, counter) for chunk in chunks]
-    
+    global COUNTER
+    COUNTER = Counter() # Intitialize a new shared counter. 
 
+    chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
+    args = [(chunk, table_name, file_class) for chunk in chunks]
+    
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
@@ -140,6 +142,9 @@ if __name__ == '__main__':
 
     global VERSION # Just set the global parameter to reduce argument number. 
     VERSION = args.version 
+
+    global COUNTER
+    COUNTER = None
     
     data_dir = os.path.join(DATA_DIR, f'r{VERSION}')
 
