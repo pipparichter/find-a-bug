@@ -56,17 +56,18 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    print(f'upload_proteins: Successfully uploaded {len(paths)} genomes to the database.')
     return len(paths)
 
 
 def error_callback(error):
     print(f'error: One of the subprocesses returned an error: {error}')
 
+
 def update_progress(n:int):
     '''Update the progress bar.'''
     global PBAR 
     PBAR.update(n)
+    print(f'update_progress: Successfully uploaded {n} genomes to the database.')
 
 
 def reset_progress(total:int, desc=''):
