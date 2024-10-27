@@ -62,8 +62,9 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     DATABASE.bulk_upload(table_name, entries) 
 
     global COUNT
-    COUNT += len(entries)
-    print(COUNT)
+    print(entries)
+    # COUNT += len(entries)
+    # print(COUNT)
     # if PBAR is not None:
     #     PBAR.update(len(entries))
 
