@@ -13,7 +13,6 @@ from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 N_WORKERS = 10
-PBAR = None
 
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
 # I can either do this by parallizing the upload_files function, or chunk processing within the upload_files function. 
