@@ -10,6 +10,7 @@ import glob
 import tarfile
 from typing import List, Tuple
 from multiprocess import Pool, Value, Lock
+import sys 
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 N_WORKERS = 5
