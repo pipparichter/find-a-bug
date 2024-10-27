@@ -45,6 +45,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     entries = []
+    print('here')
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
@@ -88,6 +89,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to the {table_name} table.', total=len(args)):
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
+    print(len(args))
     pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress)
     pool.close()
 
