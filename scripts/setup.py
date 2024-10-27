@@ -61,20 +61,23 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
         PBAR.update(len(entries))
 
 
-def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=500):
+def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
 
     global PBAR
     PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...', total=len(paths)) 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
+    
+    n_workers = 10
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
     pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
-    for _ in tqdm(pool.starmap(upload_func, args), desc=f'parallelize: Uploading to table {table_name}.', total=len(args)):
-        pass
+    # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to table {table_name}.', total=len(args)):
+    #     pass
+    pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     
     pool.close()
 
