@@ -92,6 +92,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     print(len(args))
     pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress)
     pool.close()
+    pool.join()
 
 
 
