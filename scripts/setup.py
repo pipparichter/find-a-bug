@@ -12,7 +12,8 @@ from typing import List, Tuple
 from multiprocess import Pool
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
-N_WORKERS = 10
+N_WORKERS = 5
+CHUNK_SIZE = 100
 
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
 # I can either do this by parallizing the upload_files function, or chunk processing within the upload_files function. 
@@ -34,7 +35,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-    return len(paths) # Return the number of genomes uploaded for the progress bar. 
+    # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
@@ -63,11 +64,11 @@ def error_callback(error):
     print(f'error: One of the subprocesses returned an error: {error}')
 
 
-def update_progress(n:int):
+def update_progress():
     '''Update the progress bar.'''
     print(f'update_progress: Successfully uploaded {n} genomes to the database.')
     global PBAR 
-    PBAR.update(n)
+    PBAR.update(CHUNK_SIZE)
 
 
 def reset_progress(total:int, desc=''):
@@ -76,14 +77,13 @@ def reset_progress(total:int, desc=''):
     PBAR = tqdm(total=total, desc=desc)
 
 
-def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
+def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=CHUNK_SIZE):
 
     reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
     
-    n_workers = 10
 
     # TODO: Read more about how this works. 
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
@@ -94,8 +94,8 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     with Pool(os.cpu_count()) as pool:
-        # _ = pool.starmap_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress, error_callback=error_callback)
-        _ = pool.starmap_async(upload_func, args, callback=update_progress, error_callback=error_callback)
+        _ = pool.starmap_async(upload_func, args, chunksize=100, callback=update_progress, error_callback=error_callback)
+        # _ = pool.starmap_async(upload_func, args, callback=update_progress, error_callback=error_callback)
         # result.wait()
         pool.close()
         pool.join()
