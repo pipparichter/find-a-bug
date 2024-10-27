@@ -85,15 +85,13 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
     # TODO: Read about what exactly chunksize is doing. 
-    pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
+    # pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
     # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to the {table_name} table.', total=len(args)):
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
-    result = pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress)
-    result.wait()
-    pool.close()
-    pool.join()
-
+    with Pool(os.cpu_count()) as pool:
+        result = pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress)
+        result.wait()
 
 
 if __name__ == '__main__':
