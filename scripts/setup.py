@@ -65,9 +65,9 @@ def error_callback(error):
 
 def update_progress(n:int):
     '''Update the progress bar.'''
+    print(f'update_progress: Successfully uploaded {n} genomes to the database.')
     global PBAR 
     PBAR.update(n)
-    print(f'update_progress: Successfully uploaded {n} genomes to the database.')
 
 
 def reset_progress(total:int, desc=''):
