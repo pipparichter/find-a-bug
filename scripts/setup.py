@@ -11,6 +11,8 @@ import tarfile
 from typing import List, Tuple
 from multiprocess import Pool, Value, Lock
 import sys 
+import numpy as np 
+import time 
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 N_WORKERS = 5
@@ -25,15 +27,17 @@ CHUNK_SIZE = 100
 class Counter():
     '''A process-safe counter, as described here: https://superfastpython.com/process-safe-counter/'''
     def __init__(self, total:int=None):
-        self._counter = Value('i', 0)
+        self._counter = Value('n', 0)
+        self._time = Value('t', 0)
         self._lock = Lock()
         self.total = total
         # NOTE: Read about locks here: https://superfastpython.com/multiprocessing-mutex-lock-in-python/
         # NOTE: Read about shared Ctypes here: https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
 
-    def update(self, n:int):
+    def update(self, n:int, t:float=0):
         with self._lock:
             self._counter.value += n
+            self._time.value += t
 
     def value(self) -> int:
         return self._counter.value
@@ -50,11 +54,17 @@ class Counter():
             if self.value() > 0:
                 sys.stdout.write('\r')
                 sys.stdout.flush()
-            print(f'Counter.show: {str(self)} out of {self.total}.')
+            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time)}')
 
 
 def error_callback(error):
     print(error)
+
+def show_progress(n:int, t:float=0):
+    global COUNTER
+    if COUNTER is not None:
+        COUNTER.update(len(paths), t=t)
+        COUNTER.print()
 
 
 def upload(paths:List[str], table_name:str, file_class:File):
@@ -65,16 +75,17 @@ def upload(paths:List[str], table_name:str, file_class:File):
     :param table_name: The name of the table in the database where the data will be uploaded. 
     :param file_class: The type of file being uploaded to the database. 
     '''
+    t_start = time.perf_counter()
+
     entries = []
     for path in paths:
         file = file_class(path, version=VERSION)
         entries += file.entries()
+    
     DATABASE.bulk_upload(table_name, entries)
-
-    global COUNTER
-    if COUNTER is not None:
-        COUNTER.update(len(paths))
-        COUNTER.print()
+    
+    t_finish = time.perf_counter()
+    show_progress(len(paths), t=t_finish - t_start)
     
     # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
@@ -86,6 +97,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param paths
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
+    t_start = time.perf_counter()
+    
     entries = []
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
@@ -98,11 +111,9 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-
-    global COUNTER
-    if COUNTER is not None:
-        COUNTER.update(len(paths))
-        COUNTER.print()
+    
+    t_finish = time.perf_counter()
+    show_progress(len(paths), t=t_finish - t_start)
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=CHUNK_SIZE):
