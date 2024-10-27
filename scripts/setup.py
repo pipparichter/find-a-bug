@@ -45,7 +45,6 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     entries = []
-    print('here')
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
@@ -61,7 +60,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
 
 
 def error_callback(error):
-    print(f'error: One of the subprocesses returned an error {error}')
+    print(f'error: One of the subprocesses returned an error: {error}')
 
 def update_progress(n:int):
     '''Update the progress bar.'''
