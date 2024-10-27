@@ -9,7 +9,7 @@ import zipfile
 import glob
 import tarfile
 from typing import List, Tuple
-from multiprocess import Pool
+from multiprocess import Pool, Value, Lock
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 N_WORKERS = 5
@@ -21,30 +21,43 @@ CHUNK_SIZE = 100
 # TODO: Verify that the rate-limiting step is actually decompression, and not the upload to the database. 
 # TODO: What is the maximum chunk I can read into RAM? Then I can avoid the overhead of writing the extracted ZIP files to separate files. 
 
+class Counter():
+    '''A process-safe counter, as described here: https://superfastpython.com/process-safe-counter/'''
+    def __init__(self, total:int=None):
+        self._counter = Value('i', 0)
+        self._lock = Lock()
+        self.total = total
+        # NOTE: Read about locks here: https://superfastpython.com/multiprocessing-mutex-lock-in-python/
+        # NOTE: Read about shared Ctypes here: https://superfastpython.com/multiprocessing-shared-ctypes-in-python/
 
+    def update(self, n:int):
+        with self._lock:
+            self._counter.value += n
+
+    def value(self) -> int:
+        return self._counter.value
+    
+    def __str__(self) -> str:
+        return str(self.value())
+
+    def __repr__(self) -> str:
+        return str(self.value())
+    
+    def print(self):
+        # Clear the previous line if this is not the first call to counter. 
+        with self._lock: # Make sure multiple processes don't call this at the same time. 
+            if self.value() > 0:
+                sys.stdout.write('\n')
+                sys.stdout.flush()
+            print(f'Counter.show: {str(self)} out of {self.total}.')
+
+        
 
 def error_callback(error):
-    print(f'error: One of the subprocesses returned an error: {error}')
+    print(error)
 
 
-def update_progress():
-    '''Update the progress bar.'''
-    # print(f'update_progress: Successfully uploaded {n} genomes to the database.')
-    global TOTAL 
-    TOTAL += CHUNK_SIZE
-    print(TOTAL)
-    # global PBAR 
-    # PBAR.update(CHUNK_SIZE)
-
-
-def reset_progress(total:int, desc=''):
-    '''Reset the progress bar.''' 
-    global PBAR 
-    PBAR = tqdm(total=total, desc=desc)
-    global TOTAL
-    TOTAL = 0
-
-def upload(paths:List[str], table_name:str, file_class:File):
+def upload(paths:List[str], table_name:str, file_class:File, counter:Counter):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
@@ -57,10 +70,13 @@ def upload(paths:List[str], table_name:str, file_class:File):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
+    counter.update(len(paths))
+    counter.print()
+    
     # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
 
-def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
+def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile, counter:Counter):
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
@@ -79,16 +95,18 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    update_progress()
+    counter.update(len(paths))
+    counter.print()
     # return len(paths)
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=CHUNK_SIZE):
 
-    reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
+    # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
+    counter = Counter() # Intitialize a shared counter. 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
-    args = [(chunk, table_name, file_class) for chunk in chunks]
+    args = [(chunk, table_name, file_class, counter) for chunk in chunks]
     
 
     # TODO: Read more about how this works. 
@@ -107,17 +125,11 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
         pool.close()
         pool.join()
     
-    update_progress()
 
 if __name__ == '__main__':
     
     global DATABASE # Need to declare as global for multiprocessing to work. 
     DATABASE = Database(reflect=False)
-
-    global PBAR 
-    PBAR = None
-    global TOTAL
-    TOTAL = 0
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
@@ -148,6 +160,7 @@ if __name__ == '__main__':
     upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
     # Need to upload amino acid and nucleotide data simultaneously.
+    print(f'Uploading to the proteins_r{VERSION} table.')
     proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
     proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
     proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
@@ -156,11 +169,11 @@ if __name__ == '__main__':
     parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
+    print(f'Uploading to the annotations_kegg_r{VERSION} table.')
     annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
     paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
     # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
     parallelize(paths, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
     DATABASE.close()
-    PBAR.close()
     
