@@ -93,7 +93,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     with Pool(os.cpu_count()) as pool:
-        _ = pool.map_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress, error_callback=error_callback)
+        _ = pool.starmap_async(upload_func, args, chunksize=len(args) // n_workers, callback=update_progress, error_callback=error_callback)
         # result.wait()
         pool.close()
         pool.join()
