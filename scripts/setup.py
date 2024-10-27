@@ -57,7 +57,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    return len(paths)
+    print('here')
+    # return len(paths)
 
 
 def error_callback(error):
