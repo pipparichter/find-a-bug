@@ -34,8 +34,8 @@ def upload(paths:List[str], table_name:str, file_class:File):
         file = file_class(path, version=VERSION)
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
-    # if PBAR is not None:
-    #     PBAR.update(len(entries))
+    if PBAR is not None:
+        PBAR.update(len(entries))
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
@@ -57,14 +57,14 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    # if PBAR is not None:
-    #     PBAR.update(len(entries))
+    if PBAR is not None:
+        PBAR.update(len(entries))
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
 
-    # global PBAR
-    # PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...', total=len(paths)) 
+    global PBAR
+    PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...') 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
@@ -75,9 +75,9 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # https://stackoverflow.com/questions/53751050/multiprocessing-understanding-logic-behind-chunksize 
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
     pool = Pool(os.cpu_count()) # I think this should manage the queue for me. 
-    for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to table {table_name}.', total=len(args)):
-        pass
-    # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
+    # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to the {table_name} table.', total=len(args)):
+    #     pass
+    pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     
     pool.close()
 
@@ -88,8 +88,8 @@ if __name__ == '__main__':
     global DATABASE # Need to declare as global for multiprocessing to work. 
     DATABASE = Database(reflect=False)
 
-    # global PBAR 
-    # PBAR = None
+    global PBAR 
+    PBAR = None
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     # NOTE: Table uploads must be done sequentially, i.e. the entire metadata table needs to be up before anything else. 
 
-    print(f'Uploading data to the metadata_r{VERSION} table.')
+    print(f'Uploading to the metadata_r{VERSION} table.')
     metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
     # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
     upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
