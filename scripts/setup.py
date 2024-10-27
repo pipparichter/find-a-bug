@@ -35,10 +35,10 @@ def upload(paths:List[str], table_name:str, file_class:File):
         entries += file.entries()
     DATABASE.bulk_upload(table_name, entries)
 
-    global COUNT
-    COUNT += len(entries)
-    # if PBAR is not None:
-    #     PBAR.update(len(entries))
+    # global COUNT
+    # COUNT += len(entries)
+    if PBAR is not None:
+        PBAR.update(len(paths))
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
@@ -61,20 +61,16 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
 
     DATABASE.bulk_upload(table_name, entries) 
 
-    global COUNT
-    print(len(entries))
     # COUNT += len(entries)
-    # print(COUNT)
-    # if PBAR is not None:
-    #     PBAR.update(len(entries))
+
+    if PBAR is not None:
+        PBAR.update(len(paths))
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
 
-    # global PBAR
-    # PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...') 
-    global COUNT 
-    COUNT = 0
+    global PBAR
+    PBAR = tqdm(desc=f'parallelize: Uploading to table {table_name}...') 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
@@ -98,10 +94,8 @@ if __name__ == '__main__':
     global DATABASE # Need to declare as global for multiprocessing to work. 
     DATABASE = Database(reflect=False)
 
-    # global PBAR 
-    # PBAR = None
-    global COUNT
-    COUNT = 0
+    global PBAR 
+    PBAR = None
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
