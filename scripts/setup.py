@@ -22,6 +22,24 @@ CHUNK_SIZE = 100
 # TODO: What is the maximum chunk I can read into RAM? Then I can avoid the overhead of writing the extracted ZIP files to separate files. 
 
 
+
+def error_callback(error):
+    print(f'error: One of the subprocesses returned an error: {error}')
+
+
+def update_progress():
+    '''Update the progress bar.'''
+    print(f'update_progress: Successfully uploaded {n} genomes to the database.')
+    global PBAR 
+    PBAR.update(CHUNK_SIZE)
+
+
+def reset_progress(total:int, desc=''):
+    '''Reset the progress bar.''' 
+    global PBAR 
+    PBAR = tqdm(total=total, desc=desc)
+
+
 def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
@@ -57,25 +75,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
 
     DATABASE.bulk_upload(table_name, entries) 
-    print('here')
+    update_progress()
     # return len(paths)
-
-
-def error_callback(error):
-    print(f'error: One of the subprocesses returned an error: {error}')
-
-
-def update_progress():
-    '''Update the progress bar.'''
-    print(f'update_progress: Successfully uploaded {n} genomes to the database.')
-    global PBAR 
-    PBAR.update(CHUNK_SIZE)
-
-
-def reset_progress(total:int, desc=''):
-    '''Reset the progress bar.''' 
-    global PBAR 
-    PBAR = tqdm(total=total, desc=desc)
 
 
 def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=CHUNK_SIZE):
@@ -95,12 +96,14 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     with Pool(os.cpu_count()) as pool:
-        _ = pool.starmap_async(upload_func, args, chunksize=100, callback=update_progress, error_callback=error_callback)
+        # _ = pool.starmap_async(upload_func, args, chunksize=100, callback=update_progress, error_callback=error_callback)
+        _ = pool.starmap_async(upload_func, args, chunksize=100, error_callback=error_callback)
         # _ = pool.starmap_async(upload_func, args, callback=update_progress, error_callback=error_callback)
         # result.wait()
         pool.close()
         pool.join()
-
+    
+    update_progress()
 
 if __name__ == '__main__':
     
