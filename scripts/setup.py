@@ -54,7 +54,7 @@ class Counter():
             if self.value() > 0:
                 sys.stdout.write('\r')
                 sys.stdout.flush()
-            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)}')
+            print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)}', end='\r')
 
 
 def error_callback(error):
@@ -98,6 +98,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     t_start = time.perf_counter()
+    print(len(paths))
     
     entries = []
     for aa_path, nt_path in paths:
@@ -135,7 +136,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
     with Pool(os.cpu_count()) as pool:
         # _ = pool.starmap_async(upload_func, args, chunksize=100, callback=update_progress, error_callback=error_callback)
-        _ = pool.starmap_async(upload_func, args, chunksize=100, error_callback=error_callback)
+        _ = pool.starmap_async(upload_func, args, chunksize=500, error_callback=error_callback)
         # _ = pool.starmap_async(upload_func, args, callback=update_progress, error_callback=error_callback)
         # result.wait()
         pool.close()
