@@ -48,7 +48,7 @@ class Counter():
         # Clear the previous line if this is not the first call to counter. 
         with self._lock: # Make sure multiple processes don't call this at the same time. 
             if self.value() > 0:
-                sys.stdout.write('\n')
+                sys.stdout.write('\r')
                 sys.stdout.flush()
             print(f'Counter.show: {str(self)} out of {self.total}.')
 
@@ -109,7 +109,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
     global COUNTER
-    COUNTER = Counter() # Intitialize a new shared counter. 
+    COUNTER = Counter(total=len(paths)) # Intitialize a new shared counter. 
 
     chunks = [paths[i * chunk_size: (i + 1) * chunk_size] for i in range(len(paths) // chunk_size + 1)]
     args = [(chunk, table_name, file_class) for chunk in chunks]
