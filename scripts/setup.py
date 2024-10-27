@@ -30,15 +30,19 @@ def error_callback(error):
 def update_progress():
     '''Update the progress bar.'''
     # print(f'update_progress: Successfully uploaded {n} genomes to the database.')
-    global PBAR 
-    PBAR.update(CHUNK_SIZE)
+    global TOTAL 
+    TOTAL += CHUNK_SIZE
+    print(TOTAL)
+    # global PBAR 
+    # PBAR.update(CHUNK_SIZE)
 
 
 def reset_progress(total:int, desc=''):
     '''Reset the progress bar.''' 
     global PBAR 
     PBAR = tqdm(total=total, desc=desc)
-
+    global TOTAL
+    TOTAL = 0
 
 def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
@@ -112,6 +116,8 @@ if __name__ == '__main__':
 
     global PBAR 
     PBAR = None
+    global TOTAL
+    TOTAL = 0
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', default=207, type=int, help='The GTDB version to upload to the SQL database.')
