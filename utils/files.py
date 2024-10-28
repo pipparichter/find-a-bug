@@ -18,14 +18,16 @@ def compressed(path:str):
 
 def read(path:str) -> str:
     '''Reads in a compressed or uncompressed file (detected automatically) as a string of text.'''
-    if compressed(path):
-        f = gzip.open(path, 'rt')
-    else:
-        f = open(path, 'r')
-    content = f.read()
-    f.close()
-    return content
-
+    try:
+        if compressed(path):
+            f = gzip.open(path, 'rt')
+        else:
+            f = open(path, 'r')
+        content = f.read()
+        f.close()
+        return content
+    except Exception as err:
+        print(f'read: Problem reading file {path}: {err}')
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
@@ -257,10 +259,8 @@ class KeggAnnotationsFile(File):
         
         # Replace the existing headers in the CSV file with new headers. 
         content = io.StringIO(read(path)) # Read the file into a IO stream.
-        test = pd.read_csv(content, sep='\t')
-        print(test.columns)
-        data = pd.read_csv(content, header=0, names=['best'] + KeggAnnotationsFile.fields, sep='\t') # Read in the CSV file. 
-        self.data = data.drop(columns=['best']) # "best" column marks the best KO annotation with an asterisk. 
+        data = pd.read_csv(content, header=0, names=['#'] + KeggAnnotationsFile.fields, sep='\t', low_memory=False) # Read in the CSV file. 
+        self.data = data.drop(columns=['#']) # "#" column marks where E-value exceeds the threshold. 
 
 class PfamAnnotationsFile(File):
 
