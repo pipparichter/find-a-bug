@@ -71,7 +71,6 @@ def upload(paths:List[str], table_name:str, file_class:File):
     '''Upload a chunk of zipped files to the Find-A-Bug database. .
 
     :param paths:
-    :param database: The Database object which connects to the Find-A-Bug database. 
     :param table_name: The name of the table in the database where the data will be uploaded. 
     :param file_class: The type of file being uploaded to the database. 
     '''
@@ -86,6 +85,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
         except Exception as err:
             print(err)
     
+    print('upload: About to upload...')
     DATABASE.bulk_upload(table_name, entries)
     print('upload: Succesfully uploaded something.')
     
@@ -99,8 +99,6 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     '''A function for handling upload of protein sequence files to the database, which is necessary because separate 
     nucleotide and amino acid files need to be combined in a single upload to the proteins table.
     
-    :param paths
-    :param database: The Database object which connects to the Find-A-Bug database. 
     '''
     t_start = time.perf_counter()
     
@@ -121,7 +119,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     show_progress(len(paths), t=t_finish - t_start)
 
 
-def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=2):
+def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=5):
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
     global COUNTER
