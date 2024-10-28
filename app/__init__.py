@@ -21,7 +21,6 @@ from typing import List, Generator, Dict, Tuple
 app = Flask(__name__)
 
 
-
 @app.route('/')
 def welcome():
     return 'Welcome to Find-A-Bug!', 200, {'Content-Type':'text/plain'}
