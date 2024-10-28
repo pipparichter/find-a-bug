@@ -145,7 +145,7 @@ def create_proteins_table(version:int):
     attrs = dict()
     attrs['__tablename__'] = f'proteins_r{version}'
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
-    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']))
+    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']),)
                             # {'extend_existing':True})
     
     return type(name, parents, attrs)
