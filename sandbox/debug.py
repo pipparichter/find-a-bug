@@ -4,7 +4,7 @@ import os
 
 # print('Current working directory:', os.getcwd())
 
-failing_genome_ids = np.loadtxt('failing_genome_ids.txt')
+failing_genome_ids = np.loadtxt('failing_genome_ids.txt', dtype=str)
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 LOG_DIR = os.path.join(os.getcwd(), '../scripts/log/')
