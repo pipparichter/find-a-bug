@@ -79,8 +79,11 @@ def upload(paths:List[str], table_name:str, file_class:File):
 
     entries = []
     for path in paths:
-        file = file_class(path, version=VERSION)
-        entries += file.entries()
+        try:
+            file = file_class(path, version=VERSION)
+            entries += file.entries()
+        except Exception as err:
+            print(err)
     
     DATABASE.bulk_upload(table_name, entries)
     

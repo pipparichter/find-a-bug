@@ -27,7 +27,7 @@ def read(path:str) -> str:
         f.close()
         return content
     except Exception as err:
-        print(f'read: Problem reading file {path}: {err}')
+        raise Exception(f'read: Problem reading file {path}.')
 
 def get_converter(dtype):
     '''Function for getting type converters to make things easier when reading in the metadata files.'''
@@ -261,6 +261,8 @@ class KeggAnnotationsFile(File):
         content = io.StringIO(read(path)) # Read the file into a IO stream.
         data = pd.read_csv(content, header=0, names=['#'] + KeggAnnotationsFile.fields, sep='\t', low_memory=False) # Read in the CSV file. 
         self.data = data.drop(columns=['#']) # "#" column marks where E-value exceeds the threshold. 
+
+
 
 class PfamAnnotationsFile(File):
 
