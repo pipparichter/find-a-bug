@@ -80,7 +80,6 @@ def upload(paths:List[str], table_name:str, file_class:File):
     entries = []
     for path in paths:
         file = file_class(path, version=VERSION)
-        print('here')
         entries += file.entries()
     
     DATABASE.bulk_upload(table_name, entries)
@@ -197,7 +196,8 @@ if __name__ == '__main__':
     annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
     paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
     # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
-    parallelize(paths, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
+    upload(paths, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
+    # parallelize(paths, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
     DATABASE.close()
     
