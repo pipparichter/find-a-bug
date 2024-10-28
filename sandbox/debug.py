@@ -12,7 +12,7 @@ LOG_DIR = os.path.join(os.getcwd(), '../scripts/log/')
 genome_ids_in_directory = os.listdir(os.path.join(DATA_DIR, 'r207', 'annotations_kegg'))
 # Remove the file extensions and prefixes...
 genome_ids_in_directory = [file_name.replace('.tab.gz', '') for file_name in genome_ids_in_directory]
-genome_ids_in_directory = [genome_ids.replace('RS_', '').replace('GB_', '') for genome_id in genome_ids_in_directory]
+genome_ids_in_directory = [genome_id.replace('RS_', '').replace('GB_', '') for genome_id in genome_ids_in_directory]
 
 for genome_id in failing_genome_ids:
     if not (genome_id in genome_ids_in_directory):
