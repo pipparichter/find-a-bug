@@ -257,7 +257,7 @@ class KeggAnnotationsFile(File):
         
         # Replace the existing headers in the CSV file with new headers. 
         content = io.StringIO(read(path)) # Read the file into a IO stream. 
-        print(content)
+        print(read(path))
         self.data = pd.read_csv(content, header=0, names=KeggAnnotationsFile.fields) # Read in the CSV file. 
 
 class PfamAnnotationsFile(File):
