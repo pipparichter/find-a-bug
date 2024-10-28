@@ -50,9 +50,9 @@ class Counter():
     def print(self):
         # Clear the previous line if this is not the first call to counter. 
         with self._lock: # Make sure multiple processes don't call this at the same time. 
-            # if self.value() > 0:
-            #     sys.stdout.write('\r')
-            #     sys.stdout.flush()
+            if self.value() > 0:
+                sys.stdout.write('\r')
+                sys.stdout.flush()
             print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)} seconds.', end='\r')
 
 
@@ -80,13 +80,14 @@ def upload(paths:List[str], table_name:str, file_class:File):
         try:
             file = file_class(path, version=VERSION)
             entries += file.entries()
-            print(f'upload: Successfully read {path}.')
+            # print(f'upload: Successfully read {path}.')
         except Exception as err:
-            print(err)
+            # print(err)
+            pass
     
-    print('upload: About to upload...')
+    # print('upload: About to upload...')
     DATABASE.bulk_upload(table_name, entries)
-    print('upload: Succesfully uploaded something.')
+    # print('upload: Succesfully uploaded something.')
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
