@@ -225,7 +225,6 @@ class MetadataFile(File):
         super().__init__(path, version=version)
 
         content = io.StringIO(read(path)) # Read the file into a IO stream.
-        print(content) 
         data = pd.read_csv(content, delimiter='\t', usecols=list(MetadataFile.fields.keys()), converters={f:get_converter(t) for f, t in MetadataFile.fields.items()})
         
         if reps_only: # Remove all genomes which are not GTDB representatives. 
@@ -281,7 +280,8 @@ class PfamAnnotationsFile(File):
         super().__init__(path, version=version)
         
         # The Pfam annotation files do not contain headers, so need to define them. 
-        content = io.StringIO(read(path)) # Read the file into a IO stream. 
+        content = io.StringIO(read(path)) # Read the file into a IO stream.
+        print(content) 
         data = pd.read_csv(content, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
         # Make sure the data columns match those needed for the table. 
         data = data.rename(columns={'signature_accession':'pfam'})
