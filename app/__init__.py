@@ -62,7 +62,7 @@ def get(table_name:str=None, debug:bool=False) -> Tuple[requests.Response, int, 
 
     url = url.replace('https://microbes.gps.caltech.edu/get/', '') # Remove the front part from the URL. 
     filter_string = None if '?' not in url else url.split('?')[-1] # Extract the filter information, if present.
-    filter_string = None if (len(filter_string) == 0) else filter_string # Handle case of empty filter string. 
+    filter_string = None if ((filter_string is None) or (len(filter_string) == 0)) else filter_string # Handle case of empty filter string. 
     database = Database(reflect=True)
 
     try:
