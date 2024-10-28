@@ -92,7 +92,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
         df = pd.DataFrame(entries)
         df = df.set_index('gene_id')
         global COUNTER
-        log_path = os.path.join(os.getcwd(), 'log', f'upload_failure_{table_name}_{COUTER.value()}.csv')
+        log_path = os.path.join(os.getcwd(), 'log', f'upload_failure_{table_name}_{COUNTER.value()}.csv')
         log = open(log_path, 'w')
         log.write(f'# {err}\n')
         df.to_csv(log)
