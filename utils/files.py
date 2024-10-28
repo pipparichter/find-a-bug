@@ -263,6 +263,7 @@ class KeggAnnotationsFile(File):
         data.columns = KeggAnnotationsFile.fields + ['description']
         data = data.reset_index()
         data = data.drop(columns='description')
+        data = data.dropna(axis=0) # Why are there NaNs?
         self.data = data # "#" column marks where E-value exceeds the threshold. 
 
 
