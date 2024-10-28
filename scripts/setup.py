@@ -86,15 +86,17 @@ def upload(paths:List[str], table_name:str, file_class:File):
             pass
     
     # print('upload: About to upload...')
+    print(entries[0])
     try:
         DATABASE.bulk_upload(table_name, entries)
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
-        df = pd.DataFrame(entries)
-        df = df.set_index('gene_id')
+        df = pd.DataFrame(entries).set_index('gene_id')
         global COUNTER
         log_path = os.path.join(os.getcwd(), 'log', f'upload_failure_{table_name}_{COUNTER.value()}.csv')
         log = open(log_path, 'w')
-        log.write(f'# {err}\n')
+        # Add a comment marker to each line of the error message and write it to the file. 
+        err = '\n'.join(['# ' + line for line in str(err).split('\n')])
+        log.write(f'{err}\n')
         df.to_csv(log)
         log.close()
 
