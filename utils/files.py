@@ -256,8 +256,10 @@ class KeggAnnotationsFile(File):
         super().__init__(path, version=version)
         
         # Replace the existing headers in the CSV file with new headers. 
-        content = io.StringIO(read(path)) # Read the file into a IO stream. 
-        data = pd.read_csv(content, header=0, names=['best'] + KeggAnnotationsFile.fields) # Read in the CSV file. 
+        content = io.StringIO(read(path)) # Read the file into a IO stream.
+        test = pd.read_csv(content, sep='\t')
+        print(test.columns)
+        data = pd.read_csv(content, header=0, names=['best'] + KeggAnnotationsFile.fields, sep='\t') # Read in the CSV file. 
         self.data = data.drop(columns=['best']) # "best" column marks the best KO annotation with an asterisk. 
 
 class PfamAnnotationsFile(File):
