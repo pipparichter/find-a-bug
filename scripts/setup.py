@@ -89,6 +89,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
+    print('here')
     
     # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
