@@ -15,7 +15,6 @@ import numpy as np
 import time 
 
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
-N_WORKERS = 5
 CHUNK_SIZE = 100
 
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
@@ -51,9 +50,9 @@ class Counter():
     def print(self):
         # Clear the previous line if this is not the first call to counter. 
         with self._lock: # Make sure multiple processes don't call this at the same time. 
-            if self.value() > 0:
-                sys.stdout.write('\r')
-                sys.stdout.flush()
+            # if self.value() > 0:
+            #     sys.stdout.write('\r')
+            #     sys.stdout.flush()
             print(f'Counter.show: {str(self)} out of {self.total}. Elapsed time is {np.round(self._time.value)} seconds.', end='\r')
 
 
@@ -136,6 +135,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # for _ in tqdm(pool.starmap(upload_func, args, chunksize=len(args) // n_workers), desc=f'parallelize: Uploading to the {table_name} table.', total=len(args)):
     #     pass
     # pool.starmap(upload_func, args, chunksize=len(args) // n_workers)
+    print(f'parallelize: Starting a pool with {os.cpu_count()} processes.')
     with Pool(os.cpu_count()) as pool:
         # _ = pool.starmap_async(upload_func, args, chunksize=100, callback=update_progress, error_callback=error_callback)
         _ = pool.starmap_async(upload_func, args, chunksize=500, error_callback=error_callback)
