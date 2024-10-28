@@ -4,4 +4,8 @@
 *.pkl
 *.out
 find-a-bug.log
-/sandbox
+/sandbox/proteins_aa 
+/sandbox/test 
+/sandbox/zipped_proteins_aa 
+/sandbox/*tar 
+/sandbox/*gz
