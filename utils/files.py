@@ -260,6 +260,8 @@ class KeggAnnotationsFile(File):
         # Replace the existing headers in the CSV file with new headers. 
         content = io.StringIO(read(path)) # Read the file into a IO stream.
         data = pd.read_csv(content, header=0, names=['#'] + KeggAnnotationsFile.fields, sep='\t', low_memory=False) # Read in the CSV file. 
+        if self.genome_id == 'GCA_014654065.1':
+            print(data)
         self.data = data.drop(columns=['#']) # "#" column marks where E-value exceeds the threshold. 
 
 
