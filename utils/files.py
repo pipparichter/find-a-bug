@@ -262,7 +262,7 @@ class KeggAnnotationsFile(File):
         data = pd.read_csv(content, header=0, names=KeggAnnotationsFile.fields, sep='\t', low_memory=False, comment='#') # Read in the CSV file. 
         if self.genome_id == 'GCA_014654065.1':
             print(data)
-        self.data = data.drop(columns=['#']) # "#" column marks where E-value exceeds the threshold. 
+        self.data = data # "#" column marks where E-value exceeds the threshold. 
 
 
 
