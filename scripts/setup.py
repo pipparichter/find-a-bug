@@ -87,6 +87,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
             print(err)
     
     DATABASE.bulk_upload(table_name, entries)
+    print('upload: Succesfully uploaded something.')
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
