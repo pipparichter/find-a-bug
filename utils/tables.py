@@ -129,6 +129,7 @@ def create_metadata_table(version:int):
 
     attrs = dict()
     attrs['__tablename__'] = f'metadata_r{version}'
+    attrs['__table_args__'] = {'extend_existing':True}
     
     return type(name, parents, attrs)
 
