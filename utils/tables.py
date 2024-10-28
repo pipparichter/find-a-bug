@@ -39,6 +39,7 @@ class Reflected(DeferredReflection):
 
 class ProteinsBase(Base):
     __abstract__ = True
+    __table_args__ = {'extend_existing':True}
 
     gene_id = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
     version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
@@ -61,6 +62,7 @@ class ProteinsBase(Base):
 # Should I combine PFAM and KEGG annotations in the same table?
 class AnnotationsKeggBase(Base):
     __abstract__ = True
+    __table_args__ = {'extend_existing':True}
  
     annotation_id = mapped_column(Integer, primary_key=True)
     version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
@@ -75,6 +77,7 @@ class AnnotationsKeggBase(Base):
 
 class AnnotationsPfamBase(Base):
     __abstract__ = True
+    __table_args__ = {'extend_existing':True}
 
     annotation_id = mapped_column(Integer, primary_key=True)
     version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
@@ -92,6 +95,7 @@ class AnnotationsPfamBase(Base):
 
 class MetadataBase(Base):
     __abstract__ = True 
+    __table_args__ = {'extend_existing':True}
 
     genome_id = mapped_column(String(GENOME_ID_LENGTH), primary_key=True)
     version = mapped_column(Integer, comment='The GTDB version from which the data was obtained.')
@@ -129,7 +133,7 @@ def create_metadata_table(version:int):
 
     attrs = dict()
     attrs['__tablename__'] = f'metadata_r{version}'
-    attrs['__table_args__'] = {'extend_existing':True}
+    # attrs['__table_args__'] = {'extend_existing':True}
     
     return type(name, parents, attrs)
 
@@ -141,8 +145,8 @@ def create_proteins_table(version:int):
     attrs = dict()
     attrs['__tablename__'] = f'proteins_r{version}'
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
-    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']),
-                            {'extend_existing':True})
+    attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']))
+                            # {'extend_existing':True})
     
     return type(name, parents, attrs)
 
@@ -156,8 +160,8 @@ def create_annotations_kegg_table(version:int):
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
     attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
     attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), 
-                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id']),
-                                {'extend_existing':True})  
+                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id']))
+                                # {'extend_existing':True})  
 
     return type(name, parents, attrs)
 
@@ -171,8 +175,8 @@ def create_annotations_pfam_table(version:int):
     attrs['metadata_'] = relationship(f'Metadata_r{version}', viewonly=True)
     attrs['proteins'] = relationship(f'Proteins_r{version}', viewonly=True)
     attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']), 
-                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id']), 
-                                {'extend_existing':True}) 
+                                ForeignKeyConstraint(['gene_id'], [f'proteins_r{version}.gene_id']))
+                                # {'extend_existing':True}) 
 
     return type(name, parents, attrs) 
 
