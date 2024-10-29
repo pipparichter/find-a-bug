@@ -38,7 +38,7 @@ def create_proteins_table(version:int):
     class Reflected(DeferredReflection):
         __abstract__ = True
 
-    parents = (Reflected, )
+    parents = (Base, Reflected)
     name = f'Proteins_r{version}'
     
     attrs = dict()
@@ -75,7 +75,7 @@ def create_annotations_kegg_table(version:int):
         __abstract__ = True
 
     name = f'AnnotationsKegg_r{version}'
-    parents = (Reflected,)
+    parents = (Base, Reflected)
 
     attrs = dict()
     attrs['__tablename__'] = f'annotations_kegg_r{version}'
@@ -107,7 +107,7 @@ def create_metadata_table(version:int):
         __abstract__ = True
 
     name = f'Metadata_r{version}'
-    parents = (Reflected,)
+    parents = (Base, Reflected)
 
     attrs = dict()
     attrs['__tablename__'] = f'metadata_r{version}'
@@ -155,7 +155,7 @@ def create_annotations_pfam_table(version:int):
         __abstract__ = True
 
     name = f'AnnotationsPfam_r{version}'
-    parents = (Reflected,)
+    parents = (Base, Reflected)
 
     attrs = dict()
     attrs['__tablename__'] = f'annotations_pfam_r{version}'
