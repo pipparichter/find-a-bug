@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np 
 import os 
 import glob
+import shutil
 
 # print('Current working directory:', os.getcwd())
 
@@ -30,3 +31,9 @@ for genome_id in genome_ids_with_missing_genes:
         print(genome_id, 'is missing in the source directory.')
     else:
         print(genome_id, 'is present in the source directory.')
+
+
+os.makedirs('./genome_ids_with_missing_genes')
+for genome_id in genome_ids_with_missing_genes:
+    file_name = glob.glob(os.path.join(DATA_DIR, 'r207', 'proteins_aa', f'*{genome_id}_protein.faa.gz'))[0]
+    shutil.copy(os.path.join(DATA_DIR, 'r207', 'proteins_aa', file_name), './genome_ids_with_missing_genes')
