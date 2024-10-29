@@ -26,7 +26,8 @@ class Database():
         self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
 
         if reflect:
-            Reflected.prepare(self.engine)
+            for table in self.tables:
+                table.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)            
 
