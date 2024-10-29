@@ -58,7 +58,6 @@ class Filter():
 
         self.field_to_table_map = dict()
         for rel, _ in self.table.__mapper__.relationships.items():
-            raise Exception(str(rel))
             rel_table = database.get_table(rel)
             self.field_to_table_map.update({col.name:rel_table for col in rel_table.__table__.c})
         # Make sure to add the columns in the table itself, to which filters can also be applied. 
