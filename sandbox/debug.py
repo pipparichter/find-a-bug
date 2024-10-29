@@ -25,7 +25,7 @@ LOG_DIR = os.path.join(os.getcwd(), '../scripts/log/')
 
 # These are all the genome IDs which have missing genes in the database. 
 genome_ids_with_missing_genes = ['GCF_015244675.1', 'GCA_013140765.1', 'GCA_010032545.1', 'GCA_011364235.1', 'GCA_018401055.1', 'GCF_015694425.1', 'GCF_015245355.1', 'GCA_001779505.1', 'GCA_018608425.1', 'GCA_011364155.1', 'GCA_003157385.1', 'GCF_002909445.1', 'GCA_011364525.1', 'GCA_905182715.1', 'GCA_011364265.1', 'GCA_900545805.1', 'GCF_000709085.1', 'GCF_015244745.1', 'GCA_012518835.1', 'GCA_017467305.1', 'GCF_015265435.1', 'GCF_003946115.1', 'GCA_011364225.1', 'GCA_002313895.1', 'GCF_001675285.1', 'GCA_011364305.1', 'GCF_902499045.1', 'GCA_011364105.1']
-for genome_id in genome_ids:
+for genome_id in genome_ids_with_missing_genes:
     if len(glob.glob(os.path.join(DATA_DIR, 'r207', 'proteins_aa'), f'*{genome_id}_protein.faa.gz')) < 1:
         print(genome_id, 'is missing in the source directory.')
     else:
