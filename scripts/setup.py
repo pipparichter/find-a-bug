@@ -178,17 +178,19 @@ if __name__ == '__main__':
     
     data_dir = os.path.join(DATA_DIR, f'r{VERSION}')
 
-    # if args.drop_existing:
-    #     for table_name in DATABASE.table_names[::-1]:
-    #         print(f'Dropping existing table {table_name}.')
-    #         DATABASE.drop(table_name)
-    DATABASE.drop('annotations_kegg_r207')
-    DATABASE.drop('annotations_pfam_r207')
-    DATABASE.create('annotations_kegg_r207')
-    DATABASE.create('annotations_pfam_r207')
-    # for table_name in DATABASE.table_names:
-    #     print(f'Initializing table {table_name}.')
-    #     DATABASE.create(table_name)
+    if args.drop_existing:
+        for table_name in DATABASE.table_names[::-1]:
+            print(f'Dropping existing table {table_name}.')
+            DATABASE.drop(table_name)
+
+    for table_name in DATABASE.table_names:
+        print(f'Initializing table {table_name}.')
+        DATABASE.create(table_name)
+
+    # DATABASE.drop('annotations_kegg_r207')
+    # DATABASE.drop('annotations_pfam_r207')
+    # DATABASE.create('annotations_kegg_r207')
+    # DATABASE.create('annotations_pfam_r207')
 
     DATABASE.reflect()
 

@@ -168,7 +168,7 @@ class ProteinsFile(File):
         return len(self.headers)
 
     def dataframe(self) -> pd.DataFrame:
-        '''Load the data conteined in the file as a pandas DataFrame.'''
+        '''Load the data contained in the file as a pandas DataFrame.'''
         df = pd.DataFrame([self.parse_header(header) for header in self.headers])
 
         if (self.type_ == 'aa'):

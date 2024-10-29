@@ -33,7 +33,7 @@ for genome_id in genome_ids_with_missing_genes:
         print(genome_id, 'is present in the source directory.')
 
 
-os.makedirs('./genome_ids_with_missing_genes')
+os.makedirs('./genome_ids_with_missing_genes', exist_ok=True)
 for genome_id in genome_ids_with_missing_genes:
     file_name = glob.glob(os.path.join(DATA_DIR, 'r207', 'proteins_aa', f'*{genome_id}_protein.faa.gz'))[0]
     shutil.copy(os.path.join(DATA_DIR, 'r207', 'proteins_aa', file_name), './genome_ids_with_missing_genes')
