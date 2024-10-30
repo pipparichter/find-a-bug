@@ -6,8 +6,8 @@ import shutil
 from tqdm import tqdm
 from utils.files import * 
 
-
-DATA_DIR = '/var/lib/pgsql/data/gtdb/'
+version = 'r207'
+DATA_DIR = f'/var/lib/pgsql/data/gtdb/{version}'
 
 
 def count_total_proteins(data_dir:str=os.path.join(DATA_DIR, 'proteins_aa')):
