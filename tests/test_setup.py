@@ -15,13 +15,18 @@ def is_fasta(file_name:str):
     is_aa = ('.faa' in file_name)
     return is_nt or is_aa
 
+def count_entries(path:str):
+    '''Count the number of entries in a FASTA file by counting the number of '>' characters in the file.'''
+    content = read(path)
+    return content.count('>')
+
 def count_total_proteins(data_dir:str=os.path.join(DATA_DIR, 'proteins_aa')):
     count = 0 
     for file_name in tqdm(os.listdir(data_dir), desc='count_total_proteins'):
         if is_fasta(file_name):
             path = os.path.join(data_dir, file_name)
-            file = ProteinsFile(path)
-            count += file.size()
+            # file = ProteinsFile(path)
+            count += count_entries(path)
     return count
 
 total = count_total_proteins()
