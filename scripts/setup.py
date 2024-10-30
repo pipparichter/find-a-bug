@@ -67,7 +67,7 @@ def show_progress(n:int, t:float=0):
         COUNTER.print()
 
 
-def log_error(entries:List[Dict], table_name:str):
+def log_error(err, entries:List[Dict], table_name:str):
     '''When a bulk upload fails, write the failures to a file.'''
     df = pd.DataFrame(entries) # Convert the entries to a DataFrame. 
     global COUNTER
@@ -103,7 +103,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
     try:
         DATABASE.bulk_upload(table_name, entries)
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
-        log_error(entries, table_name)
+        log_error(err, entries, table_name)
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
@@ -130,7 +130,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     try:
         DATABASE.bulk_upload(table_name, entries)
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
-        log_error(entries, table_name)
+        log_error(err, entries, table_name)
         
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
@@ -182,37 +182,37 @@ if __name__ == '__main__':
     
     data_dir = os.path.join(DATA_DIR, f'r{VERSION}')
 
-    if args.drop_existing:
-        for table_name in DATABASE.table_names[::-1]:
-            print(f'Dropping existing table {table_name}.')
-            DATABASE.drop(table_name)
+    # if args.drop_existing:
+    #     for table_name in DATABASE.table_names[::-1]:
+    #         print(f'Dropping existing table {table_name}.')
+    #         DATABASE.drop(table_name)
 
-    for table_name in DATABASE.table_names:
-        print(f'Initializing table {table_name}.')
-        DATABASE.create(table_name)
+    # for table_name in DATABASE.table_names:
+    #     print(f'Initializing table {table_name}.')
+    #     DATABASE.create(table_name)
 
-    # DATABASE.drop('annotations_kegg_r207')
-    # DATABASE.drop('annotations_pfam_r207')
-    # DATABASE.create('annotations_kegg_r207')
-    # DATABASE.create('annotations_pfam_r207')
+    DATABASE.drop('annotations_kegg_r207')
+    DATABASE.drop('annotations_pfam_r207')
+    DATABASE.create('annotations_kegg_r207')
+    DATABASE.create('annotations_pfam_r207')
 
     DATABASE.reflect()
 
     # NOTE: Table uploads must be done sequentially, i.e. the entire metadata table needs to be up before anything else. 
 
-    print(f'Uploading to the metadata_r{VERSION} table.')
-    metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
-    # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
-    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
+    # print(f'Uploading to the metadata_r{VERSION} table.')
+    # metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
+    # # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
+    # upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
-    # Need to upload amino acid and nucleotide data simultaneously.
-    print(f'Uploading to the proteins_r{VERSION} table.')
-    proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
-    proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
-    proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
-    paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
-    # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
-    parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
+    # # Need to upload amino acid and nucleotide data simultaneously.
+    # print(f'Uploading to the proteins_r{VERSION} table.')
+    # proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
+    # proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
+    # proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
+    # paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
+    # # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
+    # parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
     print(f'Uploading to the annotations_kegg_r{VERSION} table.')

@@ -72,7 +72,6 @@ def annotate_kegg(input_path:str, output_dir:str, config:str='/home/prichter/kof
     # return output_path
 
 
-# annotations_kegg_
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', choices=['pfam', 'kegg'], type=str, default='kegg')
