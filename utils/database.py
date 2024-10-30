@@ -86,7 +86,9 @@ class Database():
             self.session.commit()
 
     def reflect(self):
-        Reflected.prepare(self.engine)
+        # Reflected.prepare(self.engine)
+        for table in self.tables:
+            table.prepare(self.engine)
 
     def close(self):
         self.session.close()
