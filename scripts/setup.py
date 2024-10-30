@@ -200,19 +200,19 @@ if __name__ == '__main__':
 
     # NOTE: Table uploads must be done sequentially, i.e. the entire metadata table needs to be up before anything else. 
 
-    # print(f'Uploading to the metadata_r{VERSION} table.')
-    # metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
-    # # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
-    # upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
+    print(f'Uploading to the metadata_r{VERSION} table.')
+    metadata_paths = glob.glob(os.path.join(data_dir, '*metadata*.tsv')) # This should output the full paths. 
+    # upload(metadata_paths, database, f'metadata_r{VERSION}', MetadataFile)
+    upload(metadata_paths, f'metadata_r{VERSION}', MetadataFile)
 
-    # # Need to upload amino acid and nucleotide data simultaneously.
-    # print(f'Uploading to the proteins_r{VERSION} table.')
-    # proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
-    # proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
-    # proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
-    # paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
-    # # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
-    # parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
+    # Need to upload amino acid and nucleotide data simultaneously.
+    print(f'Uploading to the proteins_r{VERSION} table.')
+    proteins_aa_dir, proteins_nt_dir = os.path.join(data_dir, 'proteins_aa'), os.path.join(data_dir, 'proteins_nt')
+    proteins_aa_paths = [os.path.join(proteins_aa_dir, file_name) for file_name in os.listdir(proteins_aa_dir) if (file_name != 'gtdb_release_tk.log.gz')]
+    proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
+    paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
+    # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
+    parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
     print(f'Uploading to the annotations_kegg_r{VERSION} table.')
