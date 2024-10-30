@@ -258,7 +258,7 @@ class KeggAnnotationsFile(File):
 
     fields = ['gene_id', 'ko', 'threshold', 'score', 'e_value'] # Define the new column headers. 
 
-    def __init__(self, path:str, version:int=None):
+    def __init__(self, path:str, version:int=None, filter_threshold:bool=True):
 
         super().__init__(path, version=version)
         
@@ -269,6 +269,11 @@ class KeggAnnotationsFile(File):
         data = data.reset_index(drop=True)
         # Some of the threshold values are NaNs... Handle by filling with zeros? And then just making sure to filter?
         data['threshold'] = data.threshold.fillna(0)
+
+        if filter_threshold:
+            data = data[data.threshold > 0] # Remove everything with invalid threshold. 
+            data = data[data.e_value > data.threshold]
+            
         self.data = data # "#" column marks where E-value exceeds the threshold. 
 
 
