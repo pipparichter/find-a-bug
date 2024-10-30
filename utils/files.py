@@ -103,6 +103,8 @@ class ProteinsFile(File):
             self.type_ = 'nt'
         elif 'faa' in self.file_name:
             self.type_ = 'aa'
+        else:
+            raise ValueError(f'File {self.file_name} does not appear to be in FASTA format.')
 
         # I think it is not a good idea to store all the content as an attribute for the sake of limiting memory consumption. 
         content = read(path) # Handles compressed and non-compressed files. Expecting this to the bottleneck. 
@@ -273,7 +275,7 @@ class KeggAnnotationsFile(File):
         if filter_threshold:
             data = data[data.threshold > 0] # Remove everything with invalid threshold. 
             data = data[data.e_value > data.threshold]
-            
+
         self.data = data # "#" column marks where E-value exceeds the threshold. 
 
 
