@@ -80,6 +80,11 @@ class File():
             entry['version'] = self.version
         return entries
 
+    def size(self):
+        return len(self.data)
+
+
+
 
 class ProteinsFile(File):
 
@@ -259,13 +264,12 @@ class KeggAnnotationsFile(File):
         
         # Replace the existing headers in the CSV file with new headers. 
         content = io.StringIO(read(path)) # Read the file into a IO stream.
-        data = pd.read_csv(content, skiprows=2, sep='\t', low_memory=False, index_col=0) # Read in the CSV file. 
-        data.columns = KeggAnnotationsFile.fields + ['description']
-        data = data.reset_index()
-        data = data.drop(columns='description')
-        data = data.dropna(axis=0) # Why are there NaNs?
+        data = pd.read_csv(content, sep='\t', low_memory=False, header=None, usecols=list(range(1, 6)), comment='#') # , index_col=0) # Read in the CSV file. 
+        data.columns = KeggAnnotationsFile.fields # + ['description']
+        data = data.reset_index(drop=True)
+        # Some of the threshold values are NaNs... Handle by filling with zeros? And then just making sure to filter?
+        data['threshold'] = data.threshold.fillna(0)
         self.data = data # "#" column marks where E-value exceeds the threshold. 
-
 
 
 class PfamAnnotationsFile(File):

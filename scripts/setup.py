@@ -8,7 +8,7 @@ from tqdm import tqdm
 import zipfile 
 import glob
 import tarfile
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from multiprocess import Pool, Value, Lock
 import sys 
 import numpy as np 
@@ -59,11 +59,25 @@ class Counter():
 def error_callback(error):
     print(f'\n{error}')
 
+
 def show_progress(n:int, t:float=0):
     global COUNTER
     if COUNTER is not None:
         COUNTER.update(n, t=t)
         COUNTER.print()
+
+
+def log_error(entries:List[Dict], table_name:str):
+    '''When a bulk upload fails, write the failures to a file.'''
+    df = pd.DataFrame(entries) # Convert the entries to a DataFrame. 
+    global COUNTER
+    log_path = os.path.join(os.getcwd(), 'log', f'upload_failure_{table_name}_{COUNTER.value()}.csv')
+    log = open(log_path, 'w')
+    # Add a comment marker to each line of the error message and write it to the file. 
+    err = '\n'.join(['# ' + line for line in str(err).split('\n')])
+    log.write(f'{err}\n')
+    df.to_csv(log, index=False)
+    log.close()
 
 
 def upload(paths:List[str], table_name:str, file_class:File):
@@ -86,26 +100,14 @@ def upload(paths:List[str], table_name:str, file_class:File):
             pass
     
     # print('upload: About to upload...')
-    print(entries[0])
     try:
         DATABASE.bulk_upload(table_name, entries)
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
-        df = pd.DataFrame(entries).set_index('gene_id')
-        global COUNTER
-        log_path = os.path.join(os.getcwd(), 'log', f'upload_failure_{table_name}_{COUNTER.value()}.csv')
-        log = open(log_path, 'w')
-        # Add a comment marker to each line of the error message and write it to the file. 
-        err = '\n'.join(['# ' + line for line in str(err).split('\n')])
-        log.write(f'{err}\n')
-        df.to_csv(log)
-        log.close()
-
-    # print('upload: Succesfully uploaded something.')
+        log_error(entries, table_name)
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
     
-    # return len(paths) # Return the number of genomes uploaded for the progress bar. 
 
 
 def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:ProteinsFile):
@@ -125,9 +127,11 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
             entry.update({f:v for f, v in nt_entry.items()}) # Nucleotide sequences don't fit in table.
             entries.append(entry)
-
-    DATABASE.bulk_upload(table_name, entries) 
-    
+    try:
+        DATABASE.bulk_upload(table_name, entries)
+    except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
+        log_error(entries, table_name)
+        
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
 
