@@ -30,13 +30,21 @@ DEFAULT_STRING_LENGTH = 50
 # There should always be a many-to-one (proteins to Metadata) or one-to-many (proteins to annotations) relationship.
 
 
+class Base(DeclarativeBase):
+    pass 
+
+class Reflected(DeferredReflection):
+    __abstract__ = True
+    
+    
 def create_proteins_table(version:int):
 
-    class Base(DeclarativeBase):
-        pass 
+    # class Base(DeclarativeBase):
+    #     pass 
 
-    class Reflected(DeferredReflection):
-        __abstract__ = True
+    # class Reflected(DeferredReflection):
+    #     __abstract__ = True
+        
 
     parents = (Base, Reflected)
     name = f'Proteins_r{version}'
@@ -68,11 +76,11 @@ def create_proteins_table(version:int):
 
 def create_annotations_kegg_table(version:int):
 
-    class Base(DeclarativeBase):
-        pass 
+    # class Base(DeclarativeBase):
+    #     pass 
 
-    class Reflected(DeferredReflection):
-        __abstract__ = True
+    # class Reflected(DeferredReflection):
+    #     __abstract__ = True
 
     name = f'AnnotationsKegg_r{version}'
     parents = (Base, Reflected)
@@ -100,11 +108,11 @@ def create_annotations_kegg_table(version:int):
 
 def create_metadata_table(version:int):
 
-    class Base(DeclarativeBase):
-        pass 
+    # class Base(DeclarativeBase):
+    #     pass 
 
-    class Reflected(DeferredReflection):
-        __abstract__ = True
+    # class Reflected(DeferredReflection):
+    #     __abstract__ = True
 
     name = f'Metadata_r{version}'
     parents = (Base, Reflected)
@@ -148,11 +156,11 @@ def create_metadata_table(version:int):
 
 def create_annotations_pfam_table(version:int):
 
-    class Base(DeclarativeBase):
-        pass 
+    # class Base(DeclarativeBase):
+    #     pass 
 
-    class Reflected(DeferredReflection):
-        __abstract__ = True
+    # class Reflected(DeferredReflection):
+    #     __abstract__ = True
 
     name = f'AnnotationsPfam_r{version}'
     parents = (Base, Reflected)
