@@ -132,8 +132,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     '''
     t_start = time.perf_counter()
     entries, failed_entries = [], []
-    print('here')
-
+    
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
@@ -171,7 +170,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     n_workers = os.cpu_count() 
     print(f'parallelize: Starting a pool with {n_workers} processes.')
     with Pool(n_workers) as pool:
-        results = pool.starmap_async(upload_func, args, chunksize=int(len(chunks) // (2 * n_workers)), error_callback=error_callback)
+        results = pool.starmap_async(upload_func, args, chunksize=1000, error_callback=error_callback)
         results = results.get(None) # Wait for results to be available, with no timeout. 
         pool.close()
         pool.join()
