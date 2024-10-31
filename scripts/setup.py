@@ -169,7 +169,7 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
 
     n_workers = os.cpu_count() * 2
     print(f'parallelize: Starting a pool with {n_workers} processes.')
-    with Pool(n_cores) as pool:
+    with Pool(n_workers) as pool:
         results = pool.starmap_async(upload_func, args, chunksize=int(len(chunks) // (2 * n_workers)), error_callback=error_callback)
         results = results.get(None) # Wait for results to be available, with no timeout. 
         pool.close()
