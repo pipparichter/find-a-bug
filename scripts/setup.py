@@ -17,6 +17,12 @@ import time
 DATA_DIR = '/var/lib/pgsql/data/gtdb/'
 CHUNK_SIZE = 100
 
+# NOTE: There are 200505361 proteins across all files in the source directory, and only 
+# 200486859 in the database (missing 18502). For some reason, a couple thousand proteins aren't getting uploaded, 
+# and it doesn't seem like a problem with the file class. 
+# Maybe some of the protein IDs are the same? No, behavior of insert means that this should throw an error. 
+# All of the genomes are represented though, so it is somewhere else in the upload step. 
+
 # In an attempt to speed this up, going to try to parallelize the decompression step of the process. 
 # I can either do this by parallizing the upload_files function, or chunk processing within the upload_files function. 
 
@@ -102,8 +108,19 @@ def upload(paths:List[str], table_name:str, file_class:File):
     # print('upload: About to upload...')
     try:
         DATABASE.bulk_upload(table_name, entries)
-    except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
-        log_error(err, entries, table_name)
+    
+    except err:
+        # In case of an exception, switch to uploading one at a time to figure out where the problem is. 
+        failed_entries = []
+        for entry in entries:
+            try:
+                DATABASE.upload(table_name, entry)
+            except:
+                failed_entries.append(entry)
+        log_error(err, table_name, failed_entries)
+
+    # except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
+    #     log_error(err, entries, table_name)
     
     t_finish = time.perf_counter()
     show_progress(len(paths), t=t_finish - t_start)
@@ -118,16 +135,18 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     t_start = time.perf_counter()
     
     entries = []
+    total = 0
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
-            
+        total += aa_file.size()
         for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
             assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
             entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
             entry.update({f:v for f, v in nt_entry.items()}) # Nucleotide sequences don't fit in table.
             entries.append(entry)
     try:
+        assert len(entries) == total, f'upload_proteins_files: Expected {total} entries, but saw {len(entries)}.'
         DATABASE.bulk_upload(table_name, entries)
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
         log_error(err, entries, table_name)

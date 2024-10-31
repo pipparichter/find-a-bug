@@ -5,7 +5,6 @@ from sqlalchemy import Float, String, Integer
 from typing import Dict, List, NoReturn
 import pandas as pd 
 import numpy as np
-from utils.tables import MAX_SEQ_LENGTH
 import gzip 
 
 # NOTE: Donnie mentioned that pre-compiling regex expressions might speed things up quite a bit. 
