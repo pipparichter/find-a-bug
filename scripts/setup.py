@@ -155,7 +155,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     return len(entries) - len(failed_entries)
 
 
-def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
+def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=10):
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
     global COUNTER
