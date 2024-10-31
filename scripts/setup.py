@@ -109,7 +109,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
     try:
         DATABASE.bulk_upload(table_name, entries)
     
-    except err:
+    except Exception as err:
         # In case of an exception, switch to uploading one at a time to figure out where the problem is. 
         failed_entries = []
         for entry in entries:
