@@ -131,7 +131,6 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     
     '''
     t_start = time.perf_counter()
-    print('here')
     entries, failed_entries = [], []
 
     for aa_path, nt_path in paths:
