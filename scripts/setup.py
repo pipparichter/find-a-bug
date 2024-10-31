@@ -167,9 +167,10 @@ def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, c
     # TODO: Read about starmap versus map. Need this for iterable arguments. 
     # TODO: Read about what exactly chunksize is doing.
 
-    print(f'parallelize: Starting a pool with {os.cpu_count()} processes.')
-    with Pool(os.cpu_count()) as pool:
-        results = pool.starmap_async(upload_func, args, chunksize=500, error_callback=error_callback)
+    n_workers = os.cpu_count() * 2
+    print(f'parallelize: Starting a pool with {n_workers} processes.')
+    with Pool(n_cores) as pool:
+        results = pool.starmap_async(upload_func, args, chunksize=int(len(chunks) // (2 * n_workers)), error_callback=error_callback)
         results = results.get(None) # Wait for results to be available, with no timeout. 
         pool.close()
         pool.join()
