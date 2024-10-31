@@ -117,7 +117,7 @@ def upload(paths:List[str], table_name:str, file_class:File):
                 DATABASE.upload(table_name, entry)
             except:
                 failed_entries.append(entry)
-        log_error(err, table_name, failed_entries)
+        log_error(err, failed_entries, table_name)
 
     # except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
     #     log_error(err, entries, table_name)
