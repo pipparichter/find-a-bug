@@ -136,15 +136,16 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
-        print('in the loop')
         for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
             assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
             entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
             entry.update({f:v for f, v in nt_entry.items()}) # Nucleotide sequences don't fit in table.
             entries.append(entry)
     try:
+        print('uploading')
         assert len(entries) == total, f'upload_proteins_files: Expected {total} entries, but saw {len(entries)}.'
         DATABASE.bulk_upload(table_name, entries)
+        print('uploading done')
     except Exception as err: # In case of upload failure, write the failed upload to a CSV file. 
         failed_entries = handle_upload_error(err, entries, table_name)
         
