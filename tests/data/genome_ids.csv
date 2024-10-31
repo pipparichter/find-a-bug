@@ -1,4 +1,3 @@
-# These are the genome IDs which, as of 10.29.2024, have genes missing in the database (but have some genes present). 
 ,GCF_015244675.1
 ,GCA_013140765.1
 ,GCA_010032545.1
@@ -27,14 +26,6 @@
 ,GCA_011364305.1
 ,GCF_902499045.1
 ,GCA_011364105.1
-# These are the genome IDs which, as of 10.29.2024, are completely missing from the database. 
-# ,GCF_015245355.1
-# ,GCA_011364155.1
-# ,GCA_011364265.1
-# ,GCF_015244745.1
-# ,GCA_011364225.1
-# ,GCA_011364305.1
-# Also a random assortment of other genomes... 
 ,GCA_000007325.1
 ,GCA_000008085.1
 ,GCA_000008885.1
