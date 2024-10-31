@@ -130,13 +130,13 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     
     '''
     t_start = time.perf_counter()
-    
+    print('here')
     entries, failed_entries = [], []
 
     for aa_path, nt_path in paths:
         nt_file, aa_file = ProteinsFile(nt_path, version=VERSION), ProteinsFile(aa_path, version=VERSION)
         assert aa_file.size() == nt_file.size(), 'upload_proteins_files: The number of entries in corresponding nucleotide and amino acid files should match.' 
-
+        print('in the loop')
         for aa_entry, nt_entry in zip(aa_file.entries(), nt_file.entries()):
             assert aa_entry['gene_id'] == nt_entry['gene_id'], 'upload_proteins_files: Gene IDs in corresponding amino acid and nucleotide files should match.'  
             entry = aa_entry.copy() # Merge the nucleotide and amino acid entries. 
