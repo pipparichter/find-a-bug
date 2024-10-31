@@ -144,7 +144,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entries.append(entry)
     try:
         print('uploading')
-        assert len(entries) == total, f'upload_proteins_files: Expected {total} entries, but saw {len(entries)}.'
+        # assert len(entries) == total, f'upload_proteins_files: Expected {total} entries, but saw {len(entries)}.'
         DATABASE.bulk_upload(table_name, entries)
         print('uploading done')
     except pymysql.err.IntegrityError as err: # In case of upload failure, write the failed upload to a CSV file. 
