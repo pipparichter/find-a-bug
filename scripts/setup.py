@@ -227,7 +227,7 @@ if __name__ == '__main__':
     proteins_nt_paths = [os.path.join(proteins_nt_dir, file_name) for file_name in os.listdir(proteins_nt_dir)]
     paths = [(aa_path, nt_path) for aa_path, nt_path in zip(sorted(proteins_aa_paths), sorted(proteins_nt_paths))]
     # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
-    parallelize(paths[:1000], upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
+    parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
 
     print(f'Uploading to the annotations_kegg_r{VERSION} table.')
