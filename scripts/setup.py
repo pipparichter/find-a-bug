@@ -143,10 +143,8 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
             entry.update({f:v for f, v in nt_entry.items()}) # Nucleotide sequences don't fit in table.
             entries.append(entry)
     try:
-        print('uploading')
         # assert len(entries) == total, f'upload_proteins_files: Expected {total} entries, but saw {len(entries)}.'
         DATABASE.bulk_upload(table_name, entries)
-        print('uploading done')
     except pymysql.err.IntegrityError as err: # In case of upload failure, write the failed upload to a CSV file. 
         failed_entries = handle_upload_error(err, entries, table_name)
         
@@ -156,7 +154,7 @@ def upload_proteins(paths:List[Tuple[str, str]], table_name:str, file_class:Prot
     return len(entries) - len(failed_entries)
 
 
-def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=10):
+def parallelize(paths:List[str], upload_func, table_name:str, file_class:File, chunk_size:int=100):
 
     # reset_progress(len(paths), desc=f'parallelize: Uploading to table {table_name}...')
     global COUNTER
