@@ -64,7 +64,7 @@ class TestKeggAnnotationsFile(unittest.TestCase):
 
     @staticmethod
     def count_entries(path:str):
-        '''Count the number of lines in a metadata file.'''
+        '''Count the number of lines in a KEGG annotation file.'''
         n = len(read(path).strip().split('\n'))
         return n - 2 # Subtract 1 for the header line and 1 for the dashed line. 
     
@@ -93,6 +93,43 @@ class TestKeggAnnotationsFile(unittest.TestCase):
     def test_no_nan_values(self, file:KeggAnnotationsFile):
         self.assertTrue(not np.any(file.data.isnull()), f'Found {file.data.isnull().values.sum()} null values in the KeggAnnotationsFile.')
 
+
+
+class TestPfamAnnotationsFile(unittest.TestCase):
+    '''Class for testing the File objects defines in utils/files.py.'''
+    data_dir = os.path.join(DATA_DIR, 'annotations_pfam')
+    files = load_files(data_dir, PfamAnnotationsFile)
+
+    @staticmethod
+    def count_entries(path:str):
+        '''Count the number of lines in a Pfam annotation file.'''
+        n = len(read(path).strip().split('\n'))
+        return n # There is no header. 
+    
+    @parameterized.expand(files)
+    def test_all_sequences_loaded(self, file:PfamAnnotationsFile):
+        self.assertEqual(file.size(), TestPfamAnnotationsFile.count_entries(file.path))
+
+    @parameterized.expand(files)
+    def test_dataframe_size_is_correct(self, file:PfamAnnotationsFile):
+        df = file.dataframe()
+        self.assertEqual(len(df), TestPfamAnnotationsFile.count_entries(file.path))
+
+    @parameterized.expand(files)
+    def test_correct_number_of_entries(self, file:PfamAnnotationsFile):
+        entries = file.entries()
+        self.assertEqual(len(entries), TestPfamAnnotationsFile.count_entries(file.path))
+
+    @parameterized.expand(files)
+    def test_columns_are_correct(self, file:PfamAnnotationsFile):
+        correct_n_columns = len(PfamAnnotationsFile.fields)
+        n_columns = len(file.data.columns)
+        self.assertEqual(n_columns, correct_n_columns, f"Expected {correct_n_columns}, but found {n_columns}. Columns in the data attribute are: {', '.join(file.data.columns)}")
+        self.assertTrue(np.all(np.isin(file.data.columns, TestPfamAnnotationsFile.fields)))
+    
+    @parameterized.expand(files)
+    def test_no_nan_values(self, file:TestPfamAnnotationsFile):
+        self.assertTrue(not np.any(file.data.isnull()), f'Found {file.data.isnull().values.sum()} null values in PfamAnnotationsFile.')
 
 
 
