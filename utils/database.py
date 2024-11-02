@@ -26,13 +26,13 @@ class Database():
 
         self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
 
+        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True) 
+    
         if reflect:
             # for table in Database.tables:
             #     table.prepare(self.engine)
             Reflected.prepare(self.engine)
-
-        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)   
-        self.session.add_all(Database.tables)         
+  
 
     def has_table(self, table_name:str) -> bool:
         '''Checks for the existence of a table in the database.'''
