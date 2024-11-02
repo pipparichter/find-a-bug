@@ -61,6 +61,7 @@ class Filter():
             self.field_to_table_map.update({col.name:rel_table for col in rel_table.__table__.c})
         # Make sure to add the columns in the table itself, to which filters can also be applied. 
         self.field_to_table_map.update({col.name:self.table for col in self.table.__table__.c})
+        raise Exception(self.field_to_table_map)
 
         tables_to_join = [self.field_to_table_map.get(field) for field in list(self.filters.keys()) + self.include]
         tables_to_join = [table for table in tables_to_join if table is not None] # Should I be worried about this?
