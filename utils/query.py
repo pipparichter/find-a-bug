@@ -5,7 +5,6 @@ from sqlalchemy.schema import Column
 from sqlalchemy.sql.expression import Select
 # from versioned import versioned_session
 from typing import Set, List, Dict, NoReturn, Tuple
-from utils.tables import *
 import sqlalchemy
 from sqlalchemy.inspection import inspect
 from sqlalchemy import func

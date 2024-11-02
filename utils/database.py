@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import insert, text
-from utils.tables import *
+from utils.tables import create_annotations_kegg_table, create_annotations_pfam_table, create_metadata_table, create_proteins_table
 from typing import List, Dict, NoReturn
 import pandas as pd
 
