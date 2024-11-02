@@ -5,7 +5,7 @@ from typing import List, Dict, NoReturn
 import pandas as pd
 
 class Database():
-    versions = 207
+    versions = [207]
         
     tables = [create_metadata_table(version) for version in versions]
     tables += [create_proteins_table(version) for version in versions]
