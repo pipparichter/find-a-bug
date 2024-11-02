@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import insert, text
-from utils.tables import create_annotations_kegg_table, create_annotations_pfam_table, create_metadata_table, create_proteins_table
+from utils.tables import create_annotations_kegg_table, create_annotations_pfam_table, create_metadata_table, create_proteins_table, Reflected
 from typing import List, Dict, NoReturn
 import pandas as pd
 
@@ -27,8 +27,9 @@ class Database():
         self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
 
         if reflect:
-            for table in Database.tables:
-                table.prepare(self.engine)
+            # for table in Database.tables:
+            #     table.prepare(self.engine)
+            Reflected.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)            
 
