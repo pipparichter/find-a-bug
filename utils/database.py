@@ -31,7 +31,8 @@ class Database():
             #     table.prepare(self.engine)
             Reflected.prepare(self.engine)
 
-        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)            
+        self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)   
+        self.session.add_all(Database.tables)         
 
     def has_table(self, table_name:str) -> bool:
         '''Checks for the existence of a table in the database.'''
