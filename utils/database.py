@@ -5,6 +5,13 @@ from typing import List, Dict, NoReturn
 import pandas as pd
 
 class Database():
+    versions = 207
+        
+    tables = [create_metadata_table(version) for version in versions]
+    tables += [create_proteins_table(version) for version in versions]
+    tables += [create_annotations_kegg_table(version) for version in versions]
+    tables += [create_annotations_pfam_table(version) for version in versions]
+    table_names = [table.__tablename__ for table in tables]
 
     # host = '127.0.0.1' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
     host = 'localhost' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
@@ -16,17 +23,11 @@ class Database():
     url = f'{dialect}+{driver}://{user}:{password}@{host}/{name}'
 
     def __init__(self, reflect:bool=True, versions:List[int]=[207]):
-        
-        self.tables = [create_metadata_table(version) for version in versions]
-        self.tables += [create_proteins_table(version) for version in versions]
-        self.tables += [create_annotations_kegg_table(version) for version in versions]
-        self.tables += [create_annotations_pfam_table(version) for version in versions]
-        self.table_names = [table.__tablename__ for table in self.tables]
 
         self.engine = sqlalchemy.create_engine(Database.url, pool_size=100, max_overflow=20)
 
         if reflect:
-            for table in self.tables:
+            for table in tables:
                 table.prepare(self.engine)
 
         self.session = sqlalchemy.orm.Session(self.engine, autobegin=True)            
