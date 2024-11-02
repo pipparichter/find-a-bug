@@ -53,6 +53,7 @@ def create_proteins_table(version:int):
     attrs['__tablename__'] = f'proteins_r{version}'
     attrs['__table_args__'] = (ForeignKeyConstraint(['genome_id'], [f'metadata_r{version}.genome_id']),
                                 {'extend_existing':True})
+    attrs[f'metadata_r{version}'] = relationship(f'Metadata_r{version}', viewonly=True)
 
     # Set table column attributes. 
     attrs['gene_id'] = mapped_column(String(GENE_ID_LENGTH), primary_key=True)
