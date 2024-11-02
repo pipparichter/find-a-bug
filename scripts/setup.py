@@ -208,9 +208,7 @@ if __name__ == '__main__':
     #     print(f'Initializing table {table_name}.')
     #     DATABASE.create(table_name)
 
-    DATABASE.drop('annotations_kegg_r207')
     DATABASE.drop('annotations_pfam_r207')
-    DATABASE.create('annotations_kegg_r207')
     DATABASE.create('annotations_pfam_r207')
 
     DATABASE.reflect()
@@ -231,13 +229,15 @@ if __name__ == '__main__':
     # # parallelize(paths, upload_proteins, database, f'proteins_r{VERSION}', ProteinsFile)
     # parallelize(paths, upload_proteins, f'proteins_r{VERSION}', ProteinsFile)
 
+    # print(f'Uploading to the annotations_kegg_r{VERSION} table.')
+    # annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
+    # paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
+    # parallelize(paths, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
 
-    print(f'Uploading to the annotations_kegg_r{VERSION} table.')
-    annotations_kegg_dir = os.path.join(data_dir, 'annotations_kegg')
-    paths = [os.path.join(annotations_kegg_dir, file_name) for file_name in os.listdir(annotations_kegg_dir)]
-    # parallelize(path, upload, database, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
-    # upload(paths, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
-    parallelize(paths, upload, f'annotations_kegg_r{VERSION}', KeggAnnotationsFile)
+    print(f'Uploading to the annotations_pfam_r{VERSION} table.')
+    annotations_pfam_dir = os.path.join(data_dir, 'annotations_pfam')
+    paths = [os.path.join(annotations_pfam_dir, file_name) for file_name in os.listdir(annotations_pfam_dir)]
+    parallelize(paths, upload, f'annotations_pfam_r{VERSION}', PfamAnnotationsFile)
 
     DATABASE.close()
     

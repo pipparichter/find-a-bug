@@ -280,30 +280,19 @@ class KeggAnnotationsFile(File):
 
 class PfamAnnotationsFile(File):
 
-    fields = ['gene_id', 
-        'digest', 
-        'length', 
-        'analysis', 
-        'signature_accession', 
-        'signature_description', 
-        'start', 
-        'stop', 
-        'e_value', 
-        'match_status', 
-        'data', 
-        'interpro_accession', 
-        'interpro_description']
+    fields = ['gene_id', 'pfam', 'e_value', 'interpro_accession', 'interpro_description', 'start', 'stop', 'length']
 
     def __init__(self, path:str, version:int=None):
 
         super().__init__(path, version=version)
         
-        # The Pfam annotation files do not contain headers, so need to define them. 
         content = io.StringIO(read(path)) # Read the file into a IO stream.
-        data = pd.read_csv(content, header=None, names=PfamAnnotationsFile.fields, sep='\t') # Read in the TSV file. 
+        # The Pfam annotation files do not contain headers, so need to define them. Got these from the documentation.  
+        headers = ['gene_id', 'digest', 'length', 'analysis', 'signature_accession', 'signature_description', 'start', 'stop', 'e_value', 'match_status', 'data', 'interpro_accession', 'interpro_description'] 
+        data = pd.read_csv(content, header=None, names=headers, sep='\t') # Read in the TSV file. 
         # Make sure the data columns match those needed for the table. 
         data = data.rename(columns={'signature_accession':'pfam'})
-        self.data = data[['gene_id', 'pfam', 'e_value', 'interpro_accession', 'interpro_description', 'start', 'stop', 'length']]
+        self.data = data[PfamAnnotationsFile.fields]
 
 
 

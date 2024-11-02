@@ -8,7 +8,7 @@ import subprocess
 from parameterized import parameterized 
 
 DATA_DIR = os.path.join(os.getcwd(), 'data')
-GENOME_IDS = pd.read_csv(os.path.join(DATA_DIR, 'genome_ids.csv'), comment='#', index_col=0).values.ravel().tolist()[:1]
+GENOME_IDS = pd.read_csv(os.path.join(DATA_DIR, 'genome_ids.csv'), comment='#', index_col=0).values.ravel().tolist()
 
 
 # NOTE: zip fails silently if list sizes are unequal. I should make sure to check this in the setup.py script. 
@@ -19,12 +19,15 @@ def get_file_path(data_dir:str, genome_id:str):
     return file_path
 
 
-def load_files(data_dir:str, file_class) -> List[File]:
+def load_files(data_dir:str, file_class, **kwargs) -> List[File]:
     '''Load all of the File objects for the specified directory to avoid some overhead.'''
     files = []
     for genome_id in GENOME_IDS:
-        file_path = get_file_path(data_dir, genome_id)
-        files.append(file_class(file_path))
+        try:
+            file_path = get_file_path(data_dir, genome_id)
+            files.append(file_class(file_path, **kwargs))
+        except: # Test directories have different files. 
+            pass 
     return files
 
 
@@ -60,7 +63,7 @@ class TestProteinsFile(unittest.TestCase):
 class TestKeggAnnotationsFile(unittest.TestCase):
     '''Class for testing the File objects defines in utils/files.py.'''
     data_dir = os.path.join(DATA_DIR, 'annotations_kegg')
-    files = load_files(data_dir, KeggAnnotationsFile)
+    files = load_files(data_dir, KeggAnnotationsFile, filter_threshold=False)
 
     @staticmethod
     def count_entries(path:str):
@@ -125,10 +128,10 @@ class TestPfamAnnotationsFile(unittest.TestCase):
         correct_n_columns = len(PfamAnnotationsFile.fields)
         n_columns = len(file.data.columns)
         self.assertEqual(n_columns, correct_n_columns, f"Expected {correct_n_columns}, but found {n_columns}. Columns in the data attribute are: {', '.join(file.data.columns)}")
-        self.assertTrue(np.all(np.isin(file.data.columns, TestPfamAnnotationsFile.fields)))
+        self.assertTrue(np.all(np.isin(file.data.columns, PfamAnnotationsFile.fields)))
     
     @parameterized.expand(files)
-    def test_no_nan_values(self, file:TestPfamAnnotationsFile):
+    def test_no_nan_values(self, file:PfamAnnotationsFile):
         self.assertTrue(not np.any(file.data.isnull()), f'Found {file.data.isnull().values.sum()} null values in PfamAnnotationsFile.')
 
 
