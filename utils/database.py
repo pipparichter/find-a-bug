@@ -17,7 +17,7 @@ class Database():
     host = 'localhost' # Equivalent to localhost, although not sure why this would work and localhost doesn't.
     dialect = 'mariadb'
     driver = 'pymysql'
-    user = 'root'
+    user = 'admin'
     password = 'Doledi7-Bebyno2'
     name = 'findabug'
     url = f'{dialect}+{driver}://{user}:{password}@{host}/{name}'

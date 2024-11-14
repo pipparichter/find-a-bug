@@ -16,7 +16,8 @@ import time
 import datetime 
 import pymysql
 
-DATA_DIR = '/var/lib/pgsql/data/gtdb/'
+# DATA_DIR = '/var/lib/pgsql/data/gtdb/'
+DATA_DIR = '/home/prichter/microbes-data1/gtdb/'
 CHUNK_SIZE = 100
 
 def timestamp() -> str:
